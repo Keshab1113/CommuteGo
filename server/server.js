@@ -12,7 +12,7 @@ const adminRoute = require("./router/admin-router.js")
 
 const corsOptions = {
     origin: process.env.CROSS_ORIGIN,
-    methods: "GET, POST, DELETE, PATCH, HEAD",
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
     credentials: true,
 }
 
