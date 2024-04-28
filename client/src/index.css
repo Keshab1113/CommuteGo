@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+.removscrool::-webkit-scrollbar {
+  display: none;
+}
+.menu-bars {
+  margin-left: 2rem;
+  font-size: 2rem;
+  background: none;
+}
+.nav-menu {
+  width: 120px;
+  height: 92vh;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: 0;
+  left: -100%;
+}
+.nav-menu.active {
+  left: 0;
+  transition: 350ms;
+  z-index: 1000;
+}
+.navbar-toggle {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  transition: 350ms;
+}
+
+.removscrool {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  background-color: blue;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.firstbackground {
+  background: url("/back7.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.slick-slide > div {
+  margin: 0 10px;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: black !important;
+}
+.busbackground {
+  background-image: url("/buspages.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+}
+.busbackground2 {
+  background-image: url("/back2.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.feedBackBackground {
+  background-image: url("/back2.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+}
+.glass{
+  background: rgb(3,3,48);
+background: linear-gradient(152deg, rgba(3,3,48,1) 0%, rgba(44,41,129,1) 29%, rgba(20,213,208,1) 100%);
+}
+.servicebackground{
+  background-image: url("https://media.contentapi.ea.com/content/dam/eacom/skate/common/skate-about-section-bg-xl.jpg.adapt.320w.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.createdanimation {
+  animation: gototop 1s linear infinite alternate-reverse;
+}
+@keyframes gototop {
+  0% {
+    transform: translateY(-0.5rem);
+  }
+  100% {
+    transform: translateY(1rem);
+  }
+}
+
+
+@layer components {
+  .navItemsStyle {
+    @apply text-xl text-violet-950 hover:bg-gray-200 font-semibold h-10 rounded-md flex justify-center items-center w-full bg-slate-100;
+  }
+  .navbarOption {
+    @apply text-xl font-semibold mt-2 h-10 rounded-md w-fit block after:block  after:h-[2px] after:bg-violet-700 after:w-full 
+                after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center transition-all;
+  }
+  .searchInputType {
+    @apply h-20 outline-none font-semibold pl-3 w-5/6 text-xl text-black;
+  }
+  .SearchButton {
+    @apply w-[34%] bg-violet-900 hover:bg-gradient-to-l h-20 rounded-r-xl text-xl text-white font-semibold;
+  }
+  .footerLinks {
+    @apply sm:w-[25%] w-full h-full flex flex-col text-white justify-center items-center sm:items-start;
+  }
+  .footerHeading {
+    @apply text-2xl font-bold text-white mb-4 underline;
+  }
+  .followlinks {
+    @apply flex hover:underline mb-2;
+  }
+  .icons {
+    @apply mr-2;
+  }
+  .serviceOptions {
+    @apply border-2 hover:bg-violet-800 hover:text-white text-violet-600 h-28 w-28 flex justify-center items-center rounded-full cursor-pointer;
+  }
+  .reviewFrom {
+    @apply flex flex-col justify-center;
+  }
+  .searchlabels {
+    @apply flex flex-col sm:w-[18%] w-full;
+  }
+  .searchselects {
+    @apply h-[70%] outline-none pl-2 pr-2 border-r-2;
+  }
+  .searchlabel {
+    @apply h-[30%] pl-2 pr-2 capitalize font-semibold;
+  }
+  .sidebaritems{
+    @apply dark:text-white cursor-pointer font-bold hover:bg-blue-500 hover:text-white dark:hover:bg-slate-800 flex flex-col w-full justify-center items-center h-20 border-b-2 border-white dark:border-slate-600 text-sm
+  }
+}
