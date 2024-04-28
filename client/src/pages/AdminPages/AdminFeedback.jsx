@@ -9,7 +9,7 @@ const AdminFeedback = () => {
 
   const getAllUsersData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/admin/feedback", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/feedback`, {
         method: "GET",
         headers: {
           Authorization: authorizationToken,
@@ -24,7 +24,7 @@ const AdminFeedback = () => {
 
   const deleteFeedBack = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/feedback/delete/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/feedback/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: authorizationToken,

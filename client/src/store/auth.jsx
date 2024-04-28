@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     const userAuthentication = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch("http://localhost:5000/api/auth/user", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/user`, {
                 method: "GET",
                 headers: {
                     Authorization: authorizationToken,
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
     const getbusdata = async() => {
         try {
-            const response = await fetch("http://localhost:5000/api/form/getallBusDatas", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/getallBusDatas`, {
                 method: "GET",
             });
             if (response.ok) {
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
     }
     const getfeedbackdata = async() => {
         try {
-            const response = await fetch("http://localhost:5000/api/admin/getallfeedbacks", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/getallfeedbacks`, {
                 method: "GET",
             });
             if (response.ok) {

@@ -17,7 +17,7 @@ const BusDataEdit = () => {
     const { authorizationToken } = useAuth();
     const getSingleBusData = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/busdata/${params.id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/busdata/${params.id}`, {
                 method: "GET",
                 headers: {
                     Authorization: authorizationToken,
@@ -50,7 +50,7 @@ const BusDataEdit = () => {
 
         try {
             const response = await fetch(
-                `http://localhost:5000/api/admin/busdata/update/${params.id}`,
+                `${import.meta.env.VITE_API_URL}/api/admin/busdata/update/${params.id}`,
                 {
                     method: "PATCH",
                     headers: {

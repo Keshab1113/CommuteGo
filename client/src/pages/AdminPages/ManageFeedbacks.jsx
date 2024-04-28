@@ -17,7 +17,7 @@ const ManageFeedbacks = () => {
     const { authorizationToken } = useAuth();
     const getSingleFeedBackData = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/feedback/${params.id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/feedback/${params.id}`, {
                 method: "GET",
                 headers: {
                     Authorization: authorizationToken,
@@ -50,7 +50,7 @@ const ManageFeedbacks = () => {
 
         try {
             const response = await fetch(
-                `http://localhost:5000/api/admin/feedback/update/${params.id}`,
+                `${import.meta.env.VITE_API_URL}/api/admin/feedback/update/${params.id}`,
                 {
                     method: "PATCH",
                     headers: {

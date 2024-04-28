@@ -15,7 +15,7 @@ const AdminBusdata = () => {
 
   const getAllBusData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/admin/busdata", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/busdata`, {
         method: "GET",
         headers: {
           Authorization: authorizationToken,
@@ -32,7 +32,7 @@ const AdminBusdata = () => {
   const deleteBus = async (id) => {
     toast.success("Bus Deleted Successfully");
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/busdata/delete/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/busdata/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: authorizationToken,

@@ -29,7 +29,7 @@ const FeedBack = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/api/form/feedback", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/feedback`, {
         method: "POST",
         headers: {
           'Content-Type': "application/json"
