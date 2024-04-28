@@ -11,7 +11,7 @@ const adminRoute = require("./router/admin-router.js")
 
 
 const corsOptions = {
-    origin: "http://localhost:5173",
+    origin: process.env.CROSS_ORIGIN,
     methods: "GET, POST, DELETE, PATCH, HEAD",
     credentials: true,
 }
