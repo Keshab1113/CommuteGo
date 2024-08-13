@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }) => {
                     Authorization: authorizationToken,
                 }
             });
+            
             if (response.ok) {
                 const data = await response.json();
                 setUser(data.userData);
