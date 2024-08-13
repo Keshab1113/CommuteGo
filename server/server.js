@@ -11,7 +11,7 @@ const adminRoute = require("./router/admin-router.js")
 
 
 const corsOptions = {
-    origin: process.env.CROSS_ORIGIN || "https://commute-go-client.vercel.app",
+    origin: process.env.CROSS_ORIGIN,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
     credentials: true,
 }
