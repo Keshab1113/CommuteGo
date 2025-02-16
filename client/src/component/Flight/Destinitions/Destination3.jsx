@@ -14,6 +14,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Lens } from "../../../components/magicui/lens";
+import { BorderBeam } from "../../../components/magicui/border-beam";
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -34,7 +36,7 @@ export default function RecipeReviewCard() {
     };
 
     return (
-        <Card sx={{ maxWidth: 345 }}>
+        <Card sx={{ maxWidth: 345 }} className='relative !shadow-none p-4 !rounded-2xl'>
             <CardHeader
                 avatar={
                     <Avatar sx={{ bgcolor: red[900] }} aria-label="recipe">
@@ -49,12 +51,19 @@ export default function RecipeReviewCard() {
                 title="Pune"
                 subheader="October 24, 2022"
             />
+            <Lens
+          zoomFactor={2}
+          lensSize={150}
+          isStatic={false}
+          ariaLabel="Zoom Area"
+        >
             <CardMedia
                 component="img"
                 height="194"
                 image="https://www.holidify.com/images/bgImages/PUNE.jpg"
                 alt="Paella dish"
             />
+            </Lens>
             <CardContent>
                 <Typography variant="body2" color="text.secondary">
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod doloribus eum excepturi saepe quia quibusdam eaque cum voluptatum hic. Error expedita adipisci quo odio necessitatibus earum maiores quisquam consequatur pariatur!
@@ -93,6 +102,12 @@ export default function RecipeReviewCard() {
                     </Typography>
                 </CardContent>
             </Collapse>
+            <BorderBeam
+        duration={6}
+        delay={3}
+        size={500}
+        className="from-transparent via-blue-500 to-transparent"
+      />
         </Card>
     );
 }

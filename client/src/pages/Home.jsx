@@ -6,6 +6,7 @@ import Service from '../component/Service'
 import Feedback from '../component/FeedBack/Feedback'
 import Heading from '../component/Search/Heading'
 import Destinition from '../component/Flight/Destinition'
+import { Docker } from '../component/Docker/Docker'
 
 
 const Home = () => {
@@ -18,6 +19,7 @@ const Home = () => {
       <Destinition/>
       <Feedback />
       <GoTop />
+      <Docker/>
     </div>
   )
 }
