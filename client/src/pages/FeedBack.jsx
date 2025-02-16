@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import feedbackImage from "/feedback.png";
 
 const defaultfeedbackform = {
   fullname: "",
@@ -11,107 +13,152 @@ const defaultfeedbackform = {
 };
 
 const FeedBack = () => {
+  const [feedback, setFeedback] = useState(defaultfeedbackform);
 
-  const [feedback, setFeedback] = useState({
-    fullname: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
   const handleInput = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setFeedback({
-      ...feedback,
-      [name]: value
-    })
-  }
+    const { name, value } = e.target;
+    setFeedback({ ...feedback, [name]: value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/feedback`, {
         method: "POST",
-        headers: {
-          'Content-Type': "application/json"
-        },
-        body: JSON.stringify(feedback)
+        headers: { 'Content-Type': "application/json" },
+        body: JSON.stringify(feedback),
       });
       if (response.ok) {
         setFeedback(defaultfeedbackform);
-        const data = await response.json();
-        toast.success("Message send successfully.");
+        toast.success("Message sent successfully.");
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
-    <div className=' h-screen pt-[6rem] mb-10 flex flex-col justify-center items-center '>
-      <div className=' mt-5 sm:w-[70%] w-[90%] h-[80%] flex flex-col  items-center border shadow-xl shadow-violet-200 p-2'>
-        <h1 className=' text-center text-2xl font-semibold mb-4 text-violet-800 mt-6 underline capitalize'>Welcome to our FeedBack form</h1>
-        <form onSubmit={handleSubmit} className='grid grid-cols-2 gap-6 mb-4'>
-          <div className='reviewFrom'>
-            <h1 className=' font-semibold text-violet-800 mb-2'>Please Enter Your Full Name*</h1>
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      whileInView={{ opacity: 1 }} 
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+      className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-b from-white to-cyan-100"
+    >
+      <motion.h1 
+        initial={{ opacity: 0, y: -20 }} 
+        whileInView={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        viewport={{ once: true }}
+        className="text-3xl font-bold text-cyan-600 mb-6 text-center mt-10"
+      >
+        We Value Your Feedback
+      </motion.h1>
+
+      <motion.div 
+        initial={{ y: 30, opacity: 0 }} 
+        whileInView={{ y: 0, opacity: 1 }} 
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        viewport={{ once: true }}
+        className="bg-white shadow-xl rounded-xl p-6 sm:w-[80%] w-[95%] flex flex-col sm:flex-row items-center border border-cyan-200"
+      >
+        <div className="w-full sm:w-2/5 p-3 flex justify-center">
+          <motion.img 
+            initial={{ scale: 0.95, opacity: 0 }} 
+            whileInView={{ scale: 1, opacity: 1 }} 
+            transition={{ duration: 0.6 }} 
+            src={feedbackImage} 
+            alt="Feedback"
+            className="w-full max-w-xs sm:max-w-sm"
+          />
+        </div>
+
+        <div className="w-full sm:w-3/5 p-6">
+          <motion.form 
+            initial={{ opacity: 0, y: 20 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            viewport={{ once: true }}
+            onSubmit={handleSubmit} 
+            className="grid grid-cols-1 gap-4"
+          >
             <TextField
               required
-              id="outlined-required"
-              label="Name"
-              name='fullname'
+              fullWidth
+              label="Full Name"
+              name="fullname"
               value={feedback.fullname}
               onChange={handleInput}
-              autoComplete='off'
+              autoComplete="off"
+              className="rounded-md"
+              InputProps={{
+                className: "bg-white border border-cyan-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 rounded-lg transition-all",
+              }}
             />
-          </div>
 
-          <div className='reviewFrom'>
-            <h1 className=' font-semibold text-violet-800 mb-2'>Please Enter Your Email Address*</h1>
             <TextField
               required
-              id="outlined-required2"
-              label="Email"
-              name='email'
+              fullWidth
+              label="Email Address"
+              name="email"
               value={feedback.email}
               onChange={handleInput}
-              autoComplete='off'
+              autoComplete="off"
+              className="rounded-md"
+              InputProps={{
+                className: "bg-white border border-cyan-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 rounded-lg transition-all",
+              }}
             />
-          </div>
-          <div className='reviewFrom'>
-            <h1 className=' font-semibold text-violet-800 mb-2'>Enter Your Mobile Number*</h1>
+
             <TextField
               required
-              id="outlined-number"
-              label="Number"
+              fullWidth
+              label="Mobile Number"
               type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              name='phone'
+              name="phone"
               value={feedback.phone}
               onChange={handleInput}
-              autoComplete='off'
+              autoComplete="off"
+              className="rounded-md"
+              InputProps={{
+                className: "bg-white border border-cyan-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 rounded-lg transition-all",
+              }}
             />
-          </div>
-          <div className='reviewFrom'>
-            <h1 className=' font-semibold text-violet-800 mb-2'>Your Valuable Suggestion*</h1>
+
             <TextField
               required
-              id="outlined-multiline-static"
-              label="Suggestion"
+              fullWidth
+              label="Your Suggestion"
               multiline
-              rows={4}
-              name='message'
+              rows={3}
+              name="message"
               value={feedback.message}
               onChange={handleInput}
-              autoComplete='off'
+              autoComplete="off"
+              className="rounded-md"
+              InputProps={{
+                className: "bg-white border border-cyan-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 rounded-lg transition-all",
+              }}
             />
-          </div>
-          <Button type='submit' variant="outlined" className=' w-32 h-10' >Submit</Button>
-        </form>
 
-      </div>
-    </div>
-  )
-}
+            <motion.div 
+              whileHover={{ scale: 1.04 }} 
+              whileTap={{ scale: 0.96 }} 
+              className="flex justify-center mt-4"
+            >
+              <Button 
+                type="submit" 
+                variant="contained"
+                className="bg-cyan-600 text-white hover:bg-cyan-700 w-36 h-10 font-semibold rounded-md shadow-md transition-all"
+              >
+                Submit
+              </Button>
+            </motion.div>
+          </motion.form>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
-export default FeedBack
+export default FeedBack;
