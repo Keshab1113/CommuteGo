@@ -14,6 +14,14 @@ import Button from '@mui/material/Button';
 import { useAuth } from "../../store/auth";
 import User from "./User"
 
+export const shoot = () => {
+  Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: "We are Working on this features...",
+  });
+};
+
 const Navbar = () => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
@@ -22,13 +30,7 @@ const Navbar = () => {
   const toggleNavbar = () => {
     setIsopen(!isOpen);
   };
-  const shoot = () => {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "We are Working on this features...",
-    });
-  };
+  
   const adminlogin = () => {
     navigate("login");
   }
