@@ -1,12 +1,15 @@
-import React from 'react'
-import AboutInfo from '../component/About/AboutInfo'
+import React, { useContext } from 'react';
+import AboutInfo from '../component/About/AboutInfo';
+import { ThemeContext } from '../context/ThemeContext'; // Import ThemeContext
 
 const About = () => {
-  return (
-    <div>
-      <AboutInfo/>
-    </div>
-  )
-}
+  const { darkMode } = useContext(ThemeContext); // Get dark mode state
 
-export default About
+  return (
+    <div className={`${darkMode ? 'dark:bg-gray-900 dark:text-white' : ''}`}>
+      <AboutInfo />
+    </div>
+  );
+};
+
+export default About;

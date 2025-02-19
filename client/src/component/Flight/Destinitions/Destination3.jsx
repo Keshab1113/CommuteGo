@@ -16,6 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Lens } from "../../../components/magicui/lens";
 import { BorderBeam } from "../../../components/magicui/border-beam";
+import { ThemeContext } from '../../../context/ThemeContext';
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -30,13 +31,21 @@ const ExpandMore = styled((props) => {
 
 export default function RecipeReviewCard() {
     const [expanded, setExpanded] = React.useState(false);
+    const { darkMode } = React.useContext(ThemeContext);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
 
     return (
-        <Card sx={{ maxWidth: 345 }} className='relative !shadow-none p-4 !rounded-2xl'>
+        <Card
+            sx={{
+                maxWidth: 345,
+                backgroundColor: darkMode ? '#424242' : '#ffffff',
+                color: darkMode ? '#ffffff' : '#000000',
+            }}
+            className='relative !shadow-none p-4 !rounded-2xl'
+        >
             <CardHeader
                 avatar={
                     <Avatar sx={{ bgcolor: red[900] }} aria-label="recipe">
@@ -50,22 +59,18 @@ export default function RecipeReviewCard() {
                 }
                 title="Pune"
                 subheader="October 24, 2022"
+                subheaderTypographyProps={{ color: darkMode ? 'grey.500' : 'text.secondary' }}
             />
-            <Lens
-          zoomFactor={2}
-          lensSize={150}
-          isStatic={false}
-          ariaLabel="Zoom Area"
-        >
-            <CardMedia
-                component="img"
-                height="194"
-                image="https://www.holidify.com/images/bgImages/PUNE.jpg"
-                alt="Paella dish"
-            />
+            <Lens zoomFactor={2} lensSize={150} isStatic={false} ariaLabel="Zoom Area">
+                <CardMedia
+                    component="img"
+                    height="194"
+                    image="https://www.holidify.com/images/bgImages/PUNE.jpg"
+                    alt="Paella dish"
+                />
             </Lens>
             <CardContent>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color={darkMode ? 'grey.400' : 'text.secondary'}>
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod doloribus eum excepturi saepe quia quibusdam eaque cum voluptatum hic. Error expedita adipisci quo odio necessitatibus earum maiores quisquam consequatur pariatur!
                 </Typography>
             </CardContent>
@@ -102,12 +107,7 @@ export default function RecipeReviewCard() {
                     </Typography>
                 </CardContent>
             </Collapse>
-            <BorderBeam
-        duration={6}
-        delay={3}
-        size={500}
-        className="from-transparent via-blue-500 to-transparent"
-      />
+            <BorderBeam duration={6} delay={3} size={500} className="from-transparent via-blue-500 to-transparent" />
         </Card>
     );
 }

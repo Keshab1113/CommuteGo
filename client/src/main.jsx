@@ -13,6 +13,7 @@ import FlightPage from './pages/FlightPage.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import { AuthProvider } from './store/auth.jsx'
+import { ThemeProvider } from './context/ThemeContext'; // Import ThemeProvider
 import { ToastContainer } from "react-toastify";
 import Admin from './pages/AdminPages/Admin.jsx'
 import AdminHome from './pages/AdminPages/AdminHome.jsx'
@@ -25,7 +26,6 @@ import AddBus from './pages/AdminPages/AddBus.jsx'
 import UserEdit from "./pages/AdminPages/UserEditPage/UserEdit.jsx"
 import ManageFeedbacks from './pages/AdminPages/ManageFeedbacks.jsx'
 import BusDataEdit from './pages/AdminPages/BusDataEditPage/BusDataEdit.jsx'
-
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,10 +45,10 @@ const router = createBrowserRouter(
         <Route path='' element={<AdminHome />} />
         <Route path='users' element={<AllUsers />} />
         <Route path='busdata' element={<AdminBusdata />} />
-        <Route path='feedback' element={<AdminFeedback/>} />
+        <Route path='feedback' element={<AdminFeedback />} />
         <Route path='profile' element={<AdminProfile />} />
         <Route path='busdata/addBus' element={<AddBus />} />
-        <Route path="users/:id/edit" element={<UserEdit/>} />
+        <Route path="users/:id/edit" element={<UserEdit />} />
         <Route path="/admin/feedbacks/:id/edit" element={<ManageFeedbacks />} />
         <Route path="/admin/busdata/:id/edit" element={<BusDataEdit />} />
       </Route>
@@ -59,21 +59,22 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
-    <React.StrictMode>
-      <RouterProvider router={router} />
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-        transition:Bounce />
-    </React.StrictMode>
+    <ThemeProvider> {/* Wrap the entire app with ThemeProvider */}
+      <React.StrictMode>
+        <RouterProvider router={router} />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
+      </React.StrictMode>
+    </ThemeProvider>
   </AuthProvider>
-
 )
