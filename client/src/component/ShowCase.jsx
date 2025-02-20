@@ -9,8 +9,8 @@ const ShowCase = () => {
 
   return (
     <div className={`h-full sm:h-screen flex w-full sm:flex-row flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-      <div data-aos-delay="100" className='w-full sm:w-2/4 h-full flex justify-center items-center flex-col'>
-        <h1 className={`text-4xl font-semibold pt-5 pl-5 text-center ${darkMode ? 'text-cyan-400' : 'text-cyan-950'}`}>
+      <div data-aos-delay="100" className='w-full sm:w-2/4 h-full flex justify-center items-center flex-col mb-10 md:mb-0'>
+        <h1 className={`text-4xl font-semibold pt-5 pl-5 text-center mt-10 md:mt-0 mb-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-950'}`}>
           Why Should You Choose Us
         </h1>
         <h2 data-aos="fade-up" className={`text-xl opacity-90 pl-4 text-center ${darkMode ? 'text-gray-300' : 'text-black'}`}>
@@ -44,7 +44,7 @@ const ShowCase = () => {
           </div>
         </div>
       </div>
-      <div data-aos="fade-up" data-aos-delay="200" className='w-11/12 sm:w-2/4 sm:h-full h-2/4 flex justify-center items-center'>
+      <div data-aos="fade-up" data-aos-delay="200" className='w-full sm:w-2/4 sm:h-full h-2/4 flex justify-center items-center dark:bg-white'>
         <img src={img} alt="" className='h-[80%] w-[80%]' />
       </div>
     </div>

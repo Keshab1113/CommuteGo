@@ -22,7 +22,7 @@ const Footer = () => {
   return (
     <div className=" w-full flex flex-col justify-center sm:h-[25rem] h-screen items-center">
       <video src="https://firebasestorage.googleapis.com/v0/b/commutego.appspot.com/o/vid-1.mp4?alt=media&token=9e0d74ce-78fb-4f37-9262-8ddd90881283" muted autoPlay loop className=" object-cover w-full sm:h-[25rem] h-full" />
-      <footer className=" w-11/12 dark:bg-slate-900 absolute flex flex-col">
+      <footer className=" w-11/12 absolute flex flex-col">
         <div className=" h-[80%] w-full flex sm:flex-row flex-col justify-center items-center">
           <div className="footerLinks">
             <h1 className="footerHeading">Quick Links</h1>

@@ -11,8 +11,8 @@ import { ThemeContext } from '../../context/ThemeContext'
 const Destinition = () => {
     const { darkMode } = useContext(ThemeContext)
     return (
-        <div className={`h-full flex items-center flex-col ${darkMode ? 'bg-gray-900 text-white' : 'bg-blue-100 text-black'}`}>
-            <h1 className=' text-4xl font-semibold mt-8 mb-12 text-black text-center'>Most Visited Destination</h1>
+        <div className={`h-full max-w-[80vw] overflow-hidden flex items-center flex-col ${darkMode ? 'bg-gray-900 text-white' : 'bg-blue-100 text-black'}`}>
+            <h1 className=' text-4xl font-semibold mt-8 mb-12 text-black dark:text-cyan-400 text-center'>Most Visited Destination</h1>
             <div className=' w-[80%] grid sm:grid-cols-3 grid-cols-1 gap-4 justify-center mb-12'>
                 <Destination />
                 <Destination2/>

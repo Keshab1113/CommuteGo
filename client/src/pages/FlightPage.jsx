@@ -18,7 +18,7 @@ const FlightPage = () => {
       <TrendingDestination />
       <Aboutus />
       <TravelSupport />
-      <Destinition />
+      {/* <Destinition /> */}
       <GoTop />
     </div>
   );

@@ -13,12 +13,12 @@ const Home = () => {
   const { darkMode } = useContext(ThemeContext); // Get dark mode state
 
   return (
-    <div className={`h-min ${darkMode ? 'dark:bg-gray-900 dark:text-white' : ''}`}>
+    <div className={`h-min max-w-screen overflow-hidden ${darkMode ? 'dark:bg-gray-900 dark:text-white' : ''}`}>
       <Heading />
       <About />
       <ShowCase />
       <Service />
-      <Destinition />
+      {/* <Destinition /> */}
       <Feedback />
       <GoTop />
       <Docker />

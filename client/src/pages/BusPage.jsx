@@ -16,7 +16,7 @@ const BusPage = () => {
     >
       <Buses />
       <ShowCase />
-      <Destinition />
+      {/* <Destinition /> */}
       <GoTop />
     </div>
   );

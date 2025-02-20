@@ -133,7 +133,7 @@ const Service = () => {
     return (
         <div className=' h-full sm:py-0 py-6 sm:h-[70vh] flex sm:flex-row flex-col-reverse '>
             <div className=' w-full flex items-center justify-center flex-col'>
-                <h1 className=' text-4xl font-semibold  text-center mb-4'>Explore all corners of the world with us.</h1>
+                <h1 className=' text-4xl font-semibold  text-center mb-4 dark:text-cyan-400'>Explore all corners of the world with us.</h1>
                 <h2 className=' text-lg font-semibold opacity-90 '>Have you not found the right one?</h2>
                 <h2 className=' text-lg font-semibold opacity-90 '>Find a service suitable for you here.</h2>
                 {/* <div className=' w-9/12 flex sm:flex-row flex-col justify-around mt-8 h-[30%]'>

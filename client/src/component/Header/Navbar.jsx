@@ -32,7 +32,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className=" bg-white dark:bg-[#2b3042] top-2 mx-auto w-[90vw] flex justify-between items-center sm:px-12 px-2 h-16 rounded-xl shadow-lg shadow-cyan-500/50 z-50 fixed ml-[5vw]">
+    <div className=" bg-white  top-2 mx-auto w-[90vw] flex justify-center items-center sm:px-12 px-2 h-16 rounded-xl shadow-lg shadow-cyan-500/50 z-50 fixed ml-[5vw]">
       {/* Navigation Links (Desktop View) */}
       <div className="hidden md:flex w-8/12 justify-around">
         <NavLink
@@ -41,7 +41,7 @@ const Navbar = () => {
             `navbarOption duration-200 ${isActive ? " text-violet-900 " : "text-cyan-900"}`
           }
         >
-          <FontAwesomeIcon icon={faHouse} className="mr-1" />
+          <FontAwesomeIcon icon={faHouse} className="mr-1 lg:inline md:hidden hidden mt-[2px]" />
           Home
         </NavLink>
         <NavLink
@@ -50,15 +50,15 @@ const Navbar = () => {
             `navbarOption duration-200 ${isActive ? "text-violet-900 " : "text-cyan-900"}`
           }
         >
-          <FontAwesomeIcon icon={faBus} className="mr-1" />
+          <FontAwesomeIcon icon={faBus} className="mr-1 lg:inline md:hidden hidden mt-[2px]" />
           Bus
         </NavLink>
         <NavLink onClick={shoot} className="navbarOption text-cyan-900">
-          <FontAwesomeIcon icon={faTrain} className="mr-1" />
+          <FontAwesomeIcon icon={faTrain} className="mr-1 lg:inline md:hidden hidden mt-[2px]" />
           Train
         </NavLink>
         <NavLink onClick={shoot} className="navbarOption text-cyan-900">
-          <FontAwesomeIcon icon={faTrainTram} className="mr-1" />
+          <FontAwesomeIcon icon={faTrainTram} className="mr-1 lg:inline md:hidden hidden mt-[2px]" />
           Metro
         </NavLink>
         <NavLink
@@ -67,37 +67,24 @@ const Navbar = () => {
             `navbarOption duration-200 ${isActive ? " text-violet-900 " : "text-cyan-900"}`
           }
         >
-          <FontAwesomeIcon icon={faPlane} className="mr-1 rotate-[-90deg]" />
+          <FontAwesomeIcon icon={faPlane} className="mr-1 rotate-[-90deg] lg:inline md:hidden hidden mt-[2px]" />
           Flight
         </NavLink>
         <NavLink onClick={shoot} className="navbarOption text-cyan-900">
-          <FontAwesomeIcon icon={faTrainTram} className="mr-1" />
+          <FontAwesomeIcon icon={faTrainTram} className="mr-1 lg:inline md:hidden hidden mt-[2px]" />
           Tram
         </NavLink>
       </div>
 
       {/* Right Side Buttons */}
-      <div className="flex items-center gap-4">
-        {isLoggedIn ? <User /> : <Button onClick={adminlogin} variant="outlined">Admin Login</Button>}
-        <button
-          onClick={toggleDarkMode}
-          className={`relative flex items-center justify-center gap-2 px-4 py-2 rounded-full text-white transition-all duration-500 ${
-            darkMode ? "bg-[#fc9f88] hover:bg-[#EA6A49]" : "bg-[#4ABEBD] hover:bg-[#F07B5E]"
-          } shadow-md`}
-        >
-          {darkMode ? (
-            <Sun className="w-6 h-6 text-yellow-400" />
-          ) : (
-            <Moon className="w-6 h-6 text-gray-800" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile View Navbar */}
-      <div className="md:hidden w-full flex justify-between">
-        <NavLink to="/" className="">
+      
+        
+        <div className=" lg:w-fit md:w-fit w-full flex justify-between">
+        <NavLink to="/" className=" ml-2 md:hidden">
           <h1 className="text-2xl font-semibold text-violet-800">CommuteGo</h1>
         </NavLink>
+        <div className="flex items-center gap-4 absolute right-4 top-3">
+        {isLoggedIn ? <User /> : <Button onClick={adminlogin} variant="outlined">Admin Login</Button>}
         <button onClick={toggleNavbar} className="md:hidden">
           {isOpen ? (
             <X className="text-violet-800 dark:text-white" />
@@ -106,6 +93,22 @@ const Navbar = () => {
           )}
         </button>
       </div>
+      </div>
+      <button
+          onClick={toggleDarkMode}
+          className={` absolute right-2 top-20 flex items-center justify-center gap-2 rounded-full text-white transition-all duration-500 h-10 w-10 ${
+            darkMode ? "bg-white" : "bg-black"
+          } shadow-md`}
+        >
+          {darkMode ? (
+            <Sun className="w-6 h-6 text-black" />
+          ) : (
+            <Moon className="w-6 h-6 text-white" />
+          )}
+        </button>
+
+      {/* Mobile View Navbar */}
+      
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
