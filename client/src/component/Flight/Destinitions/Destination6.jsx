@@ -16,6 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Lens } from "../../../components/magicui/lens";
 import { BorderBeam } from "../../../components/magicui/border-beam";
+import { ThemeContext } from '../../../context/ThemeContext'; // Import ThemeContext
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -29,6 +30,7 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function RecipeReviewCard6() {
+    const { darkMode } = React.useContext(ThemeContext); // Use darkMode from ThemeContext
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
@@ -36,7 +38,17 @@ export default function RecipeReviewCard6() {
     };
 
     return (
-        <Card sx={{ maxWidth: 345 }} className='relative !shadow-none p-4 !rounded-2xl'>
+        <Card
+            sx={{
+                maxWidth: 345,
+                backgroundColor: darkMode ? '#424242' : '#ffffff',
+                color: darkMode ? '#ffffff' : '#000000',
+                boxShadow: 'none',
+                borderRadius: 2,
+                p: 2,
+            }}
+            className="relative !shadow-none p-4 !rounded-2xl"
+        >
             <CardHeader
                 avatar={
                     <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -50,13 +62,11 @@ export default function RecipeReviewCard6() {
                 }
                 title="Lucknow"
                 subheader="June 12, 2023"
+                subheaderTypographyProps={{
+                    color: darkMode ? "grey.500" : "text.secondary",
+                }}
             />
-            <Lens
-                zoomFactor={2}
-                lensSize={150}
-                isStatic={false}
-                ariaLabel="Zoom Area"
-            >
+            <Lens zoomFactor={2} lensSize={150} isStatic={false} ariaLabel="Zoom Area">
                 <CardMedia
                     component="img"
                     height="194"
@@ -65,7 +75,12 @@ export default function RecipeReviewCard6() {
                 />
             </Lens>
             <CardContent>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                    variant="body2"
+                    sx={{
+                        color: darkMode ? 'grey.300' : 'text.secondary',
+                    }}
+                >
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod doloribus eum excepturi saepe quia quibusdam eaque cum voluptatum hic. Error expedita adipisci quo odio necessitatibus earum maiores quisquam consequatur pariatur!
                 </Typography>
             </CardContent>
