@@ -31,7 +31,7 @@ app.use("/api/admin",busdataRoute);
 app.use("/api/admin",feedbackRoute);
 app.use("/api/admin",adminRoute);
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3000;
 
 connectDB().then(() => {
     app.listen(port, () => {

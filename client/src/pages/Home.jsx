@@ -17,7 +17,7 @@ const Home = () => {
     <div className={`h-min max-w-screen overflow-hidden ${darkMode ? 'dark:bg-gray-900 dark:text-white' : ''}`}>
       <Landing/>
       {/* <Heading /> */}
-      <About />
+      {/* <About /> */}
       <ShowCase />
       <Service />
       {/* <Destinition /> */}

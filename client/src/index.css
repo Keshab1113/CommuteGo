@@ -70,12 +70,12 @@ body {
   color: white;
 }
 .busbackground2 {
-  background-image: url("/back2.jpg");
+  background-image: url("/back2.png");
   background-repeat: no-repeat;
   background-size: cover;
 }
 .feedBackBackground {
-  background-image: url("/back2.jpg");
+  background-image: url("/back2.png");
   background-repeat: no-repeat;
   background-size: cover;
   color: white;
