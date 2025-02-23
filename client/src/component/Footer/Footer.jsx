@@ -29,7 +29,7 @@ const Footer = () => {
             <Link className="followlinks"><FontAwesomeIcon icon={faHouse} className="icons" />Home</Link>
             <Link to={'about'} className="followlinks"><FontAwesomeIcon icon={faUser} className="icons" />AboutUs</Link>
             <Link to={'contact'} className="followlinks"><FontAwesomeIcon icon={faPhone} className="icons" />ContactUs</Link>
-            <Link to={'feedback'} className="followlinks"><FontAwesomeIcon icon={faCircleInfo} className="icons" />Services</Link>
+            <Link to={'services'} className="followlinks"><FontAwesomeIcon icon={faCircleInfo} className="icons" />Services</Link>
             {isLoggedIn && user.isAdmin ? <Link to={'admin'} className="followlinks"><FontAwesomeIcon icon={faUser} className="icons" />Admin</Link> : <Link to={'login'} className="followlinks"><FontAwesomeIcon icon={faUser} className="icons" />Login</Link>
             }
             
