@@ -81,8 +81,13 @@ body {
   color: white;
 }
 .glass{
-  background: rgb(3,3,48);
-background: linear-gradient(152deg, rgba(3,3,48,1) 0%, rgba(44,41,129,1) 29%, rgba(20,213,208,1) 100%);
+  /* From https://css.glass */
+background: rgba(159, 117, 117, 0);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(6.4px);
+-webkit-backdrop-filter: blur(6.4px);
+border: 1px solid rgba(159, 117, 117, 0.33);
 }
 .servicebackground{
   background-image: url("https://media.contentapi.ea.com/content/dam/eacom/skate/common/skate-about-section-bg-xl.jpg.adapt.320w.jpg");
@@ -104,7 +109,7 @@ background: linear-gradient(152deg, rgba(3,3,48,1) 0%, rgba(44,41,129,1) 29%, rg
 
 @layer components {
   .navItemsStyle {
-    @apply text-xl text-violet-950 hover:bg-gray-200 font-semibold h-10 rounded-md flex justify-center items-center w-full bg-slate-100;
+    @apply text-xl text-violet-950 hover:bg-gray-200 font-semibold h-10 rounded-md flex justify-start pl-4 mb-4 items-center w-full bg-slate-100;
   }
   .navbarOption {
     @apply text-xl font-semibold mt-2 h-10 rounded-md w-fit block after:block  after:h-[2px] after:bg-violet-700 after:w-full 
@@ -117,7 +122,7 @@ background: linear-gradient(152deg, rgba(3,3,48,1) 0%, rgba(44,41,129,1) 29%, rg
     @apply w-[34%] bg-violet-900 hover:bg-gradient-to-l h-20 rounded-r-xl text-xl text-white font-semibold;
   }
   .footerLinks {
-    @apply sm:w-[25%] w-full h-full flex flex-col text-white justify-center items-center sm:items-start;
+    @apply sm:w-[25%] w-full h-full flex flex-col text-white justify-center items-start;
   }
   .footerHeading {
     @apply text-2xl font-bold text-white mb-4 underline;

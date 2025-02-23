@@ -9,7 +9,7 @@ import {
   faPlane,
   faUser,
   faPhone,
-  faComments,
+  faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaTwitter, FaFacebook, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -22,14 +22,14 @@ const Footer = () => {
   return (
     <div className=" w-full flex flex-col justify-center sm:h-[25rem] h-screen items-center">
       <video src="https://firebasestorage.googleapis.com/v0/b/commutego.appspot.com/o/vid-1.mp4?alt=media&token=9e0d74ce-78fb-4f37-9262-8ddd90881283" muted autoPlay loop className=" object-cover w-full sm:h-[25rem] h-full" />
-      <footer className=" w-11/12 absolute flex flex-col">
-        <div className=" h-[80%] w-full flex sm:flex-row flex-col justify-center items-center">
+      <footer className=" w-11/12 absolute flex flex-col glass p-6">
+        <div className=" h-[80%] w-full flex sm:flex-row flex-col justify-center items-start">
           <div className="footerLinks">
             <h1 className="footerHeading">Quick Links</h1>
             <Link className="followlinks"><FontAwesomeIcon icon={faHouse} className="icons" />Home</Link>
             <Link to={'about'} className="followlinks"><FontAwesomeIcon icon={faUser} className="icons" />AboutUs</Link>
             <Link to={'contact'} className="followlinks"><FontAwesomeIcon icon={faPhone} className="icons" />ContactUs</Link>
-            <Link to={'feedback'} className="followlinks"><FontAwesomeIcon icon={faComments} className="icons" />Feedback</Link>
+            <Link to={'feedback'} className="followlinks"><FontAwesomeIcon icon={faCircleInfo} className="icons" />Services</Link>
             {isLoggedIn && user.isAdmin ? <Link to={'admin'} className="followlinks"><FontAwesomeIcon icon={faUser} className="icons" />Admin</Link> : <Link to={'login'} className="followlinks"><FontAwesomeIcon icon={faUser} className="icons" />Login</Link>
             }
             
@@ -52,13 +52,13 @@ const Footer = () => {
           </div>
           <div className="footerLinks">
             <h1 className="footerHeading">About this Page</h1>
-            <p>CommuteGo.com is a team of dedicated members, who are passionate about Indian
+            <p>CommuteGo is a team of dedicated members, who are passionate about Indian
               Transportation Systems.</p>
           </div>
         </div>
         <div className="h-[20%] w-full border-t">
           <p className=" text-[17px] text-white mt-3 flex justify-center font-semibold">
-            © 2023 CommuteGo, Inc.
+            © 2023 CommuteGo.
           </p>
         </div>
       </footer>

@@ -5,25 +5,23 @@ import About from '../component/About/About';
 import Service from '../component/Service';
 import Feedback from '../component/FeedBack/Feedback';
 import Heading from '../component/Search/Heading';
-import Destinition from '../component/Flight/Destinition';
-import { Docker } from '../component/Docker/Docker';
-import { ThemeContext } from '../context/ThemeContext'; // Import ThemeContext
+import { ThemeContext } from '../context/ThemeContext';
 import Landing from '../components/Landing/Landing';
+import FeedBack from './FeedBack';
 
 const Home = () => {
-  const { darkMode } = useContext(ThemeContext); // Get dark mode state
+  const { darkMode } = useContext(ThemeContext);
 
   return (
-    <div className={`h-min max-w-screen overflow-hidden ${darkMode ? 'dark:bg-gray-900 dark:text-white' : ''}`}>
-      <Landing/>
-      {/* <Heading /> */}
-      {/* <About /> */}
-      <ShowCase />
+    <div className={`h-min max-w-screen overflow-hidden ${darkMode ? 'bg-gray-900 dark:text-white' : ''}`}>
+      {/* <Landing/> */}
+      <Heading />
+      <About />
       <Service />
-      {/* <Destinition /> */}
+      <ShowCase />
+      <FeedBack/>
       <Feedback />
       <GoTop />
-      <Docker />
     </div>
   );
 };

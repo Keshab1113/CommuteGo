@@ -10,18 +10,18 @@ const About = () => {
     const { darkMode } = useContext(ThemeContext); // Get dark mode state
 
     return (
-        <div className={`h-screen w-screen md:h-[150vh] flex sm:flex-row flex-col-reverse justify-start  ${darkMode ? 'bg-gray-950' : 'bg-white'}`}>
-            <div className="overflow-hidden w-[50vw]">
+        <div className={`h-full w-screen md:h-[150vh] flex sm:flex-row flex-col-reverse justify-start  ${darkMode ? 'bg-black' : 'bg-white'}`}>
+            <div className="overflow-hidden md:w-[50vw] w-[100vw]">
                 <MacbookScroll
                     src="https://firebasestorage.googleapis.com/v0/b/commutego.appspot.com/o/header.mp4?alt=media&token=ec250b2e-12a1-433d-a937-afa21a10f5fc"
                     showGradient={false}
                 />
             </div>
-            <div data-aos-delay="200" className={`sm:w-2/4 w-full flex justify-start items-center pt-40 flex-col pb-4 md:pb-0 `}>
+            <div data-aos-delay="200" className="sm:w-2/4 w-full flex justify-start items-center md:pt-40 pt-10 flex-col pb-4 md:pb-0 h-full ">
                 <h1 className={`text-5xl font-bold flex justify-center items-center pt-4 pl-5 mt-10 md:mt-0 mb-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-950'}`}>
                     About Us
                 </h1>
-                <h1 data-aos="fade-up" className={`text-2xl font-bold opacity-70 ${darkMode ? 'text-gray-300' : 'text-cyan-950'}`}>
+                <h1 data-aos="fade-up" className={`md:text-2xl text-xl text-center font-bold opacity-70 ${darkMode ? 'text-gray-300' : 'text-cyan-950'}`}>
                     CommuteGo wishes you a happy & safe journey.
                 </h1>
                 <div className={`font-semibold w-4/5 mt-10 opacity-70 space-y-4 text-center ${darkMode ? 'text-gray-300' : 'text-black'}`}>

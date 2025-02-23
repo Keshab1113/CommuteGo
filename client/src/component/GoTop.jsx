@@ -30,7 +30,7 @@ const GoTop = () => {
     return (
         <>
             {isVisible && (
-                <div className=' bg-violet-900 dark:bg-white dark:text-black text-white w-10 h-10 flex justify-center items-center rounded-[100%] cursor-pointer fixed bottom-[5rem] right-[5rem] z-50 overflow-hidden' onClick={goToBtn}>
+                <div className=' bg-violet-900 dark:bg-white dark:text-black text-white w-10 h-10 flex justify-center items-center rounded-[100%] cursor-pointer fixed bottom-[5rem] md:right-[5rem] right-6 z-50 overflow-hidden' onClick={goToBtn}>
                     <FontAwesomeIcon icon={faArrowUp} className='createdanimation' />
                 </div>
             )}

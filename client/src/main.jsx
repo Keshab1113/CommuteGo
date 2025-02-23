@@ -26,6 +26,7 @@ import AddBus from './pages/AdminPages/AddBus.jsx'
 import UserEdit from "./pages/AdminPages/UserEditPage/UserEdit.jsx"
 import ManageFeedbacks from './pages/AdminPages/ManageFeedbacks.jsx'
 import BusDataEdit from './pages/AdminPages/BusDataEditPage/BusDataEdit.jsx'
+import Landing from './components/Landing/Landing.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
       <Route path='/' element={<Layout />}>
         <Route path='' element={<Home />} />
         <Route path='about' element={<About />} />
+        <Route path='services' element={<Landing />} />
         <Route path='bus' element={<BusPage />} />
         <Route path='feedback' element={<FeedBack />} />
         <Route path='contact' element={<Contact />} />

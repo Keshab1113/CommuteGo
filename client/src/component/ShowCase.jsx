@@ -2,13 +2,14 @@ import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandHoldingMedical, faRoute, faHeadset } from '@fortawesome/free-solid-svg-icons';
 import img from '/cartoon.jpg';
-import { ThemeContext } from '../context/ThemeContext'; // import ThemeContext
+import { ThemeContext } from '../context/ThemeContext';
+import { Globe } from "../components/magicui/globe";
 
 const ShowCase = () => {
   const { darkMode } = useContext(ThemeContext); // get darkMode state
 
   return (
-    <div className={`h-full sm:h-screen flex w-full sm:flex-row flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`h-full md:h-screen flex w-full sm:flex-row flex-col ${darkMode ? 'bg-black' : 'bg-slate-200'}`}>
       <div data-aos-delay="100" className='w-full sm:w-2/4 h-full flex justify-center items-center flex-col mb-10 md:mb-0'>
         <h1 className={`text-4xl font-semibold pt-5 pl-5 text-center mt-10 md:mt-0 mb-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-950'}`}>
           Why Should You Choose Us
@@ -44,8 +45,11 @@ const ShowCase = () => {
           </div>
         </div>
       </div>
-      <div data-aos="fade-up" data-aos-delay="200" className='w-full sm:w-2/4 sm:h-full h-2/4 flex justify-center items-center dark:bg-white'>
-        <img src={img} alt="" className='h-[80%] w-[80%]' />
+      <div data-aos="fade-up" data-aos-delay="200" className='w-full sm:w-2/4 md:h-full h-[50vh] flex justify-center items-center dark:bg-white'>
+        <div className="relative flex size-full max-w-lg items-center justify-center overflow-hidden rounded-lg md:px-40 px-10 md:pt-8 pt-4">
+          <Globe className="md:top-56 top-4" />
+          <div className="pointer-events-none absolute inset-0 h-full " />
+        </div>
       </div>
     </div>
   );

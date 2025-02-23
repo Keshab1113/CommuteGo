@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import feedbackImage from "/feedback.png";
+import { ThemeContext } from '../context/ThemeContext';
 
 const defaultfeedbackform = {
   fullname: "",
@@ -14,7 +15,7 @@ const defaultfeedbackform = {
 
 const FeedBack = () => {
   const [feedback, setFeedback] = useState(defaultfeedbackform);
-
+const { darkMode } = useContext(ThemeContext);
   const handleInput = (e) => {
     const { name, value } = e.target;
     setFeedback({ ...feedback, [name]: value });
@@ -43,14 +44,14 @@ const FeedBack = () => {
       whileInView={{ opacity: 1 }} 
       transition={{ duration: 0.8 }}
       viewport={{ once: true }}
-      className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-b from-white to-cyan-100"
+      className={`min-h-screen flex flex-col justify-center items-center p-4 py-10 md:py-0 ${darkMode ? 'bg-[#1d1d1d] text-white' : 'bg-gradient-to-b from-white to-cyan-100'}`}
     >
       <motion.h1 
         initial={{ opacity: 0, y: -20 }} 
         whileInView={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true }}
-        className="text-3xl font-bold text-cyan-600 mb-6 text-center mt-10"
+        className="text-4xl font-bold text-cyan-600 mb-6 text-center mt-10"
       >
         We Value Your Feedback
       </motion.h1>
@@ -60,7 +61,7 @@ const FeedBack = () => {
         whileInView={{ y: 0, opacity: 1 }} 
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true }}
-        className="bg-white shadow-xl rounded-xl p-6 sm:w-[80%] w-[95%] flex flex-col sm:flex-row items-center border border-cyan-200"
+        className={` shadow-xl rounded-xl p-6 sm:w-[80%] w-[95%] flex flex-col sm:flex-row items-center border border-cyan-200 ${darkMode ? 'bg-[#070707] text-white' : 'bg-white'}`}
       >
         <div className="w-full sm:w-2/5 p-3 flex justify-center">
           <motion.img 

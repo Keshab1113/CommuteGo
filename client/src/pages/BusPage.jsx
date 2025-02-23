@@ -2,7 +2,6 @@ import React from "react";
 import Buses from "../component/Bus/Buses";
 import GoTop from "../component/GoTop";
 import ShowCase from "../component/ShowCase.jsx";
-import Destinition from "../component/Flight/Destinition.jsx";
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext.jsx";
 
@@ -16,7 +15,6 @@ const BusPage = () => {
     >
       <Buses />
       <ShowCase />
-      {/* <Destinition /> */}
       <GoTop />
     </div>
   );

@@ -63,25 +63,18 @@ const Feedback = () => {
     <div
       className={cn(
         "h-full flex flex-col justify-center items-center pt-20",
-        darkMode ? "bg-gray-900" : "bg-white"
+        darkMode ? "bg-[#070707]" : "bg-pink-100"
       )}
     >
       <h1
         className={cn(
-          "text-4xl font-semibold mb-5",
-          darkMode ? "text-white" : "text-cyan-950"
-        )}
-      >
-        Feedback
-      </h1>
-      <h2
-        className={cn(
-          "text-2xl font-semibold mb-10",
-          darkMode ? "text-white" : "text-cyan-950"
+          "text-4xl font-semibold mb-20 text-center",
+          darkMode ? " text-cyan-500" : "text-cyan-500"
         )}
       >
         Some of our user's words
-      </h2>
+      </h1>
+      
 
       <div className="relative flex h-[50vh] w-full flex-row items-center justify-center gap-4 overflow-hidden [perspective:300px]">
         {!feedBackdata || feedBackdata.length === 0 ? (

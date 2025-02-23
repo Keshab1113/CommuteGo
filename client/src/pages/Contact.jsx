@@ -1,3 +1,4 @@
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone } from "lucide-react";
 import { WorldMap } from "../components/ui/world-map";
@@ -9,8 +10,10 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { ThemeContext } from "../context/ThemeContext";
 
 export default function Contact() {
+  const { darkMode } = useContext(ThemeContext);
   const dots = [
     {
       start: { lat: 40.7128, lng: -74.006 },
@@ -24,21 +27,21 @@ export default function Contact() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center w-full bg-gradient-to-b from-background to-secondary p-4">
+    <div className={`min-h-screen flex flex-col justify-center items-center w-full bg-gradient-to-b from-background to-secondary p-4 ${darkMode ? 'bg-[#070707]' : 'bg-gray-100'}`}>
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-4xl p-20"
+        className="w-full max-w-4xl md:p-20 p-4"
       >
-        <h1 className="text-center text-4xl font-bold mb-2">
+        <h1 className={`text-center text-4xl font-bold mb-2 ${darkMode ? 'text-cyan-600' : 'text-cyan-600'}`}>
           Welcome To The Help Centre
         </h1>
-        <p className="text-2xl text-center mb-8">We're available 24/7</p>
+        <p className="text-2xl text-center mb-8 text-cyan-600">We're available 24/7</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Card>
+            <Card className={`${darkMode ? 'bg-gray-100' : 'bg-gray-100'}`}>
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Phone className="mr-2" />
@@ -118,12 +121,6 @@ export default function Contact() {
             ]}
           />
         </motion.div>
-
-        <div className="text-center">
-          <Button asChild>
-            <a href="mailto:keshabdas2003@gmail.com">Contact Us</a>
-          </Button>
-        </div>
       </motion.div>
     </div>
   );
