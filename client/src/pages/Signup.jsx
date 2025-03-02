@@ -57,17 +57,18 @@ const Signup = () => {
 
 
     return (
-        <div className=' h-[100vh] flex justify-center items-center bg-slate-100 dark:bg-slate-950'>
-            <form onSubmit={handleSubmit} className=' border h-[70%] sm:w-[50%] w-[90%] p-2 flex flex-col justify-center items-center shadow bg-white dark:bg-slate-900 dark:border-slate-950'>
-                <h1 className=' text-center text-3xl font-bold underline text-blue-700 mb-5 dark:text-white'>Signup</h1>
-                <div className='grid grid-cols-2 gap-4 mb-5'>
+        <div className='h-screen flex justify-center items-center my-auto bg-black bg-grid-white/[0.2] relative'>
+            <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black  [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+            <form onSubmit={handleSubmit} className=' border h-[70%] lg:w-[50%] w-[90%] rounded-xl p-2 flex flex-col justify-center items-center shadow bg-white dark:bg-slate-900 dark:border-slate-950'>
+                <h1 className=' text-center text-4xl font-semibold text-cyan-400 dark:text-white mb-5'>Signup with new account</h1>
+                <div className='flex flex-col gap-4 mb-5 w-[90%]'>
                     <div className=''>
                         <h1 className=' text-lg font-bold mb-4 dark:text-white'>Username</h1>
                         <TextField
                             required
                             id="outlined-required"
                             label="Name"
-                            className=' dark:bg-white rounded-md'
+                            className=' dark:bg-white rounded-md w-full'
                             name='username'
                             value={user.username}
                             onChange={handleInput}
@@ -80,7 +81,7 @@ const Signup = () => {
                             name='email'
                             id="outlined-email-input"
                             label="Email"
-                            className=' dark:bg-white rounded-md'
+                            className=' dark:bg-white rounded-md w-full'
                             value={user.email}
                             onChange={handleInput}
                         />
@@ -102,7 +103,7 @@ const Signup = () => {
 
                 </div>
                 <Button variant="outlined" type='submit' className=' w-[50%]'>Signup</Button>
-                <div className=' flex dark:text-white mt-2'>
+                <div className=' flex dark:text-white mt-2 w-[90%]'>
                     <h1>Already have an account?</h1>
                     <Link to={'/login'} className='hover:text-blue-700 font-semibold'>
                         <button>Login</button>
