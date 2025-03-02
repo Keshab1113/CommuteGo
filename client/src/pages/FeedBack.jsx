@@ -61,7 +61,7 @@ const { darkMode } = useContext(ThemeContext);
         whileInView={{ y: 0, opacity: 1 }} 
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true }}
-        className={` shadow-xl rounded-xl p-6 sm:w-[80%] w-[95%] flex flex-col sm:flex-row items-center border border-cyan-200 ${darkMode ? 'bg-[#070707] text-white' : 'bg-white'}`}
+        className={` shadow-xl rounded-xl md:p-6 p-3 sm:w-[80%] w-[95%] flex flex-col sm:flex-row items-center border border-cyan-200 ${darkMode ? 'bg-[#070707] text-white' : 'bg-white'}`}
       >
         <div className="w-full sm:w-2/5 p-3 flex justify-center">
           <motion.img 
@@ -74,7 +74,7 @@ const { darkMode } = useContext(ThemeContext);
           />
         </div>
 
-        <div className="w-full sm:w-3/5 p-6">
+        <div className="w-full sm:w-[80%] md:p-6 p-3">
           <motion.form 
             initial={{ opacity: 0, y: 20 }} 
             whileInView={{ opacity: 1, y: 0 }} 

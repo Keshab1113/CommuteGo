@@ -33,7 +33,7 @@ const Navbar = () => {
 
   return (
     <div className=" bg-white  top-2 mx-auto w-[90vw] flex justify-center items-center sm:px-12 px-2 h-16 rounded-xl shadow-lg shadow-cyan-500/50 z-50 fixed ml-[5vw]">
-      <div className="hidden md:flex w-[50%] justify-around">
+      <div className="hidden md:flex lg:w-[50%] md:w-[90%] w-full justify-around">
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -55,10 +55,12 @@ const Navbar = () => {
         }>
           Contact
         </NavLink>
-        <NavLink to="/services" onClick={shoot} className="navbarOption text-cyan-900">
+        <NavLink to="/services" onClick={shoot} className={({ isActive }) =>
+          `navbarOption duration-200 ${isActive ? "text-violet-900 " : "text-cyan-900"}`
+        }>
           Services
         </NavLink>
-        {isLoggedIn ? <NavLink to="/profile" className="navbarOption text-cyan-900">
+        {isLoggedIn ? <NavLink to="/admin/profile" className="navbarOption text-cyan-900">
           Profile
         </NavLink> : <NavLink onClick={adminlogin} className="navbarOption text-cyan-900">
           Admin
@@ -72,9 +74,9 @@ const Navbar = () => {
 
       <div className=" lg:w-fit md:w-fit w-full flex justify-between">
         <NavLink to="/" className=" ml-2 md:hidden">
-          <h1 className="text-2xl font-semibold text-violet-800">CommuteGo</h1>
+          <h1 className="text-2xl font-semibold text-cyan-400">CommuteGo</h1>
         </NavLink>
-        <div className="flex items-center gap-4 absolute right-4 top-5">
+        <div className={`flex items-center gap-0 absolute ${isLoggedIn?"right-4 top-3":"right-4 top-5"}`}>
           {isLoggedIn && <User />}
           <button onClick={toggleNavbar} className="md:hidden">
             {isOpen ? (
@@ -118,7 +120,7 @@ const Navbar = () => {
             }} className="navItemsStyle">
             Services
           </NavLink>
-          {isLoggedIn ? <NavLink to="/profile" onClick={()=>setIsopen(false)} className="navItemsStyle">
+          {isLoggedIn ? <NavLink to="/admin/profile" onClick={()=>setIsopen(false)} className="navItemsStyle">
             Profile
           </NavLink> :
             <NavLink onClick={()=>{

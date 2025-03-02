@@ -56,9 +56,9 @@ const Service = () => {
   }, []);
 
   return (
-    <div className= {`h-full md:py-20 py-10 flex sm:flex-row flex-col-reverse ${darkMode ? 'bg-[#070707]' : 'bg-white'}`}>
+    <div className= {`h-full md:py-20 py-10 flex sm:flex-row flex-col-reverse ${darkMode ? 'bg-[#070707]' : 'bg-gradient-to-b from-white to-cyan-100'}`}>
       <div className=' w-full flex items-center justify-center flex-col'>
-        <h1 className={` text-4xl font-semibold  text-center mb-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-950'}`}>Explore all corners of the world with us.</h1>
+        <h1 className={` text-4xl font-semibold  text-center mb-4 text-cyan-400`}>Explore all corners of the world with us.</h1>
         <h2 className={` text-lg font-semibold opacity-90 ${darkMode ? 'text-cyan-400' : 'text-cyan-950'}`}>Have you not found the right one?</h2>
         <h2 className={` text-lg font-semibold opacity-90 ${darkMode ? 'text-cyan-400' : 'text-cyan-950'}`}>Find a service suitable for you here.</h2>
         <AnimatedTestimonials testimonials={testimonials} />

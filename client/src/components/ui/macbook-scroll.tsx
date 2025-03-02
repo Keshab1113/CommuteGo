@@ -78,7 +78,7 @@ export const MacbookScroll = ({
         rotate={rotate}
         translate={translate}
       />
-      <div className=' absolute h-full flex flex-col justify-center items-center w-full overflow-hidden'>
+      <div className=' absolute h-full md:flex flex-col justify-center items-center w-full overflow-hidden hidden'>
         <h1 data-aos="fade-up" className="sm:text-6xl text-4xl font-extrabold cursor-default text-violet-50">
           CommuteGo
         </h1>
@@ -90,7 +90,7 @@ export const MacbookScroll = ({
         </div>
       </div>
       {/* Base area */}
-      <div className="h-[22rem] w-[32rem] bg-gray-200 dark:bg-[#272729] rounded-2xl overflow-hidden relative -z-10">
+      <div className="h-[22rem] md:w-[32rem] w-[50rem] bg-gray-200 dark:bg-[#272729] rounded-2xl overflow-hidden relative -z-10">
         {/* above keyboard bar */}
         <div className="h-10 w-full relative">
           <div className="absolute inset-x-0 mx-auto w-[80%] h-4 bg-[#050505]" />
@@ -138,7 +138,7 @@ export const Lid = ({
           transformOrigin: "bottom",
           transformStyle: "preserve-3d",
         }}
-        className="h-[12rem] w-[32rem] bg-[#010101] rounded-2xl p-2 relative"
+        className="h-[12rem] md:w-[32rem] w-[50rem] bg-[#010101] rounded-2xl p-2 relative"
       >
         <div
           style={{
@@ -160,7 +160,7 @@ export const Lid = ({
           transformStyle: "preserve-3d",
           transformOrigin: "top",
         }}
-        className="h-96 w-[32rem] absolute inset-0 bg-[#010101] rounded-2xl p-2"
+        className="h-96 md:w-[32rem] w-[50rem] absolute inset-0 bg-[#010101] rounded-2xl p-2"
       >
         <div className="absolute inset-0 bg-[#272729] rounded-lg" />
         <video

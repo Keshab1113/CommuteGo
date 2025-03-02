@@ -13,8 +13,8 @@ const AboutInfo = () => {
   const { darkMode } = useContext(ThemeContext);
 
   return (
-    <div className={`flex items-center justify-center min-h-screen py-36 md:py-6 md:px-6 px-2 ${darkMode ? 'bg-black' : 'bg-gray-100'}`}>
-      <Card className={`max-w-3xl w-full ${darkMode ? 'bg-[#070707]' : 'bg-white'} shadow-lg rounded-2xl md:px-6 md:py-6 px-4 py-6`}>
+    <div className={`flex items-center justify-center min-h-screen py-36 md:py-6 md:px-6 px-2 ${darkMode ? 'bg-black' : 'bg-gradient-to-b from-white to-cyan-100'}`}>
+      <Card className={`max-w-3xl w-full mt-20 ${darkMode ? 'bg-[#070707]' : 'bg-white'} shadow-lg rounded-2xl md:px-6 md:py-6 px-4 py-6`}>
         <h1 className={`text-center text-4xl font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-700'} border-b-4 border-cyan-600 pb-2`}>
           About Us
         </h1>

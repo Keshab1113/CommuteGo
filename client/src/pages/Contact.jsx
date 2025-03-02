@@ -27,7 +27,7 @@ export default function Contact() {
   ];
 
   return (
-    <div className={`min-h-screen flex flex-col justify-center items-center w-full bg-gradient-to-b from-background to-secondary p-4 ${darkMode ? 'bg-[#070707]' : 'bg-gray-100'}`}>
+    <div className={`min-h-screen flex flex-col justify-center items-center w-full bg-gradient-to-b from-background to-secondary p-4 ${darkMode ? 'bg-[#070707]' : 'bg-gradient-to-b from-white to-cyan-100'}`}>
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}

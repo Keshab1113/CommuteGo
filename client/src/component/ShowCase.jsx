@@ -9,9 +9,9 @@ const ShowCase = () => {
   const { darkMode } = useContext(ThemeContext); // get darkMode state
 
   return (
-    <div className={`h-full md:h-screen flex w-full sm:flex-row flex-col ${darkMode ? 'bg-black' : 'bg-slate-200'}`}>
+    <div className={`h-full md:h-screen flex w-full sm:flex-row flex-col ${darkMode ? 'bg-black' : 'bg-gradient-to-b from-white to-cyan-100'}`}>
       <div data-aos-delay="100" className='w-full sm:w-2/4 h-full flex justify-center items-center flex-col mb-10 md:mb-0'>
-        <h1 className={`text-4xl font-semibold pt-5 pl-5 text-center mt-10 md:mt-0 mb-4 ${darkMode ? 'text-cyan-400' : 'text-cyan-950'}`}>
+        <h1 className={`text-4xl font-semibold pt-5 pl-5 text-center mt-10 md:mt-0 mb-4 text-cyan-400`}>
           Why Should You Choose Us
         </h1>
         <h2 data-aos="fade-up" className={`text-xl opacity-90 pl-4 text-center ${darkMode ? 'text-gray-300' : 'text-black'}`}>

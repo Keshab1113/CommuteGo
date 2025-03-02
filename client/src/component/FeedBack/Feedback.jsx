@@ -63,12 +63,12 @@ const Feedback = () => {
     <div
       className={cn(
         "h-full flex flex-col justify-center items-center pt-20",
-        darkMode ? "bg-[#070707]" : "bg-pink-100"
+        darkMode ? "bg-[#070707]" : "bg-gradient-to-b from-white to-cyan-100"
       )}
     >
       <h1
         className={cn(
-          "text-4xl font-semibold mb-20 text-center",
+          "text-4xl font-semibold mb-20 text-center md:px-0 px-4",
           darkMode ? " text-cyan-500" : "text-cyan-500"
         )}
       >

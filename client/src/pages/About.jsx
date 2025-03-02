@@ -6,7 +6,7 @@ const About = () => {
   const { darkMode } = useContext(ThemeContext); // Get dark mode state
 
   return (
-    <div className={`${darkMode ? 'bg-gray-900 text-white' : ' '}`}>
+    <div className={`${darkMode ? 'bg-gray-900 text-white' : ' bg-gradient-to-b from-white to-cyan-100'}`}>
       <AboutInfo />
     </div>
   );
