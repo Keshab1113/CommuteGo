@@ -37,7 +37,6 @@ const AdminProfile = () => {
             <h1 className=" font-semibold mt-4  pb-2">
               Email: {user.email}
             </h1>
-            <h1 className=" font-semibold mt-4  pb-2">Address: Jalpaiguri, India</h1>
             <h1 className=" font-semibold mt-4  pb-2">Admin: Yes</h1>
         </div>
       </LampContainer>

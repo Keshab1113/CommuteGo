@@ -49,9 +49,9 @@ const AddBus = () => {
     }
 
   return (
-      <div className=' bg-slate-100 h-[100vh] pt-[8vh] w-full flex justify-center items-center'>
-          <form onSubmit={handleSubmit} className=' h-[75%] sm:w-[50%] w-[90%] bg-white rounded-2xl p-4 flex flex-col justify-center'>
-              <h1 className=' text-2xl font-bold text-center'>Please Input Bus Data</h1>
+      <div className=' bg-black bg-grid-white/[0.2] h-[100vh] pt-[8vh] w-full flex justify-center items-center'>
+          <form onSubmit={handleSubmit} className=' h-fit md:p-10 p-6 md:w-[50%] w-[90%] bg-white rounded-2xl flex flex-col justify-center'>
+              <h1 className=' text-4xl font-bold text-center mb-10'>Please Input Bus Data</h1>
               <div className=' flex flex-col mb-2'>
                   <h1 className=' font-bold'>Bus Name</h1>
                   <TextField
