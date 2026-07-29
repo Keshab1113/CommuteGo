@@ -159,7 +159,7 @@ const FeedBack = () => {
                     value={feedback.phone}
                     onChange={handleInput}
                     className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all"
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 9999999999"
                   />
                 </div>
               </div>
@@ -215,18 +215,10 @@ const FeedBack = () => {
             </div>
             <div>
               <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium">support@commutego.com</p>
+              <p className="font-medium">keshabdas2003@gmail.com</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-              <Phone className="w-6 h-6 text-emerald-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Phone</p>
-              <p className="font-medium">+91 98765 43210</p>
-            </div>
-          </div>
+          
         </motion.div>
       </motion.div>
     </div>

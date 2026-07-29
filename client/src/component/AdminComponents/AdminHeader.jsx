@@ -91,7 +91,7 @@ const AdminHeader = () => {
                   <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 shadow-xl z-50 overflow-hidden">
                     <div className="p-4 border-b border-gray-200 dark:border-gray-800">
                       <p className="font-medium">{user?.username || 'Admin'}</p>
-                      <p className="text-sm text-gray-500">{user?.email || 'admin@commutego.com'}</p>
+                      <p className="text-sm text-gray-500">{user?.email || 'keshabdas2003@gmail.com'}</p>
                     </div>
                     <div className="p-2">
                       <Link

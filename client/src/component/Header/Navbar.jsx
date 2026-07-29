@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
-import { Menu, X, Sun, Moon, Bus, Train, Plane, Home, Info, Phone, User, LogOut, ChevronDown, MapPin, ArrowRight } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Menu, X, Bus, Train, Plane, Home, Info, Phone, User, LogOut, ChevronDown, MapPin, ArrowRight, Compass, Users, Heart, Sparkles } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../store/auth";
-import { ThemeContext } from "../../context/ThemeContext";
 import { cn } from "../../lib/utils";
 
 const Navbar = () => {
@@ -10,8 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  const [isExploreDropdownOpen, setIsExploreDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,10 +30,16 @@ const Navbar = () => {
     { to: "/services", label: "Services", icon: MapPin },
   ];
 
-  const services = [
-    { to: "/bus", label: "Bus", icon: Bus, color: "from-orange-500 to-red-500" },
-    { to: "/flight", label: "Flight", icon: Plane, color: "from-blue-500 to-cyan-500" },
-    { to: "/train", label: "Train", icon: Train, color: "from-purple-500 to-pink-500" },
+  const pillars = [
+    { to: "/hidden-destinations", label: "Hidden Destinations", icon: Compass, color: "from-emerald-500 to-teal-500", description: "Discover authentic places" },
+    { to: "/local-buddies", label: "Local Buddies", icon: Users, color: "from-cyan-500 to-blue-500", description: "Connect with passionate locals" },
+    { to: "/travel-matchmaking", label: "Travel Together", icon: Heart, color: "from-rose-500 to-pink-500", description: "Find compatible companions" },
+  ];
+
+  const transportServices = [
+    { to: "/bus", label: "Bus Booking", icon: Bus, color: "from-orange-500 to-red-500" },
+    { to: "/flight", label: "Flight Booking", icon: Plane, color: "from-blue-500 to-cyan-500" },
+    { to: "/train", label: "Train Booking", icon: Train, color: "from-purple-500 to-pink-500" },
   ];
 
   return (
@@ -53,7 +57,7 @@ const Navbar = () => {
           className={cn(
             "mx-auto w-[95vw] lg:w-[92vw] xl:w-[90vw] transition-all duration-500 rounded-2xl",
             scrolled
-              ? "bg-white/80 dark:bg-[#141313]/90 backdrop-blur-xl shadow-premium border border-gray-200/50 dark:border-gray-800/50"
+              ? "bg-[#141313]/90 backdrop-blur-xl shadow-premium border border-gray-800/50"
               : "bg-transparent"
           )}
         >
@@ -61,17 +65,16 @@ const Navbar = () => {
             {/* Logo */}
             <NavLink to="/" className="flex items-center gap-3 group">
               <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/30 group-hover:shadow-cyan-500/50 transition-all duration-300 group-hover:scale-105">
-                  <span className="text-white font-bold text-lg">C</span>
+                <div className="w-10 h-10 rounded-xl  flex items-center justify-center  transition-all duration-300 group-hover:scale-105">
+                  <span className="text-white font-bold text-lg"><img src="/logo.png" alt="company logo" /></span>
                 </div>
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300 -z-10"></div>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 dark:from-cyan-400 dark:to-emerald-400 bg-clip-text text-transparent tracking-tight">
+                <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent tracking-tight">
                   CommuteGo
                 </span>
-                <span className="text-[10px] text-gray-500 dark:text-gray-400 -mt-1 hidden sm:block">
-                  Your Journey, Simplified
+                <span className="text-[10px] text-gray-400 -mt-1 hidden sm:block">
+                  Discover. Connect. Travel.
                 </span>
               </div>
             </NavLink>
@@ -86,8 +89,8 @@ const Navbar = () => {
                     cn(
                       "relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200",
                       isActive
-                        ? "text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10"
-                        : "text-gray-600 dark:text-gray-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                        ? "text-cyan-400 bg-cyan-500/10"
+                        : "text-gray-300 hover:text-cyan-400 hover:bg-gray-800/50"
                     )
                   }
                 >
@@ -95,53 +98,59 @@ const Navbar = () => {
                 </NavLink>
               ))}
 
-              {/* Services Dropdown */}
+              {/* Explore Dropdown - Three Pillars */}
               <div className="relative">
                 <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-xl transition-all duration-200 flex items-center gap-1"
+                  onClick={() => setIsExploreDropdownOpen(!isExploreDropdownOpen)}
+                  className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-emerald-400 hover:bg-gray-800/50 rounded-xl transition-all duration-200 flex items-center gap-1"
                 >
-                  Services
-                  <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
+                  <Sparkles className="w-4 h-4" />
+                  Explore
+                  <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isExploreDropdownOpen && "rotate-180")} />
                 </button>
 
-                {isDropdownOpen && (
+                {isExploreDropdownOpen && (
                   <>
                     <div
                       className="fixed inset-0 z-40"
-                      onClick={() => setIsDropdownOpen(false)}
+                      onClick={() => setIsExploreDropdownOpen(false)}
                     />
-                    <div className="absolute top-full right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 shadow-xl shadow-cyan-500/10 overflow-hidden z-50 animate-scale-in">
-                      <div className="p-2">
-                        <p className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                          Transport Services
+                    <div className="absolute top-full right-0 mt-2 w-80 rounded-2xl bg-[#1C1B1B] border border-gray-800 shadow-xl shadow-emerald-500/10 overflow-hidden z-50 animate-scale-in">
+                      <div className="p-3">
+                        <p className="px-3 py-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                          Discover India Differently
                         </p>
-                        {services.map((service) => (
+                        {pillars.map((pillar) => (
                           <NavLink
-                            key={service.to}
-                            to={service.to}
-                            onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-200 group"
+                            key={pillar.to}
+                            to={pillar.to}
+                            onClick={() => setIsExploreDropdownOpen(false)}
+                            className="flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-gray-800/50 transition-all duration-200 group"
                           >
-                            <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center", service.color)}>
-                              <service.icon className="w-4 h-4 text-white" />
+                            <div className={cn("w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0", pillar.color)}>
+                              <pillar.icon className="w-5 h-5 text-white" />
                             </div>
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400">
-                              {service.label}
-                            </span>
+                            <div>
+                              <span className="text-sm font-semibold text-gray-200 group-hover:text-emerald-400 block">
+                                {pillar.label}
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                {pillar.description}
+                              </span>
+                            </div>
                           </NavLink>
                         ))}
                       </div>
-                      <div className="border-t border-gray-100 dark:border-gray-800 p-2">
+                      <div className="border-t border-gray-800 p-2">
                         <NavLink
-                          to="/about"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-200"
+                          to="/hidden-destinations"
+                          onClick={() => setIsExploreDropdownOpen(false)}
+                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 hover:from-emerald-500/20 hover:to-cyan-500/20 transition-all duration-200"
                         >
-                          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                            View All Services
+                          <span className="text-sm font-semibold text-emerald-400">
+                            View All Destinations
                           </span>
-                          <ArrowRight className="w-4 h-4 text-gray-400" />
+                          <ArrowRight className="w-4 h-4 text-emerald-500" />
                         </NavLink>
                       </div>
                     </div>
@@ -152,28 +161,6 @@ const Navbar = () => {
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleDarkMode}
-                className="relative w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-all duration-200 group"
-                aria-label="Toggle theme"
-              >
-                <div className="relative w-5 h-5">
-                  <Sun
-                    className={cn(
-                      "absolute inset-0 w-5 h-5 text-gray-600 dark:text-gray-300 transition-all duration-300",
-                      darkMode ? "opacity-0 rotate-90 scale-0" : "opacity-100 rotate-0 scale-100"
-                    )}
-                  />
-                  <Moon
-                    className={cn(
-                      "absolute inset-0 w-5 h-5 text-gray-600 dark:text-gray-300 transition-all duration-300",
-                      darkMode ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-0"
-                    )}
-                  />
-                </div>
-              </button>
-
               {/* Auth Button */}
               {isLoggedIn ? (
                 <NavLink
@@ -196,12 +183,12 @@ const Navbar = () => {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="lg:hidden w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-all duration-200"
+                className="lg:hidden w-10 h-10 rounded-xl bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-all duration-200"
               >
                 {isOpen ? (
-                  <X className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  <X className="w-5 h-5 text-gray-300" />
                 ) : (
-                  <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  <Menu className="w-5 h-5 text-gray-300" />
                 )}
               </button>
             </div>
@@ -217,7 +204,7 @@ const Navbar = () => {
               : "max-h-0 opacity-0 mt-0"
           )}
         >
-          <div className="bg-white/95 dark:bg-[#141313]/95 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xl p-4">
+          <div className="bg-[#141313]/95 backdrop-blur-xl rounded-2xl border border-gray-800 shadow-xl p-4">
             <div className="space-y-1">
               {navLinks.map((link) => (
                 <NavLink
@@ -228,8 +215,8 @@ const Navbar = () => {
                     cn(
                       "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                       isActive
-                        ? "text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                        ? "text-cyan-400 bg-cyan-500/10"
+                        : "text-gray-300 hover:bg-gray-800/50"
                     )
                   }
                 >
@@ -239,30 +226,30 @@ const Navbar = () => {
               ))}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+            <div className="mt-4 pt-4 border-t border-gray-800">
               <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                Services
+                Transport Services
               </p>
               <div className="grid grid-cols-3 gap-2">
-                {services.map((service) => (
+                {transportServices.map((service) => (
                   <NavLink
                     key={service.to}
                     to={service.to}
                     onClick={() => setIsOpen(false)}
-                    className="flex flex-col items-center gap-2 px-3 py-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                    className="flex flex-col items-center gap-2 px-3 py-3 rounded-xl bg-gray-800/50 hover:bg-gray-800 transition-all duration-200"
                   >
                     <div className={cn("w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center", service.color)}>
                       <service.icon className="w-5 h-5 text-white" />
                     </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                      {service.label}
+                    <span className="text-xs font-medium text-gray-300">
+                      {service.label.split(" ")[0]}
                     </span>
                   </NavLink>
                 ))}
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+            <div className="mt-4 pt-4 border-t border-gray-800">
               {isLoggedIn ? (
                 <NavLink
                   to="/admin/profile"

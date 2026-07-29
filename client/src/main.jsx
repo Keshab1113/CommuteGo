@@ -12,6 +12,12 @@ import Contact from './pages/Contact.jsx'
 import FlightPage from './pages/FlightPage.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
+import ForgotPassword from './pages/ForgotPassword.jsx'
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
+import TermsOfService from './pages/TermsOfService.jsx'
+import HiddenDestinations from './pages/HiddenDestinations.jsx'
+import LocalBuddies from './pages/LocalBuddies.jsx'
+import TravelMatchmaking from './pages/TravelMatchmaking.jsx'
 import { AuthProvider } from './store/auth.jsx'
 import { ThemeProvider } from './context/ThemeContext'; // Import ThemeProvider
 import { ToastContainer } from "react-toastify";
@@ -39,9 +45,15 @@ const router = createBrowserRouter(
         <Route path='feedback' element={<FeedBack />} />
         <Route path='contact' element={<Contact />} />
         <Route path='flight' element={<FlightPage />} />
+        <Route path='hidden-destinations' element={<HiddenDestinations />} />
+        <Route path='local-buddies' element={<LocalBuddies />} />
+        <Route path='travel-matchmaking' element={<TravelMatchmaking />} />
+        <Route path='privacy-policy' element={<PrivacyPolicy />} />
+        <Route path='terms-of-service' element={<TermsOfService />} />
       </Route>
       <Route path='login' element={<Login />} />
       <Route path='signup' element={<Signup />} />
+      <Route path='forgot-password' element={<ForgotPassword />} />
       <Route path='logout' element={<Logout />} />
       <Route path='/admin' element={<Admin />}>
         <Route path='' element={<AdminHome />} />

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Bus, Train, Plane, Home, Info, Phone, Mail, MapPin, Clock, Facebook, Twitter, Linkedin, Instagram, ArrowRight, ChevronRight } from "lucide-react";
+import { Bus, Train, Plane, Home, Info, Phone, Mail, MapPin, Clock, Facebook, Twitter, Linkedin, Instagram, ArrowRight, ChevronRight, Compass, Users, Heart, Sparkles } from "lucide-react";
+import { cn } from "../../lib/utils";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -10,6 +11,12 @@ const Footer = () => {
     { to: "/about", label: "About Us", icon: Info },
     { to: "/contact", label: "Contact Us", icon: Phone },
     { to: "/services", label: "Services", icon: MapPin },
+  ];
+
+  const pillars = [
+    { to: "/hidden-destinations", label: "Hidden Destinations", icon: Compass, color: "from-emerald-500 to-teal-500" },
+    { to: "/local-buddies", label: "Local Buddies", icon: Users, color: "from-cyan-500 to-blue-500" },
+    { to: "/travel-matchmaking", label: "Travel Together", icon: Heart, color: "from-rose-500 to-pink-500" },
   ];
 
   const services = [
@@ -26,7 +33,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative bg-[#0a0a0a] dark:bg-[#141313] text-gray-300 overflow-hidden">
+    <footer className="relative bg-[#0a0a0a] text-gray-300 overflow-hidden">
       {/* Premium Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Gradient Orbs */}
@@ -44,14 +51,14 @@ const Footer = () => {
       {/* Main Footer Content */}
       <div className="relative z-10">
         {/* Top Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
             {/* Brand Column */}
             <div className="lg:col-span-1">
               <Link to="/" className="flex items-center gap-3 group mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/30 group-hover:shadow-cyan-500/50 transition-all duration-300 group-hover:scale-105">
-                    <span className="text-white font-bold text-xl">C</span>
+                  <div className="w-12 h-12 rounded-2xl  flex items-center justify-center  transition-all duration-300 group-hover:scale-105">
+                    <span className="text-white font-bold text-xl"><img src="/logo.png" alt="company logo" /></span>
                   </div>
                 </div>
                 <div>
@@ -65,26 +72,49 @@ const Footer = () => {
               </Link>
 
               <p className="text-gray-400 text-sm leading-relaxed mb-6">
-                Your trusted companion for seamless transportation booking across India.
-                We are dedicated to making your travel experience comfortable, reliable,
-                and hassle-free.
+                India's #1 platform for hidden travel experiences. Discover authentic destinations,
+                connect with passionate locals, and travel with like-minded companions.
               </p>
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center p-3 rounded-xl bg-white/5 border border-white/5">
-                  <p className="text-2xl font-bold text-white">500+</p>
-                  <p className="text-xs text-gray-500">Routes</p>
+                  <p className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">2.5k+</p>
+                  <p className="text-xs text-gray-500">Hidden Places</p>
                 </div>
                 <div className="text-center p-3 rounded-xl bg-white/5 border border-white/5">
-                  <p className="text-2xl font-bold text-white">10K+</p>
-                  <p className="text-xs text-gray-500">Users</p>
+                  <p className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">5k+</p>
+                  <p className="text-xs text-gray-500">Local Buddies</p>
                 </div>
                 <div className="text-center p-3 rounded-xl bg-white/5 border border-white/5">
-                  <p className="text-2xl font-bold text-white">24/7</p>
-                  <p className="text-xs text-gray-500">Support</p>
+                  <p className="text-2xl font-bold bg-gradient-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">50K+</p>
+                  <p className="text-xs text-gray-500">Travelers</p>
                 </div>
               </div>
+            </div>
+
+            {/* Three Pillars */}
+            <div>
+              <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
+                <span className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-cyan-500 rounded-full"></span>
+                Explore India
+              </h3>
+              <ul className="space-y-3">
+                {pillars.map((pillar) => (
+                  <li key={pillar.to}>
+                    <Link
+                      to={pillar.to}
+                      className="flex items-center gap-3 text-gray-400 hover:text-emerald-400 transition-colors duration-200 group"
+                    >
+                      <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center", pillar.color)}>
+                        <pillar.icon className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm">{pillar.label}</span>
+                      <ChevronRight className="w-3 h-3 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             {/* Quick Links */}
@@ -100,7 +130,7 @@ const Footer = () => {
                       to={link.to}
                       className="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors duration-200 group"
                     >
-                      <link.icon className="w-4 h-4 text-gray-600 group-hover:text-cyan-500 transition-colors" />
+                      <link.icon className="w-4 h-4 text-gray-500 group-hover:text-cyan-500 transition-colors" />
                       <span className="text-sm">{link.label}</span>
                       <ChevronRight className="w-3 h-3 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
                     </Link>
@@ -109,50 +139,7 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Services */}
-            <div>
-              <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
-                <span className="w-1 h-6 bg-gradient-to-b from-cyan-500 to-emerald-500 rounded-full"></span>
-                Our Services
-              </h3>
-              <ul className="space-y-3">
-                {services.map((service) => (
-                  <li key={service.to}>
-                    <Link
-                      to={service.to}
-                      className="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors duration-200 group"
-                    >
-                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 flex items-center justify-center">
-                        <service.icon className="w-3 h-3 text-cyan-500" />
-                      </div>
-                      <span className="text-sm">{service.label}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Contact Info */}
-              <div className="mt-8 space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Mail className="w-4 h-4 text-cyan-500" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-0.5">Email Us</p>
-                    <p className="text-sm text-gray-300">support@commutego.com</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Phone className="w-4 h-4 text-cyan-500" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-0.5">Call Us</p>
-                    <p className="text-sm text-gray-300">+91 98765 43210</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
 
             {/* Newsletter */}
             <div>
@@ -198,12 +185,31 @@ const Footer = () => {
                 </div>
               </div>
             </div>
+
+            {/* Services */}
+            <div>
+              
+
+              {/* Contact Info */}
+              <div className="mt-8 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Mail className="w-4 h-4 text-cyan-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-0.5">Email Us</p>
+                    <p className="text-sm text-gray-300">keshabdas2003@gmail.com</p>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-white/5">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Clock className="w-4 h-4" />
@@ -216,10 +222,10 @@ const Footer = () => {
               </p>
 
               <div className="flex items-center gap-6">
-                <Link to="/privacy" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
+                <Link to="/privacy-policy" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
                   Privacy Policy
                 </Link>
-                <Link to="/terms" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
+                <Link to="/terms-of-service" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
                   Terms of Service
                 </Link>
               </div>
