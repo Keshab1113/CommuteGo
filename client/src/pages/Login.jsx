@@ -1,104 +1,191 @@
-import React, { useState } from 'react'
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import React, { useState, useContext } from 'react';
+import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
-import { Carousel } from 'flowbite-react';
 import { toast } from "react-toastify";
-import EastIcon from '@mui/icons-material/East';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Bus, Loader2 } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Login = () => {
-    const navigate = useNavigate();
-    const { storeTokenInLS } = useAuth();
+  const navigate = useNavigate();
+  const { storeTokenInLS } = useAuth();
+  const { darkMode } = useContext(ThemeContext);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
 
-    const [user, setUser] = useState({
-        email: "",
-        password: "",
-    });
+  const handleInput = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+    setUser({ ...user, [name]: value });
+  };
 
-    const handleInput = (e) => {
-        let name = e.target.name;
-        let value = e.target.value;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
 
-        setUser({
-            ...user,
-            [name]: value,
-        })
+      const res_data = await response.json();
+      if (response.ok) {
+        storeTokenInLS(res_data.token);
+        setUser({ email: "", password: "" });
+        toast.success("Welcome back!");
+        navigate("/admin");
+      } else {
+        toast.error(res_data.extraDetails || res_data.message);
+      }
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log(import.meta.env.VITE_API_URL);
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(user),
-            });
+  return (
+    <div className={`min-h-screen flex items-center justify-center p-4 relative overflow-hidden ${darkMode ? 'bg-[#141313]' : 'bg-white'}`}>
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 grid-pattern opacity-20"></div>
+      </div>
 
-            const res_data = await response.json();
-            if (response.ok) {
-                storeTokenInLS(res_data.token);
-                setUser({
-                    email: "",
-                    password: "",
-                });
-                navigate("/admin");
-            } else {
-                toast.error(res_data.extraDetails ? res_data.extraDetails : res_data.message);
-            }
-
-        } catch (error) {
-            toast.error("Login error: ", error);
-        }
-    }
-
-    return (
-        <div className=' h-screen flex justify-center items-center my-auto bg-black bg-grid-white/[0.2] relative'>
-            <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black  [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
-            <form onSubmit={handleSubmit} className=' border h-fit lg:w-[50%] w-[90%] py-20 rounded-xl flex flex-col justify-center items-center shadow bg-white glass'>
-                <h1 className=' text-center text-4xl font-semibold text-cyan-400 mb-5'>Log in to your account</h1>
-                <div className=' w-[90%] mb-6'>
-                    <h1 className=' text-lg font-bold mb-4 text-white'>Enter Email Address</h1>
-                    <TextField
-                        required
-                        id="outlined-required"
-                        label="Email"
-                        className=' w-full bg-white rounded-md border-white text-white border-solid border'
-                        name='email'
-                        value={user.email}
-                        onChange={handleInput}
-                    />
-                </div>
-                <div className=' w-[90%] '>
-                    <h1 className=' text-lg font-bold mb-4 text-white'>Enter Your Password</h1>
-                    <TextField
-                        required
-                        id="outlined-password-input"
-                        label="Password"
-                        type="password"
-                        autoComplete="current-password"
-                        className=' w-full bg-white rounded-md'
-                        name='password'
-                        value={user.password}
-                        onChange={handleInput}
-                    />
-                </div>
-                <div className=' w-[90%] mt-4'>
-                    <h1 className=' hover:text-blue-700 cursor-pointer font-semibold text-white  w-max mb-4'>Forgot Password?</h1>
-                </div>
-                <button type='submit' className='w-[50%] border-white border text-white py-3 rounded-xl hover:text-cyan-400 font-extrabold hover:bg-black'>Login</button>
-                <div className='w-[90%] mt-4 flex gap-1 text-white'>
-                <h1>Don't have an account?</h1>{" "}
-                    <Link to={'/signup'} className='hover:text-blue-700 font-semibold text-white'>
-                        <button>Sign up</button>
-                    </Link>
-                </div>
-            </form>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative z-10 w-full max-w-md"
+      >
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-flex items-center gap-3 group">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+              <Bus className="w-7 h-7 text-white" />
+            </div>
+            <span className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 dark:from-cyan-400 dark:to-emerald-400 bg-clip-text text-transparent">
+              CommuteGo
+            </span>
+          </Link>
         </div>
-    )
-}
 
-export default Login
+        {/* Login Card */}
+        <div className="p-8 rounded-3xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 shadow-premium">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Sign in to continue your journey</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Field */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="email"
+                  required
+                  name="email"
+                  value={user.email}
+                  onChange={handleInput}
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all"
+                  placeholder="Enter your email"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  name="password"
+                  value={user.password}
+                  onChange={handleInput}
+                  className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Remember & Forgot */}
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-cyan-500 focus:ring-cyan-500" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">Remember me</span>
+              </label>
+              <Link to="/forgot-password" className="text-sm text-cyan-600 dark:text-cyan-400 hover:underline">
+                Forgot Password?
+              </Link>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold hover:from-cyan-600 hover:to-emerald-600 transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  Sign In
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white dark:bg-[#1C1B1B] text-gray-500">or</span>
+            </div>
+          </div>
+
+          {/* Sign Up Link */}
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-cyan-600 dark:text-cyan-400 font-semibold hover:underline">
+              Create one
+            </Link>
+          </p>
+        </div>
+
+        {/* Back to Home */}
+        <div className="text-center mt-6">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+            ← Back to Home
+          </Link>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default Login;

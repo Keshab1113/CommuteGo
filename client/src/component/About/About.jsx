@@ -1,44 +1,78 @@
 import React, { useContext } from 'react';
-import img from "/travelcomponent.jpg";
+import { motion } from 'framer-motion';
+import { MapPin, Users, Bus, Clock, ArrowRight, Award, Shield, Heart } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
-import Button from '@mui/material/Button';
-import { ThemeContext } from "../../context/ThemeContext"; // Import ThemeContext
+import { ThemeContext } from "../../context/ThemeContext";
 import { MacbookScroll } from '../../components/ui/macbook-scroll';
 
 const About = () => {
     const navigate = useNavigate();
-    const { darkMode } = useContext(ThemeContext); // Get dark mode state
+    const { darkMode } = useContext(ThemeContext);
 
     return (
-        <div className={`h-full w-screen md:h-[150vh] flex lg:flex-row md:flex-col-reverse flex-col-reverse justify-start  ${darkMode ? 'bg-black' : 'bg-gradient-to-b from-white to-cyan-100'}`}>
-            <div className="overflow-hidden lg:w-[50vw] w-[100vw]">
-                <MacbookScroll
-                    src="https://firebasestorage.googleapis.com/v0/b/commutego.appspot.com/o/header.mp4?alt=media&token=ec250b2e-12a1-433d-a937-afa21a10f5fc"
-                    showGradient={false}
-                />
-            </div>
-            <div data-aos-delay="200" className="lg:w-2/4 md:w-full w-full flex justify-start items-center md:pt-40 pt-10 flex-col pb-4 md:pb-0 h-full ">
-                <h1 className={`text-5xl font-bold flex justify-center items-center pt-4 pl-5 mt-10 md:mt-0 mb-4 text-cyan-400`}>
-                    About Us
-                </h1>
-                <h1 data-aos="fade-up" className={`md:text-2xl text-xl text-center font-bold opacity-70 ${darkMode ? 'text-gray-300' : 'text-cyan-950'}`}>
-                    CommuteGo wishes you a happy & safe journey.
-                </h1>
-                <div className={`font-semibold w-4/5 mt-10 opacity-70 space-y-4 text-center ${darkMode ? 'text-gray-300' : 'text-black'}`}>
-                    <h1 data-aos="fade-up" className='opacity-90 text-xl'>
-                        CommuteGo is a team of dedicated members, who are passionate about Indian Transportation Systems.
-                    </h1>
-                    <h1 data-aos="fade-up" className='opacity-90 text-xl'>
-                        This web site (CommuteGo) is a privately maintained site and does not have any official connection or affiliation whatsoever to State Governments and related organizations, or to the Government of India, nor is it endorsed or supported by any of them in any way. Opinions expressed on this web site are solely the personal opinions of the authors and do not necessarily reflect official views of the Indian Governments or any other related organization.
-                    </h1>
-                    <h1 data-aos="fade-up" className='text-xl'>
-                        THE INFORMATION AVAILABLE ON THIS SITE IS FOR GENERAL INFORMATION PURPOSES.
-                    </h1>
+        <div className={`min-h-screen ${darkMode ? 'bg-[#141313]' : 'bg-white'}`}>
+            <div className="flex flex-col lg:flex-row">
+                {/* Video/Image Section */}
+                <div className="lg:w-1/2 w-full min-h-[50vh] lg:min-h-screen overflow-hidden">
+                    <MacbookScroll
+                        src="https://firebasestorage.googleapis.com/v0/b/commutego.appspot.com/o/header.mp4?alt=media&token=ec250b2e-12a1-433d-a937-afa21a10f5fc"
+                        showGradient={false}
+                    />
                 </div>
-                <div data-aos="fade-up" className='mt-4'>
-                    <Button onClick={() => navigate("/about")} variant="outlined" className='w-32 h-10'>
-                        Know more
-                    </Button>
+
+                {/* Content Section */}
+                <div className="lg:w-1/2 w-full flex flex-col justify-center items-start px-6 lg:px-16 py-16 lg:py-0">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-sm font-medium mb-6">
+                            About Us
+                        </span>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                            <span className="bg-gradient-to-r from-cyan-600 to-emerald-600 dark:from-cyan-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                                About CommuteGo
+                            </span>
+                        </h1>
+                        <p className="text-xl md:text-2xl font-semibold text-gray-600 dark:text-gray-300 mb-6">
+                            CommuteGo wishes you a happy & safe journey.
+                        </p>
+
+                        <div className="space-y-4 text-gray-500 dark:text-gray-400 mb-8">
+                            <p>
+                                CommuteGo is a team of dedicated members, who are passionate about Indian Transportation Systems.
+                            </p>
+                            <p>
+                                This web site (CommuteGo) is a privately maintained site and does not have any official connection or affiliation whatsoever to State Governments and related organizations, or to the Government of India, nor is it endorsed or supported by any of them in any way. Opinions expressed on this web site are solely the personal opinions of the authors and do not necessarily reflect official views of the Indian Governments or any other related organization.
+                            </p>
+                            <p className="font-semibold text-gray-700 dark:text-gray-300">
+                                THE INFORMATION AVAILABLE ON THIS SITE IS FOR GENERAL INFORMATION PURPOSES ONLY.
+                            </p>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="grid grid-cols-3 gap-4 mb-8">
+                            {[
+                                { label: 'Routes', value: '500+', icon: MapPin },
+                                { label: 'Users', value: '10K+', icon: Users },
+                                { label: 'Support', value: '24/7', icon: Clock },
+                            ].map((stat, index) => (
+                                <div key={stat.label} className="text-center p-4 rounded-xl bg-gray-50 dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800">
+                                    <stat.icon className="w-6 h-6 mx-auto mb-2 text-cyan-500" />
+                                    <p className="text-2xl font-bold">{stat.value}</p>
+                                    <p className="text-xs text-gray-500">{stat.label}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={() => navigate("/about")}
+                            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold hover:from-cyan-600 hover:to-emerald-600 transition-all duration-300 shadow-lg shadow-cyan-500/25"
+                        >
+                            Know more <ArrowRight className="w-4 h-4" />
+                        </button>
+                    </motion.div>
                 </div>
             </div>
         </div>

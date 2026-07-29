@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUp } from '@fortawesome/free-solid-svg-icons'
+import { ArrowUp } from 'lucide-react'
 
 const GoTop = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -8,16 +7,12 @@ const GoTop = () => {
     const listenToScroll = () => {
         let heightToHidden = 250;
         const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        if (winScroll > heightToHidden) {
-            setIsVisible(true);
-        }
-        else {
-            setIsVisible(false);
-        }
+        setIsVisible(winScroll > heightToHidden);
     }
 
     useEffect(() => {
         window.addEventListener('scroll', listenToScroll);
+        return () => window.removeEventListener('scroll', listenToScroll);
     }, []);
 
     const goToBtn = () => {
@@ -27,12 +22,17 @@ const GoTop = () => {
             behavior: 'smooth'
         });
     }
+
     return (
         <>
             {isVisible && (
-                <div className=' bg-violet-900 dark:bg-white dark:text-black text-white w-10 h-10 flex justify-center items-center rounded-[100%] cursor-pointer fixed bottom-[5rem] md:right-[5rem] right-6 z-50 overflow-hidden' onClick={goToBtn}>
-                    <FontAwesomeIcon icon={faArrowUp} className='createdanimation' />
-                </div>
+                <button
+                    onClick={goToBtn}
+                    className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-110 transition-all duration-300 flex items-center justify-center"
+                    aria-label="Go to top"
+                >
+                    <ArrowUp className="w-5 h-5" />
+                </button>
             )}
         </>
     )

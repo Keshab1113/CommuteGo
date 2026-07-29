@@ -2,15 +2,15 @@ import React from 'react'
 import Navbar from './component/Header/Navbar'
 import Footer from './component/Footer/Footer'
 import { Outlet } from 'react-router-dom'
-import Docker from './components/Docker/Docker'
 
 const Layout = () => {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
           <Navbar />
-          <Outlet/>
+          <main className="flex-1">
+            <Outlet/>
+          </main>
           <Footer/>
-          <Docker/>
     </div>
   )
 }
