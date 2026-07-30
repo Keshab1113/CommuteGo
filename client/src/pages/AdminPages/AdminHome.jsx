@@ -1,26 +1,22 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Download, Plus, Eye, Edit, Trash2, Bus, Users, MessageSquare, TrendingUp, Clock, CheckCircle, XCircle, ArrowUpDown, MoreVertical } from 'lucide-react';
+import { Search, Filter, Download, Plus, Eye, Edit, Trash2, Bus, Users, MessageSquare, TrendingUp, Clock, CheckCircle, XCircle, ArrowUpDown, MoreVertical, Loader2 } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { ThemeContext } from '../../context/ThemeContext';
 import { useAuth } from '../../store/auth';
 import { toast } from "react-toastify";
+import { userApi } from '../../services/api/adminApi';
+import { busApi } from '../../services/api/adminApi';
+import { feedbackApi } from '../../services/api/adminApi';
 
 const AdminHome = () => {
   const { darkMode } = useContext(ThemeContext);
   const { authorizationToken } = useAuth();
-  const [stats, setStats] = useState({
-    users: 127,
-    busData: 843,
-    feedbacks: 24,
-  });
 
-  const recentActivity = [
-    { type: 'user', message: 'New user registered: Priya Sharma', time: '2 mins ago' },
-    { type: 'bus', message: 'Bus added: Kolkata Express', time: '15 mins ago' },
-    { type: 'feedback', message: 'New feedback received', time: '1 hour ago' },
-    { type: 'booking', message: '5 new bookings today', time: '2 hours ago' },
-  ];
+  const [stats, setStats] = useState({ users: 0, busData: 0, feedbacks: 0 });
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [recentFeedbacks, setRecentFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const quickActions = [
     { icon: Plus, label: 'Add Bus', to: '/admin/busdata/addBus', color: 'from-cyan-500 to-emerald-500' },
@@ -29,12 +25,78 @@ const AdminHome = () => {
     { icon: Bus, label: 'Manage Buses', to: '/admin/busdata', color: 'from-pink-500 to-rose-500' },
   ];
 
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [usersRes, busesRes, feedbacksRes] = await Promise.all([
+          userApi.getAll(),
+          busApi.getAll(),
+          feedbackApi.getAll()
+        ]);
+
+        const users = usersRes.data;
+        const buses = busesRes.data;
+        const feedbacks = feedbacksRes.data;
+
+        setStats({
+          users: users.length || 0,
+          busData: buses.length || 0,
+          feedbacks: feedbacks.length || 0
+        });
+
+        // Build recent activity from actual data
+        const activities = [];
+        users.slice(0, 2).forEach(user => {
+          activities.push({
+            type: 'user',
+            message: `User: ${user.username || user.email}`,
+            time: 'Recently'
+          });
+        });
+        buses.slice(0, 2).forEach(bus => {
+          activities.push({
+            type: 'bus',
+            message: `Bus: ${bus.name}`,
+            time: 'Recently added'
+          });
+        });
+        feedbacks.slice(0, 2).forEach(feedback => {
+          activities.push({
+            type: 'feedback',
+            message: `Feedback from ${feedback.fullname}`,
+            time: 'Recently received'
+          });
+        });
+        setRecentActivity(activities.slice(0, 4));
+
+        // Set recent feedbacks (latest 3)
+        setRecentFeedbacks(feedbacks.slice(0, 3));
+
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+        toast.error('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
   const statCards = [
-    { label: 'Total Users', value: stats.users, icon: Users, color: 'from-blue-500 to-cyan-500', change: '+12%' },
-    { label: 'Bus Routes', value: stats.busData, icon: Bus, color: 'from-cyan-500 to-emerald-500', change: '+8%' },
-    { label: 'Feedbacks', value: stats.feedbacks, icon: MessageSquare, color: 'from-orange-500 to-red-500', change: '-3%' },
-    { label: 'Active Bookings', value: '89', icon: TrendingUp, color: 'from-purple-500 to-pink-500', change: '+24%' },
+    { label: 'Total Users', value: stats.users, icon: Users, color: 'from-blue-500 to-cyan-500', change: stats.users > 0 ? '+New' : '0' },
+    { label: 'Bus Routes', value: stats.busData, icon: Bus, color: 'from-cyan-500 to-emerald-500', change: stats.busData > 0 ? '+New' : '0' },
+    { label: 'Feedbacks', value: stats.feedbacks, icon: MessageSquare, color: 'from-orange-500 to-red-500', change: stats.feedbacks > 0 ? '+New' : '0' },
+    { label: 'Active Bookings', value: '0', icon: TrendingUp, color: 'from-purple-500 to-pink-500', change: '0' },
   ];
+
+  if (loading) {
+    return (
+      <div className={`min-h-screen ${darkMode ? 'bg-[#141313]' : 'bg-gray-50'} flex items-center justify-center`}>
+        <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-[#141313]' : 'bg-gray-50'}`}>
@@ -77,7 +139,7 @@ const AdminHome = () => {
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
                   <stat.icon className="w-6 h-6 text-white" />
                 </div>
-                <span className={`text-xs font-medium px-2 py-1 rounded-full ${stat.change.startsWith('+') ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'}`}>
+                <span className={`text-xs font-medium px-2 py-1 rounded-full ${stat.change.startsWith('+') ? 'bg-emerald-500/10 text-emerald-600' : 'bg-gray-500/10 text-gray-600'}`}>
                   {stat.change}
                 </span>
               </div>
@@ -92,36 +154,40 @@ const AdminHome = () => {
           <div className="lg:col-span-2 p-6 rounded-2xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold">Recent Activity</h2>
-              <button className="text-sm text-cyan-600 hover:underline">View All</button>
+              <Link to="/admin/users" className="text-sm text-cyan-600 hover:underline">View All</Link>
             </div>
             <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-[#0a0a0a]"
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    activity.type === 'user' ? 'bg-blue-500/10 text-blue-500' :
-                    activity.type === 'bus' ? 'bg-cyan-500/10 text-cyan-500' :
-                    activity.type === 'feedback' ? 'bg-orange-500/10 text-orange-500' :
-                    'bg-emerald-500/10 text-emerald-500'
-                  }`}>
-                    {activity.type === 'user' && <Users className="w-5 h-5" />}
-                    {activity.type === 'bus' && <Bus className="w-5 h-5" />}
-                    {activity.type === 'feedback' && <MessageSquare className="w-5 h-5" />}
-                    {activity.type === 'booking' && <TrendingUp className="w-5 h-5" />}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{activity.message}</p>
-                    <p className="text-xs text-gray-500 flex items-center gap-1">
-                      <Clock className="w-3 h-3" /> {activity.time}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+              {recentActivity.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">No recent activity</p>
+              ) : (
+                recentActivity.map((activity, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-[#0a0a0a]"
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      activity.type === 'user' ? 'bg-blue-500/10 text-blue-500' :
+                      activity.type === 'bus' ? 'bg-cyan-500/10 text-cyan-500' :
+                      activity.type === 'feedback' ? 'bg-orange-500/10 text-orange-500' :
+                      'bg-emerald-500/10 text-emerald-500'
+                    }`}>
+                      {activity.type === 'user' && <Users className="w-5 h-5" />}
+                      {activity.type === 'bus' && <Bus className="w-5 h-5" />}
+                      {activity.type === 'feedback' && <MessageSquare className="w-5 h-5" />}
+                      {activity.type === 'booking' && <TrendingUp className="w-5 h-5" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{activity.message}</p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {activity.time}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))
+              )}
             </div>
           </div>
 
@@ -161,43 +227,42 @@ const AdminHome = () => {
             <Link to="/admin/feedbacks" className="text-sm text-cyan-600 hover:underline">View All</Link>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Name</th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Email</th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Message</th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                  <td className="py-3 px-4 text-sm">Priya Sharma</td>
-                  <td className="py-3 px-4 text-sm text-gray-500">priya@example.com</td>
-                  <td className="py-3 px-4 text-sm truncate max-w-xs">Great service! Highly recommend...</td>
-                  <td className="py-3 px-4"><span className="px-2 py-1 text-xs rounded-full bg-yellow-500/10 text-yellow-600">Pending</span></td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><Eye className="w-4 h-4" /></button>
-                      <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><Edit className="w-4 h-4" /></button>
-                    </div>
-                  </td>
-                </tr>
-                <tr className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                  <td className="py-3 px-4 text-sm">Rahul Verma</td>
-                  <td className="py-3 px-4 text-sm text-gray-500">rahul@example.com</td>
-                  <td className="py-3 px-4 text-sm truncate max-w-xs">Very good experience...</td>
-                  <td className="py-3 px-4"><span className="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-600">Resolved</span></td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><Eye className="w-4 h-4" /></button>
-                      <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><Edit className="w-4 h-4" /></button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            {recentFeedbacks.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">No feedbacks yet</p>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Name</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Email</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Message</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Status</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-500">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentFeedbacks.map((feedback) => (
+                    <tr key={feedback._id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      <td className="py-3 px-4 text-sm">{feedback.fullname}</td>
+                      <td className="py-3 px-4 text-sm text-gray-500">{feedback.email}</td>
+                      <td className="py-3 px-4 text-sm truncate max-w-xs">{feedback.message}</td>
+                      <td className="py-3 px-4">
+                        <span className={`px-2 py-1 text-xs rounded-full ${feedback.isDone ? 'bg-emerald-500/10 text-emerald-600' : 'bg-yellow-500/10 text-yellow-600'}`}>
+                          {feedback.isDone ? 'Resolved' : 'Pending'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <Link to="/admin/feedbacks" className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>

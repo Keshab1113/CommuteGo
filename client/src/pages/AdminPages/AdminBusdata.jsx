@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from "react-router-dom";
-import { Search, Plus, Edit, Trash2, Bus, MapPin, Route, ArrowRight, X, Check } from 'lucide-react';
+import { useNavigate, Link } from "react-router-dom";
+import { Search, Plus, Edit, Trash2, Bus, MapPin, Route, ArrowRight, X, Check, Loader2 } from 'lucide-react';
 import { useAuth } from '../../store/auth';
 import { ThemeContext } from '../../context/ThemeContext';
 import { toast } from "react-toastify";
@@ -23,10 +23,12 @@ const AdminBusdata = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBusId, setSelectedBusId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const getAllBusData = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/busdata`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/busdata`, {
         method: "GET",
         headers: {
           Authorization: authorizationToken,
@@ -40,6 +42,9 @@ const AdminBusdata = () => {
       setbusDatas(formattedData);
     } catch (error) {
       console.log(error);
+      toast.error("Failed to fetch buses");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,7 +55,7 @@ const AdminBusdata = () => {
 
   const deleteBus = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/busdata/delete/${selectedBusId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/busdata/delete/${selectedBusId}`, {
         method: "DELETE",
         headers: {
           Authorization: authorizationToken,
@@ -166,6 +171,11 @@ const AdminBusdata = () => {
           transition={{ duration: 0.3 }}
           className="rounded-2xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 overflow-hidden"
         >
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
+            </div>
+          ) : (
           <DataGrid
             rows={filteredBusData}
             columns={columns}
@@ -201,6 +211,7 @@ const AdminBusdata = () => {
               },
             }}
           />
+          )}
         </motion.div>
       </div>
 

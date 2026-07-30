@@ -1,190 +1,173 @@
-import { useEffect, useState } from "react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../store/auth";
+import { ThemeContext } from "../../../context/ThemeContext";
 import { toast } from "react-toastify";
+import { Loader2, ArrowLeft } from "lucide-react";
 
 const UserEdit = () => {
-    const [data, setData] = useState({
-        username: "",
-        email: "",
-        isAdmin: "",
+  const [data, setData] = useState({
+    username: "",
+    email: "",
+    isAdmin: false,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const navigate = useNavigate();
+  const params = useParams();
+  const { authorizationToken } = useAuth();
+  const { darkMode } = useContext(ThemeContext);
+
+  const getSingleUserData = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/${params.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: authorizationToken,
+        },
+      });
+      const userData = await response.json();
+      setData({
+        username: userData.username || "",
+        email: userData.email || "",
+        isAdmin: userData.isAdmin || false,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to fetch user data");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    getSingleUserData();
+  }, []);
+
+  const handleInput = (e) => {
+    const { name, value, type, checked } = e.target;
+    setData({
+      ...data,
+      [name]: type === "checkbox" ? checked : value,
     });
-    const navigate = useNavigate();
+  };
 
-    const params = useParams();
-    // console.log("params single user: ", params);
-    const { authorizationToken } = useAuth();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-    //   get single user data
-    const getSingleUserData = async () => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/${params.id}`, {
-                method: "GET",
-                headers: {
-                    Authorization: authorizationToken,
-                },
-            });
-            const data = await response.json();
-            // console.log(`users single data:  ${data}`);
-            setData(data);
-
-            //   if (response.ok) {
-            //     getAllUsersData();
-            //   }
-        } catch (error) {
-            console.log(error);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/admin/users/update/${params.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authorizationToken,
+          },
+          body: JSON.stringify(data),
         }
-    };
+      );
 
-    useEffect(() => {
-        getSingleUserData();
-    }, []);
+      if (response.ok) {
+        toast.success("User updated successfully");
+        navigate(-1);
+      } else {
+        toast.error("Failed to update user");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleInput = (e) => {
-        let name = e.target.name;
-        let value = e.target.value;
-
-        setData({
-            ...data,
-            [name]: value,
-        });
-    };
-
-    // to udpate the data dynamically
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/admin/users/update/${params.id}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: authorizationToken,
-                    },
-                    body: JSON.stringify(data),
-                }
-            );
-
-            if (response.ok) {
-                toast.success("Updated successfully");
-                navigate(-1);
-            } else {
-                toast.error("Not Updated ");
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
+  if (isFetching) {
     return (
-        <section className=" bg-slate-600 h-screen w-full flex justify-center items-center">
-            <div className=" h-[22rem] w-[40%] bg-slate-400 p-4 overflow-hidden">
-            <div className="">
-                <h1 className=" text-4xl font-bold">Update User Data</h1>
-            </div>
-            <div className=" grid grid-two-cols  h-full">
-                    <section className="flex flex-col">
-                    <form onSubmit={handleSubmit} className=" ">
-                            <div className="flex flex-col">
-                            <label htmlFor="username" className=" font-bold mt-2 mb-2 capitalize">username</label>
-                            <input
-                                    type="text"
-                                    className=" outline-none border border-black rounded-xl px-4 h-8"
-                                name="username"
-                                id="username"
-                                autoComplete="off"
-                                value={data.username}
-                                onChange={handleInput}
-                                required
-                            />
-                        </div>
-
-                            <div className="flex flex-col">
-                                <label htmlFor="email" className=" font-bold mt-2 mb-2 capitalize">email</label>
-                            <input
-                                    type="email"
-                                    className=" outline-none border border-black rounded-xl px-4 h-8"
-                                name="email"
-                                id="email"
-                                autoComplete="off"
-                                value={data.email}
-                                onChange={handleInput}
-                                required
-                            />
-                        </div>
-
-                            <div className="flex flex-col">
-                                <label htmlFor="isAdmin" className=" font-bold mt-2 mb-2 capitalize">IsAdmin</label>
-                            <input
-                                type="text"
-                                    name="isAdmin"
-                                    className=" outline-none border border-black rounded-xl px-4 h-8"
-                                id="isAdmin"
-                                autoComplete="off"
-                                value={data.isAdmin}
-                                onChange={handleInput}
-                                required
-                            />
-                        </div>
-
-                        <div className=" mt-2 mb-2 flex justify-center items-center w-full">
-                            <button type="submit" className=" px-4 hover:border rounded-xl bg-blue-800 text-white">Update</button>
-                        </div>
-                    </form>
-                </section>
-                </div>
-            </div>
-        </section>
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-[#141313]' : 'bg-gray-50'}`}>
+        <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
+      </div>
     );
+  }
+
+  return (
+    <div className={`min-h-screen flex items-center justify-center p-6 ${darkMode ? 'bg-[#141313]' : 'bg-gray-50'}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-lg"
+      >
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-500 hover:text-cyan-600 mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back
+        </button>
+
+        <div className="p-8 rounded-3xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 shadow-premium">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold mb-2">Update User</h1>
+            <p className="text-sm text-gray-500">Edit user information below</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium mb-2">Username</label>
+              <input
+                type="text"
+                name="username"
+                value={data.username}
+                onChange={handleInput}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={data.email}
+                onChange={handleInput}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
+                required
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                name="isAdmin"
+                id="isAdmin"
+                checked={data.isAdmin}
+                onChange={handleInput}
+                className="w-5 h-5 rounded border-gray-300 text-cyan-500 focus:ring-cyan-500"
+              />
+              <label htmlFor="isAdmin" className="text-sm font-medium">Admin Privileges</label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold hover:from-cyan-600 hover:to-emerald-600 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                "Update User"
+              )}
+            </button>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
 };
 
-
-
-// import React from 'react'
-
-
-
-// const UserEdit = () => {
-//     const handleInput = (e) => {
-//         let name = e.target.name;
-//         let value = e.target.value;
-//         setData({
-//             ...data,
-//             [name]: value,
-//         });
-//     };
-//   return (
-//       <div>
-//               <h1>
-//                   Update User Details
-//               </h1>
-//               <div className=' flex  flex-col h-full  justify-around w-full'>
-//                   <div className=' w-full  py-2'>
-//                       <h1 className=' font-bold mb-2'>Username</h1>
-//                   <input
-//                       onChange={handleInput} type="text"
-//                       value={curUsers.username}
-//                       name="username" id="username"
-//                       className=' border px-4 border-black outline-none rounded-xl w-full h-10'
-//                       autoComplete='off'
-//                       required
-                      
-//                   />
-//                   </div>
-//                   <div className=' w-full  py-2'>
-//                       <h1 className=' font-bold mb-2'>Email</h1>
-//                       <input type="text" value={curUsers.email} name="" id="" className=' border px-4 border-black outline-none rounded-xl w-full h-10' />
-//                   </div>
-//                   <div className=' w-full  py-2'>
-//                       <h1 className=' font-bold mb-2'>Is Admin</h1>
-//                       <input type="text" value={curUsers.isAdmin} name="" id="" className=' border px-4 border-black outline-none rounded-xl w-full h-10' />
-//                   </div>
-//                   <button className=' border px-4 border-black bg-blue-700 hover:bg-indigo-800 text-white w-full h-10 rounded-xl mb-6'>Submit</button>
-//               </div>
-//       </div>
-//   )
-// }
-
-export default UserEdit
+export default UserEdit;

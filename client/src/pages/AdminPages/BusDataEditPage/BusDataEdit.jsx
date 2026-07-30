@@ -1,149 +1,207 @@
-import React from 'react'
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../store/auth";
+import { ThemeContext } from "../../../context/ThemeContext";
 import { toast } from "react-toastify";
+import { Bus, MapPin, Route, ArrowLeft, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const BusDataEdit = () => {
-    const [data, setData] = useState({
-        name: "",
-        from: "",
-        to: "",
-        route: "",
+  const [data, setData] = useState({
+    name: "",
+    from: "",
+    to: "",
+    route: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const navigate = useNavigate();
+  const params = useParams();
+  const { authorizationToken } = useAuth();
+  const { darkMode } = useContext(ThemeContext);
+
+  const getSingleBusData = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/busdata/${params.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: authorizationToken,
+        },
+      });
+      const busData = await response.json();
+      setData({
+        name: busData.name || "",
+        from: busData.from || "",
+        to: busData.to || "",
+        route: busData.route || "",
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to fetch bus data");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    getSingleBusData();
+  }, []);
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setData({
+      ...data,
+      [name]: value,
     });
-    const navigate = useNavigate();
+  };
 
-    const params = useParams();
-    const { authorizationToken } = useAuth();
-    const getSingleBusData = async () => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/busdata/${params.id}`, {
-                method: "GET",
-                headers: {
-                    Authorization: authorizationToken,
-                },
-            });
-            const data = await response.json();
-            setData(data);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-        } catch (error) {
-            console.log(error);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/form/busdata/update/${params.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authorizationToken,
+          },
+          body: JSON.stringify(data),
         }
-    };
-    useEffect(() => {
-        getSingleBusData();
-    }, []);
+      );
 
-    const handleInput = (e) => {
-        let name = e.target.name;
-        let value = e.target.value;
+      if (response.ok) {
+        toast.success("Bus updated successfully");
+        navigate(-1);
+      } else {
+        toast.error("Failed to update bus");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        setData({
-            ...data,
-            [name]: value,
-        });
-    };
-
-    // to udpate the data dynamically
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/admin/busdata/update/${params.id}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: authorizationToken,
-                    },
-                    body: JSON.stringify(data),
-                }
-            );
-
-            if (response.ok) {
-                toast.success("Updated successfully");
-                navigate(-1);
-            } else {
-                toast.error("Not Updated ");
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
+  if (isFetching) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-[#141313]' : 'bg-gray-50'}`}>
+        <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
+      </div>
+    );
+  }
 
   return (
-      <section className="  h-screen w-full flex justify-center items-center bg-black bg-grid-white/[0.2]">
-          <div className="  md:w-[40%] w-[90vw] glass mt-[8vh] md:p-10 p-6 overflow-hidden rounded-2xl">
-              <div className=" mb-10">
-                  <h1 className=" text-4xl font-bold text-white">Update Details</h1>
-              </div>
-              <div className=" grid grid-two-cols  h-full">
-                  <section className="flex flex-col">
-                      <form onSubmit={handleSubmit} className=" ">
-                          <div className="flex flex-col">
-                              <label htmlFor="name" className=" font-bold mt-2 mb-2 capitalize text-white">name</label>
-                              <input
-                                  type="text"
-                                  className=" outline-none border border-black rounded-xl px-4 py-2 h-fit text-[15px]"
-                                  name="name"
-                                  id="name"
-                                  autoComplete="off"
-                                  value={data.name}
-                                  onChange={handleInput}
-                                  required
-                              />
-                          </div>
+    <div className={`min-h-screen flex items-center justify-center p-6 ${darkMode ? 'bg-[#141313]' : 'bg-gray-50'}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-lg"
+      >
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-500 hover:text-cyan-600 mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Bus List
+        </button>
 
-                          <div className="flex flex-col">
-                              <label htmlFor="email" className=" font-bold mt-2 mb-2 capitalize text-white">from</label>
-                              <input
-                                  type="text"
-                                  className=" outline-none border border-black rounded-xl px-4 py-2 h-fit text-[15px]"
-                                  name="from"
-                                  id="from"
-                                  autoComplete="off"
-                                  value={data.from}
-                                  onChange={handleInput}
-                                  required
-                              />
-                          </div>
-                          <div className="flex flex-col">
-                              <label htmlFor="phone" className=" font-bold mt-2 mb-2 capitalize text-white">to</label>
-                              <input
-                                  type="text"
-                                  className=" outline-none border border-black rounded-xl px-4 py-2 h-fit text-[15px]"
-                                  name="to"
-                                  id="to"
-                                  autoComplete="off"
-                                  value={data.to}
-                                  onChange={handleInput}
-                                  required
-                              />
-                          </div>
-                          <div className="flex flex-col">
-                              <label htmlFor="message" className=" font-bold mt-2 mb-2 capitalize text-white">route</label>
-                              <textarea
-                                  rows="3"
-                                  className=" outline-none border border-black rounded-xl px-4 py-2 text-[15px]"
-                                  name="route"
-                                  id="route"
-                                  autoComplete="off"
-                                  value={data.route}
-                                  onChange={handleInput}
-                              />
-                          </div>
-
-
-                          <div className=" mt-2 mb-2 flex justify-center items-center w-full">
-                              <button type="submit" className=" px-10 py-2 hover:border rounded-xl bg-blue-800 text-white">Update</button>
-                          </div>
-                      </form>
-                  </section>
-              </div>
+        <div className="p-8 rounded-3xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 shadow-premium">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
+              <Bus className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold mb-2">Update Bus</h1>
+            <p className="text-sm text-gray-500">Edit bus details below</p>
           </div>
-      </section>
-  )
-}
 
-export default BusDataEdit
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium mb-2">Bus Name</label>
+              <div className="relative">
+                <Bus className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  name="name"
+                  value={data.name}
+                  onChange={handleInput}
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">From</label>
+                <div className="relative">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-cyan-500" />
+                  <input
+                    type="text"
+                    name="from"
+                    value={data.from}
+                    onChange={handleInput}
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">To</label>
+                <div className="relative">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />
+                  <input
+                    type="text"
+                    name="to"
+                    value={data.to}
+                    onChange={handleInput}
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Route Details</label>
+              <div className="relative">
+                <Route className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
+                <textarea
+                  rows={4}
+                  name="route"
+                  value={data.route}
+                  onChange={handleInput}
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all resize-none"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold hover:from-orange-600 hover:to-red-600 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                <>
+                  <Bus className="w-5 h-5" />
+                  Update Bus
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default BusDataEdit;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Plus, Edit, Trash2, User, Mail, Shield, MoreVertical, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { Search, Filter, Plus, Edit, Trash2, User, Mail, Shield, MoreVertical, ChevronLeft, ChevronRight, Download, Loader2 } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { useAuth } from '../../store/auth';
 import { ThemeContext } from '../../context/ThemeContext';
@@ -12,9 +12,11 @@ const AllUsers = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const usersPerPage = 10;
 
   const getAllUsersData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users`, {
         method: "GET",
@@ -26,6 +28,9 @@ const AllUsers = () => {
       setUsers(data);
     } catch (error) {
       console.log(error);
+      toast.error("Failed to fetch users");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -96,6 +101,12 @@ const AllUsers = () => {
           transition={{ duration: 0.3 }}
           className="rounded-2xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 overflow-hidden"
         >
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
+            </div>
+          ) : (
+          <>
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -172,6 +183,8 @@ const AllUsers = () => {
           </div>
 
           {/* Pagination */}
+          </>
+          )}
           <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500">
               Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} results

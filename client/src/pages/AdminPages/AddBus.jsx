@@ -33,7 +33,7 @@ const AddBus = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/busdata/addbus`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/busdata/addbus`, {
         method: "POST",
         headers: {
           'Content-Type': "application/json",

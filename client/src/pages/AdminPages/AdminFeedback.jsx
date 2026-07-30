@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Plus, Edit, Trash2, Eye, CheckCircle, XCircle, MessageSquare, Clock, Filter } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Eye, CheckCircle, XCircle, MessageSquare, Clock, Filter, Loader2 } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { useAuth } from '../../store/auth';
 import { ThemeContext } from '../../context/ThemeContext';
@@ -12,10 +12,12 @@ const AdminFeedback = () => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const getAllUsersData = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/feedback`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/feedback`, {
         method: "GET",
         headers: {
           Authorization: authorizationToken,
@@ -25,12 +27,15 @@ const AdminFeedback = () => {
       setFeedbacks(data);
     } catch (error) {
       console.log(error);
+      toast.error("Failed to fetch feedbacks");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const deleteFeedBack = async (id) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/feedback/delete/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/feedback/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: authorizationToken,
@@ -151,6 +156,12 @@ const AdminFeedback = () => {
           transition={{ duration: 0.3 }}
           className="rounded-2xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 overflow-hidden"
         >
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
+            </div>
+          ) : (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -223,6 +234,8 @@ const AdminFeedback = () => {
               <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p className="text-gray-500">No feedbacks found</p>
             </div>
+          )}
+          </>
           )}
         </motion.div>
       </div>
