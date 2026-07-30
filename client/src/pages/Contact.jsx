@@ -1,17 +1,64 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, Send, MessageSquare, CheckCircle, ArrowRight, Sparkles, Heart } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, MessageSquare, CheckCircle, ArrowRight, Sparkles, Heart, Star, ThumbsUp } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [formData, setFormData] = useState({ fullname: "", email: "", phone: "", subject: "", message: "" });
+  const [reviewData, setReviewData] = useState({ fullname: "", rating: 5, comment: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, type: "contact" })
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        toast.success("Message sent successfully!");
+        setFormData({ fullname: "", email: "", phone: "", subject: "", message: "" });
+        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        toast.error("Failed to send message");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...reviewData, type: "review" })
+      });
+
+      if (response.ok) {
+        setReviewSubmitted(true);
+        toast.success("Thank you for your review!");
+        setReviewData({ fullname: "", rating: 5, comment: "" });
+        setTimeout(() => setReviewSubmitted(false), 5000);
+      } else {
+        toast.error("Failed to submit review");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactMethods = [
@@ -108,7 +155,7 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Contact Form & Info */}
+      {/* Contact Form & Review Section */}
       <section className="relative py-16">
         <div className="relative z-10 container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -142,15 +189,15 @@ export default function Contact() {
                   <p className="text-gray-400">We'll get back to you soon. Check your email!</p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleContactSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-300">Full Name</label>
                       <input
                         type="text"
                         required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        value={formData.fullname}
+                        onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
                         className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white placeholder-gray-500"
                         placeholder="Keshab Das"
                       />
@@ -167,23 +214,34 @@ export default function Contact() {
                       />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-300">Subject</label>
-                    <select
-                      required
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white"
-                    >
-                      <option value="">Select a topic</option>
-                      <option value="hidden-destinations">Hidden Destinations</option>
-                      <option value="local-buddies">Local Buddies</option>
-                      <option value="travel-matchmaking">Travel Matchmaking</option>
-                      <option value="bug-report">Bug Report</option>
-                      <option value="feedback">Feedback</option>
-                      <option value="partnership">Partnership</option>
-                      <option value="other">Other</option>
-                    </select>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-300">Phone (Optional)</label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white placeholder-gray-500"
+                        placeholder="+91 xxxxxxxxx"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-300">Subject</label>
+                      <select
+                        required
+                        value={formData.subject}
+                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                        className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white"
+                      >
+                        <option value="">Select a topic</option>
+                        <option value="Hidden Destinations">Hidden Destinations</option>
+                        <option value="Local Buddies">Local Buddies</option>
+                        <option value="Travel Matchmaking">Travel Matchmaking</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="Partnership">Partnership</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2 text-gray-300">Message</label>
@@ -198,69 +256,127 @@ export default function Contact() {
                   </div>
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold hover:from-cyan-600 hover:to-emerald-600 transition-all shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold hover:from-cyan-600 hover:to-emerald-600 transition-all shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 disabled:opacity-50"
                   >
-                    Send Message <ArrowRight className="w-5 h-5" />
+                    {loading ? "Sending..." : "Send Message"} <ArrowRight className="w-5 h-5" />
                   </button>
                 </form>
               )}
             </motion.div>
 
-            {/* Right Side - FAQ & Info */}
-            <div className="space-y-8">
-              {/* FAQ Section */}
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="p-8 rounded-3xl bg-[#1C1B1B] border border-gray-800"
-              >
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
-                    <Sparkles className="w-6 h-6 text-emerald-400" />
-                  </div>
-                  <h3 className="text-xl font-bold">Frequently Asked Questions</h3>
+            {/* Review Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="p-8 rounded-3xl bg-[#1C1B1B] border border-gray-800"
+            >
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                  <ThumbsUp className="w-7 h-7 text-white" />
                 </div>
-                <div className="space-y-4">
-                  {faqs.map((faq, index) => (
-                    <div key={index} className="p-4 rounded-xl bg-[#0a0a0a] border border-gray-800">
-                      <h4 className="font-semibold mb-2 text-gray-200">{faq.q}</h4>
-                      <p className="text-sm text-gray-400">{faq.a}</p>
+                <div>
+                  <h2 className="text-2xl font-bold">Share Your Experience</h2>
+                  <p className="text-gray-400 text-sm">Help us improve our services</p>
+                </div>
+              </div>
+
+              {reviewSubmitted ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex flex-col items-center justify-center py-16 text-center"
+                >
+                  <div className="w-20 h-20 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
+                    <Star className="w-10 h-10 text-amber-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Thank You!</h3>
+                  <p className="text-gray-400">Your review helps us improve.</p>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleReviewSubmit} className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-300">Your Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={reviewData.fullname}
+                      onChange={(e) => setReviewData({ ...reviewData, fullname: e.target.value })}
+                      className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all text-white placeholder-gray-500"
+                      placeholder="John Doe"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-300">Rating</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewData({ ...reviewData, rating: star })}
+                          className="p-2 rounded-lg transition-all"
+                        >
+                          <Star
+                            className={`w-8 h-8 transition-colors ${
+                              star <= reviewData.rating
+                                ? "text-amber-400 fill-amber-400"
+                                : "text-gray-600"
+                            }`}
+                          />
+                        </button>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Response Time */}
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="p-8 rounded-3xl bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 border border-cyan-500/20"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <Clock className="w-8 h-8 text-cyan-400" />
-                  <h3 className="text-xl font-bold">Response Time</h3>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Email</span>
-                    <span className="font-medium">Within 24 hours</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Live Chat</span>
-                    <span className="font-medium">Instant</span>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-300">Your Review</label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={reviewData.comment}
+                      onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+                      className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all resize-none text-white placeholder-gray-500"
+                      placeholder="Tell us about your experience with CommuteGo..."
+                    />
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Phone</span>
-                    <span className="font-medium">Within 1 hour</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              
-            </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 disabled:opacity-50"
+                  >
+                    {loading ? "Submitting..." : "Submit Review"} <Star className="w-5 h-5" />
+                  </button>
+                </form>
+              )}
+            </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="relative py-16">
+        <div className="relative z-10 container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="p-8 rounded-3xl bg-[#1C1B1B] border border-gray-800"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-emerald-400" />
+              </div>
+              <h3 className="text-xl font-bold">Frequently Asked Questions</h3>
+            </div>
+            <div className="space-y-4">
+              {faqs.map((faq, index) => (
+                <div key={index} className="p-4 rounded-xl bg-[#0a0a0a] border border-gray-800">
+                  <h4 className="font-semibold mb-2 text-gray-200">{faq.q}</h4>
+                  <p className="text-sm text-gray-400">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 

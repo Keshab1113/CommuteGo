@@ -1,0 +1,42 @@
+const express = require("express");
+const router = express.Router();
+const { authMiddleware } = require("../middlewares/auth-middleware.js");
+const { adminMiddleware } = require("../middlewares/admin-middleware.js");
+const {
+  getAllTrips,
+  getTripById,
+  getMyTrips,
+  createTrip,
+  updateTrip,
+  updateTripStatus,
+  deleteTrip,
+  requestJoinTrip,
+  getTripRequests,
+  respondToRequest,
+  getPendingTrips,
+  reviewTrip
+} = require("../controllers/trip-controller.js");
+
+// Public routes (only approved trips)
+router.get("/", getAllTrips);
+router.get("/:id", getTripById);
+
+// Authenticated routes
+router.get("/my/trips", authMiddleware, getMyTrips);
+router.post("/", authMiddleware, createTrip);
+router.put("/:id", authMiddleware, updateTrip);
+router.patch("/:id/status", authMiddleware, updateTripStatus);
+router.delete("/:id", authMiddleware, deleteTrip);
+
+// Join requests
+router.post("/:id/join", authMiddleware, requestJoinTrip);
+router.get("/:id/requests", authMiddleware, getTripRequests);
+
+// Request management
+router.patch("/requests/:id", authMiddleware, respondToRequest);
+
+// Admin routes
+router.get("/admin/pending", authMiddleware, adminMiddleware, getPendingTrips);
+router.patch("/admin/:id/review", authMiddleware, adminMiddleware, reviewTrip);
+
+module.exports = router;

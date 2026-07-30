@@ -66,89 +66,77 @@ const AllUsers = () => {
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-[#141313]' : 'bg-gray-50'}`}>
+    <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-[#1C1B1B] border-b border-gray-200 dark:border-gray-800 px-6 py-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">All Users</h1>
-            <p className="text-sm text-gray-500">Manage and view all registered users</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">All Users</h1>
+          <p className="text-sm text-gray-500">Manage and view all registered users</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-4 py-2 rounded-xl bg-[#1C1B1B] border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-500/50"
+            />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0a0a0a] text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
-              />
-            </div>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-medium hover:from-cyan-600 hover:to-emerald-600 transition-all">
-              <Download className="w-4 h-4" />
-              Export
-            </button>
-          </div>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-medium hover:from-cyan-600 hover:to-emerald-600 transition-all">
+            <Download className="w-4 h-4" />
+            Export
+          </button>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
+        </div>
+      ) : (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="rounded-2xl bg-white dark:bg-[#1C1B1B] border border-gray-200 dark:border-gray-800 overflow-hidden"
+          className="rounded-2xl bg-[#1C1B1B] border border-white/10 overflow-hidden"
         >
-          {isLoading ? (
-            <div className="flex items-center justify-center h-64">
-              <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
-            </div>
-          ) : (
-          <>
-          {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#0a0a0a]">
-                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-600 dark:text-gray-400">User</th>
-                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-600 dark:text-gray-400">Email</th>
-                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-600 dark:text-gray-400">Role</th>
-                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-600 dark:text-gray-400">Joined</th>
-                  <th className="text-right py-4 px-6 text-sm font-semibold text-gray-600 dark:text-gray-400">Actions</th>
+                <tr className="border-b border-white/10 bg-[#0a0a0a]">
+                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-400">User</th>
+                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-400">Email</th>
+                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-400">Role</th>
+                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-400">Joined</th>
+                  <th className="text-right py-4 px-6 text-sm font-semibold text-gray-400">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {currentUsers.map((curUser, index) => (
-                  <motion.tr
-                    key={curUser._id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2, delay: index * 0.03 }}
-                    className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-[#0a0a0a] transition-colors"
-                  >
+                {currentUsers.map((curUser) => (
+                  <tr key={curUser._id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold">
                           {curUser.username?.charAt(0).toUpperCase()}
                         </div>
-                        <span className="font-medium">{curUser.username}</span>
+                        <span className="font-medium text-white">{curUser.username}</span>
                       </div>
                     </td>
                     <td className="py-4 px-6">
-                      <div className="flex items-center gap-2 text-gray-500">
+                      <div className="flex items-center gap-2 text-gray-400">
                         <Mail className="w-4 h-4" />
                         {curUser.email}
                       </div>
                     </td>
                     <td className="py-4 px-6">
                       {curUser.isAdmin ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 text-xs font-medium">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-medium">
                           <Shield className="w-3 h-3" /> Admin
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 text-gray-400 text-xs font-medium">
                           <User className="w-3 h-3" /> User
                         </span>
                       )}
@@ -160,7 +148,7 @@ const AllUsers = () => {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/admin/users/${curUser._id}/edit`}
-                          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-cyan-600 transition-colors"
+                          className="p-2 rounded-lg hover:bg-white/10 text-gray-400 hover:text-cyan-400 transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </Link>
@@ -170,22 +158,20 @@ const AllUsers = () => {
                               deleteUser(curUser._id);
                             }
                           }}
-                          className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-500 hover:text-red-600 transition-colors"
+                          className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
           {/* Pagination */}
-          </>
-          )}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-white/10">
             <p className="text-sm text-gray-500">
               Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} results
             </p>
@@ -193,9 +179,9 @@ const AllUsers = () => {
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4 text-gray-400" />
               </button>
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 let pageNum;
@@ -215,7 +201,7 @@ const AllUsers = () => {
                     className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
                       currentPage === pageNum
                         ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white'
-                        : 'border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800'
+                        : 'border border-white/10 text-gray-400 hover:bg-white/5'
                     }`}
                   >
                     {pageNum}
@@ -225,14 +211,14 @@ const AllUsers = () => {
               <button
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4 text-gray-400" />
               </button>
             </div>
           </div>
         </motion.div>
-      </div>
+      )}
     </div>
   );
 };

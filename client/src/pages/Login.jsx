@@ -26,6 +26,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Form submitted, attempting login...");
+    console.log("API URL:", `${import.meta.env.VITE_API_URL}/api/auth/login`);
     setIsLoading(true);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
@@ -35,8 +37,10 @@ const Login = () => {
         },
         body: JSON.stringify(user),
       });
+      console.log("Response received:", response);
 
       const res_data = await response.json();
+      console.log("Response data:", res_data);
       if (response.ok) {
         storeTokenInLS(res_data.token);
         setUser({ email: "", password: "" });
@@ -46,6 +50,7 @@ const Login = () => {
         toast.error(res_data.extraDetails || res_data.message);
       }
     } catch (error) {
+      console.error("Login error:", error);
       toast.error("Login failed. Please try again.");
     } finally {
       setIsLoading(false);

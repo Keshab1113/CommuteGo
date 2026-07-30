@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Filter, Star, Clock, Shield, Heart, Camera, Music, Utensils, Mountain, BookOpen, Users, CheckCircle, MessageCircle, Calendar, ChevronDown, X, Award } from 'lucide-react';
+import { MapPin, Search, Filter, Star, Clock, Shield, Heart, Camera, Music, Utensils, Mountain, BookOpen, Users, CheckCircle, MessageCircle, Calendar, ChevronDown, X, Award, Loader2 } from 'lucide-react';
+import { useAuth } from '../store/auth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const LocalBuddies = () => {
+  const { authorizationToken } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedInterest, setSelectedInterest] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [buddies, setBuddies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const interests = [
     { id: 'all', label: 'All', icon: Users },
@@ -28,129 +36,38 @@ const LocalBuddies = () => {
     { id: 'goa', label: 'Goa' },
   ];
 
-  const buddies = [
-    {
-      id: 1,
-      name: 'Rajesh Kumar',
-      location: 'Darjeeling, WB',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop',
-      interests: ['Tea Gardens', 'Photography', 'Trekking', 'Buddhist Culture'],
-      rating: 4.9,
-      reviews: 127,
-      responseTime: '< 1 hour',
-      languages: ['Hindi', 'English', 'Nepali'],
-      price: '₹2,500/day',
-      priceNegotiable: true,
-      verified: true,
-      badge: 'Top Rated',
-      bio: 'Born and raised in Darjeeling, I\'ve spent 15 years exploring every corner of this beautiful hill station. I love sharing stories about tea, mountains, and local culture.',
-      availability: 'Mon-Sun',
-      tripsCompleted: 89,
-      localSince: 2018,
-    },
-    {
-      id: 2,
-      name: 'Priya Sharma',
-      location: 'Jaipur, Rajasthan',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop',
-      interests: ['Folk Music', 'Art & Crafts', 'Cooking', 'History'],
-      rating: 5.0,
-      reviews: 89,
-      responseTime: '< 30 mins',
-      languages: ['Hindi', 'English', 'Rajasthani'],
-      price: '₹3,000/day',
-      priceNegotiable: false,
-      verified: true,
-      badge: 'Superhost',
-      bio: 'A passionate artist and musician from Jaipur. I host folk music sessions, cooking classes, and guided tours through the old city.',
-      availability: 'Mon-Sat',
-      tripsCompleted: 67,
-      localSince: 2019,
-    },
-    {
-      id: 3,
-      name: 'Amit Nath',
-      location: 'Shillong, Meghalaya',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop',
-      interests: ['Music', 'Photography', 'Hiking', 'Local Food'],
-      rating: 4.8,
-      reviews: 156,
-      responseTime: '< 2 hours',
-      languages: ['English', 'Khasi', 'Hindi'],
-      price: '₹2,000/day',
-      priceNegotiable: true,
-      verified: true,
-      badge: 'Quick Responder',
-      bio: 'Shillong native with a passion for photography and music. I know all the hidden waterfalls and can show you the real Meghalaya.',
-      availability: 'Mon-Sun',
-      tripsCompleted: 112,
-      localSince: 2017,
-    },
-    {
-      id: 4,
-      name: 'Vikram Singh',
-      location: 'Varanasi, UP',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop',
-      interests: ['Spirituality', 'History', 'Photography', 'Yoga'],
-      rating: 4.9,
-      reviews: 203,
-      responseTime: '< 1 hour',
-      languages: ['Hindi', 'English', 'Bhojpuri'],
-      price: '₹2,500/day',
-      priceNegotiable: false,
-      verified: true,
-      badge: 'Heritage Expert',
-      bio: 'A Varanasi local who has been conducting spiritual tours for 10 years. I can explain the deepest meanings of the ghats and temples.',
-      availability: 'Mon-Sun',
-      tripsCompleted: 156,
-      localSince: 2016,
-    },
-    {
-      id: 5,
-      name: 'Anita Menon',
-      location: 'Kochi, Kerala',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop',
-      interests: ['Spice Markets', 'Cooking', 'Backwaters', 'Ayurveda'],
-      rating: 5.0,
-      reviews: 94,
-      responseTime: '< 30 mins',
-      languages: ['Malayalam', 'English', 'Tamil'],
-      price: '₹3,500/day',
-      priceNegotiable: true,
-      verified: true,
-      badge: 'Food Expert',
-      bio: 'Born in Kerala\'s spice country. I host cooking sessions, spice market tours, and Ayurvedic experiences.',
-      availability: 'Mon-Sat',
-      tripsCompleted: 78,
-      localSince: 2020,
-    },
-    {
-      id: 6,
-      name: 'Carlos Fernandes',
-      location: 'Goa',
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop',
-      interests: ['Beach Life', 'History', 'Portuguese Heritage', 'Nightlife'],
-      rating: 4.7,
-      reviews: 118,
-      responseTime: '< 2 hours',
-      languages: ['Konkani', 'English', 'Hindi', 'Portuguese'],
-      price: '₹2,800/day',
-      priceNegotiable: true,
-      verified: true,
-      badge: 'History Buff',
-      bio: 'Goan born and bred with deep knowledge of Portuguese colonial history and hidden beach spots.',
-      availability: 'Mon-Sun',
-      tripsCompleted: 95,
-      localSince: 2019,
-    },
-  ];
+  useEffect(() => {
+    fetchBuddies();
+  }, []);
+
+  const fetchBuddies = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/local-buddies?limit=50`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setBuddies(data.buddies || []);
+      } else {
+        throw new Error('Failed to fetch local buddies');
+      }
+    } catch (err) {
+      setError(err.message);
+      toast.error('Failed to load local buddies');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredBuddies = buddies.filter(buddy => {
-    const matchesSearch = buddy.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         buddy.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = buddy.displayName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         buddy.location?.city?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesInterest = selectedInterest === 'all' ||
-                            buddy.interests.some(i => i.toLowerCase().includes(selectedInterest.toLowerCase()));
-    const matchesLocation = selectedLocation === 'all' || buddy.location.toLowerCase().includes(selectedLocation.toLowerCase());
+                            buddy.interests?.some(i => i.toLowerCase().includes(selectedInterest.toLowerCase()));
+    const matchesLocation = selectedLocation === 'all' ||
+                           buddy.location?.city?.toLowerCase().includes(selectedLocation.toLowerCase());
     return matchesSearch && matchesInterest && matchesLocation;
   });
 
@@ -253,134 +170,171 @@ const LocalBuddies = () => {
         </div>
       </section>
 
+      {/* Loading State */}
+      {loading && (
+        <section className="py-24">
+          <div className="max-w-7xl mx-auto px-4 flex items-center justify-center">
+            <Loader2 className="w-12 h-12 animate-spin text-cyan-500" />
+          </div>
+        </section>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <section className="py-24">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="text-red-400 mb-4">{error}</p>
+            <button
+              onClick={fetchBuddies}
+              className="px-6 py-3 rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-600 transition-all"
+            >
+              Retry
+            </button>
+          </div>
+        </section>
+      )}
+
       {/* Results */}
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="text-gray-500 mb-6">
-            Showing <span className="text-cyan-400 font-semibold">{filteredBuddies.length}</span> local buddies
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBuddies.map((buddy, index) => (
-              <motion.div
-                key={buddy.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                whileHover={{ y: -5 }}
-                className="group relative p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
+      {!loading && !error && (
+        <section className="py-8">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-gray-500">
+                Showing <span className="text-cyan-400 font-semibold">{filteredBuddies.length}</span> local buddies
+              </p>
+              <button
+                onClick={() => navigate('/become-local-buddy')}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium hover:from-amber-600 hover:to-orange-600 transition-all"
               >
-                {/* Badge */}
-                {buddy.badge && (
-                  <div className="absolute top-4 right-4 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30">
-                    <span className="text-xs font-medium text-amber-400 flex items-center gap-1">
-                      <Award className="w-3 h-3" />
-                      {buddy.badge}
-                    </span>
-                  </div>
-                )}
+                <Award className="w-4 h-4" />
+                Become a Buddy
+              </button>
+            </div>
 
-                {/* Profile */}
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="relative">
-                    <img
-                      src={buddy.image}
-                      alt={buddy.name}
-                      className="w-20 h-20 rounded-2xl object-cover"
-                    />
-                    {buddy.verified && (
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-br from-cyan-500 to-rose-500 flex items-center justify-center">
-                        <CheckCircle className="w-4 h-4 text-white" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg">{buddy.name}</h3>
-                    <p className="text-sm text-gray-400 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-cyan-400" />
-                      {buddy.location}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">Local since {buddy.localSince}</p>
-                  </div>
-                </div>
-
-                {/* Bio */}
-                <p className="text-sm text-gray-400 mb-4 line-clamp-2">{buddy.bio}</p>
-
-                {/* Interests */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {buddy.interests.slice(0, 3).map((interest) => (
-                    <span key={interest} className="px-2 py-1 rounded-lg bg-white/5 text-xs">
-                      {interest}
-                    </span>
-                  ))}
-                  {buddy.interests.length > 3 && (
-                    <span className="px-2 py-1 rounded-lg bg-white/5 text-xs text-gray-400">
-                      +{buddy.interests.length - 3} more
-                    </span>
-                  )}
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-4 gap-2 mb-4">
-                  <div className="text-center p-2 rounded-xl bg-white/5">
-                    <div className="flex items-center justify-center gap-1">
-                      <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                      <span className="font-bold text-sm">{buddy.rating}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredBuddies.map((buddy, index) => (
+                <motion.div
+                  key={buddy._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                  whileHover={{ y: -5 }}
+                  className="group relative p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
+                >
+                  {/* Badge */}
+                  {buddy.isFeatured && (
+                    <div className="absolute top-4 right-4 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30">
+                      <span className="text-xs font-medium text-amber-400 flex items-center gap-1">
+                        <Award className="w-3 h-3" />
+                        Featured
+                      </span>
                     </div>
-                    <p className="text-xs text-gray-500">Rating</p>
-                  </div>
-                  <div className="text-center p-2 rounded-xl bg-white/5">
-                    <p className="font-bold text-sm">{buddy.reviews}</p>
-                    <p className="text-xs text-gray-500">Reviews</p>
-                  </div>
-                  <div className="text-center p-2 rounded-xl bg-white/5">
-                    <p className="font-bold text-sm">{buddy.tripsCompleted}</p>
-                    <p className="text-xs text-gray-500">Trips</p>
-                  </div>
-                  <div className="text-center p-2 rounded-xl bg-white/5">
-                    <p className="font-bold text-xs">{buddy.responseTime}</p>
-                    <p className="text-xs text-gray-500">Response</p>
-                  </div>
-                </div>
+                  )}
 
-                {/* Languages */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {buddy.languages.map((lang) => (
-                    <span key={lang} className="px-2 py-0.5 rounded bg-white/5 text-xs text-gray-400">
-                      {lang}
-                    </span>
-                  ))}
-                </div>
+                  {/* Profile */}
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="relative">
+                      <img
+                        src={buddy.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop'}
+                        alt={buddy.displayName}
+                        className="w-20 h-20 rounded-2xl object-cover"
+                      />
+                      {buddy.isVerified && (
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-br from-cyan-500 to-rose-500 flex items-center justify-center">
+                          <CheckCircle className="w-4 h-4 text-white" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg">{buddy.displayName}</h3>
+                      <p className="text-sm text-gray-400 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-cyan-400" />
+                        {buddy.location?.city}, {buddy.location?.state}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Local since {new Date(buddy.createdAt).getFullYear()}
+                      </p>
+                    </div>
+                  </div>
 
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                  <div>
-                    <span className="text-xl font-bold text-cyan-400">{buddy.price}</span>
-                    <span className="text-xs text-gray-500 ml-1">/day</span>
-                    {buddy.priceNegotiable && (
-                      <span className="ml-2 px-2 py-0.5 rounded bg-emerald-500/10 text-xs text-emerald-400">
-                        Negotiable
+                  {/* Bio */}
+                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">{buddy.bio}</p>
+
+                  {/* Interests */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {buddy.interests?.slice(0, 3).map((interest) => (
+                      <span key={interest} className="px-2 py-1 rounded-lg bg-white/5 text-xs">
+                        {interest}
+                      </span>
+                    ))}
+                    {buddy.interests?.length > 3 && (
+                      <span className="px-2 py-1 rounded-lg bg-white/5 text-xs text-gray-400">
+                        +{buddy.interests.length - 3} more
                       </span>
                     )}
                   </div>
-                  <div className="flex gap-2">
-                    <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
-                      <Heart className="w-4 h-4" />
-                    </button>
-                    <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
-                      <MessageCircle className="w-4 h-4" />
-                    </button>
-                    <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-rose-500 text-white text-sm font-medium hover:from-cyan-600 hover:to-rose-600 transition-all">
-                      Book
-                    </button>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-4 gap-2 mb-4">
+                    <div className="text-center p-2 rounded-xl bg-white/5">
+                      <div className="flex items-center justify-center gap-1">
+                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                        <span className="font-bold text-sm">{buddy.rating?.toFixed(1) || 'N/A'}</span>
+                      </div>
+                      <p className="text-xs text-gray-500">Rating</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-white/5">
+                      <p className="font-bold text-sm">{buddy.reviewCount || 0}</p>
+                      <p className="text-xs text-gray-500">Reviews</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-white/5">
+                      <p className="font-bold text-sm">{buddy.tripsCompleted || 0}</p>
+                      <p className="text-xs text-gray-500">Trips</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-white/5">
+                      <p className="font-bold text-xs">{buddy.responseTime || 'N/A'}</p>
+                      <p className="text-xs text-gray-500">Response</p>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+
+                  {/* Languages */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {buddy.languages?.map((lang) => (
+                      <span key={lang} className="px-2 py-0.5 rounded bg-white/5 text-xs text-gray-400">
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                    <div>
+                      <span className="text-xl font-bold text-cyan-400">₹{buddy.dayRate?.toLocaleString()}</span>
+                      <span className="text-xs text-gray-500 ml-1">/day</span>
+                      {buddy.priceNegotiable && (
+                        <span className="ml-2 px-2 py-0.5 rounded bg-emerald-500/10 text-xs text-emerald-400">
+                          Negotiable
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                        <Heart className="w-4 h-4" />
+                      </button>
+                      <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                        <MessageCircle className="w-4 h-4" />
+                      </button>
+                      <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-rose-500 text-white text-sm font-medium hover:from-cyan-600 hover:to-rose-600 transition-all">
+                        Book
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* CTA */}
       <section className="py-24">

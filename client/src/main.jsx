@@ -1,11 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Routes } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom'
 import Layout from './Layout.jsx'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
-import BusPage from './pages/BusPage.jsx'
 import NoPage from './pages/NoPage.jsx'
 import FeedBack from './pages/FeedBack.jsx'
 import Contact from './pages/Contact.jsx'
@@ -16,22 +15,28 @@ import ForgotPassword from './pages/ForgotPassword.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import TermsOfService from './pages/TermsOfService.jsx'
 import HiddenDestinations from './pages/HiddenDestinations.jsx'
+import AddDestination from './pages/AddDestination.jsx'
 import LocalBuddies from './pages/LocalBuddies.jsx'
+import AddLocalBuddy from './pages/AddLocalBuddy.jsx'
 import TravelMatchmaking from './pages/TravelMatchmaking.jsx'
+import CreateTrip from './pages/CreateTrip.jsx'
 import { AuthProvider } from './store/auth.jsx'
-import { ThemeProvider } from './context/ThemeContext'; // Import ThemeProvider
+import { ThemeProvider } from './context/ThemeContext';
 import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import Admin from './pages/AdminPages/Admin.jsx'
 import AdminHome from './pages/AdminPages/AdminHome.jsx'
 import AllUsers from './pages/AdminPages/AllUsers.jsx'
 import AdminProfile from './pages/AdminPages/AdminProfile/AdminProfile.jsx'
 import AdminFeedback from './pages/AdminPages/AdminFeedback.jsx'
-import AdminBusdata from './pages/AdminPages/AdminBusdata.jsx'
+import AdminContact from './pages/AdminPages/AdminContact.jsx'
+import AdminDestinations from './pages/AdminPages/AdminDestinations.jsx'
+import AdminLocalBuddies from './pages/AdminPages/AdminLocalBuddies.jsx'
+import AdminTrips from './pages/AdminPages/AdminTrips.jsx'
+import AdminReviews from './pages/AdminPages/AdminReviews.jsx'
 import { Logout } from './pages/Logout.jsx'
-import AddBus from './pages/AdminPages/AddBus.jsx'
 import UserEdit from "./pages/AdminPages/UserEditPage/UserEdit.jsx"
 import ManageFeedbacks from './pages/AdminPages/ManageFeedbacks.jsx'
-import BusDataEdit from './pages/AdminPages/BusDataEditPage/BusDataEdit.jsx'
 import Landing from './components/Landing/Landing.jsx'
 
 const router = createBrowserRouter(
@@ -41,13 +46,15 @@ const router = createBrowserRouter(
         <Route path='' element={<Home />} />
         <Route path='about' element={<About />} />
         <Route path='services' element={<Landing />} />
-        <Route path='bus' element={<BusPage />} />
         <Route path='feedback' element={<FeedBack />} />
         <Route path='contact' element={<Contact />} />
         <Route path='flight' element={<FlightPage />} />
         <Route path='hidden-destinations' element={<HiddenDestinations />} />
+        <Route path='add-destination' element={<AddDestination />} />
         <Route path='local-buddies' element={<LocalBuddies />} />
+        <Route path='become-local-buddy' element={<AddLocalBuddy />} />
         <Route path='travel-matchmaking' element={<TravelMatchmaking />} />
+        <Route path='create-trip' element={<CreateTrip />} />
         <Route path='privacy-policy' element={<PrivacyPolicy />} />
         <Route path='terms-of-service' element={<TermsOfService />} />
       </Route>
@@ -58,13 +65,14 @@ const router = createBrowserRouter(
       <Route path='/admin' element={<Admin />}>
         <Route path='' element={<AdminHome />} />
         <Route path='users' element={<AllUsers />} />
-        <Route path='busdata' element={<AdminBusdata />} />
-        <Route path='feedback' element={<AdminFeedback />} />
+        <Route path='destinations' element={<AdminDestinations />} />
+        <Route path='local-buddies' element={<AdminLocalBuddies />} />
+        <Route path='trips' element={<AdminTrips />} />
+        <Route path='feedbacks' element={<AdminFeedback />} />
+        <Route path='contacts' element={<AdminContact />} />
         <Route path='profile' element={<AdminProfile />} />
-        <Route path='busdata/addBus' element={<AddBus />} />
         <Route path="users/:id/edit" element={<UserEdit />} />
         <Route path="/admin/feedbacks/:id/edit" element={<ManageFeedbacks />} />
-        <Route path="/admin/busdata/:id/edit" element={<BusDataEdit />} />
       </Route>
       <Route path='*' element={<NoPage />} />
     </>
@@ -73,7 +81,7 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
-    <ThemeProvider> {/* Wrap the entire app with ThemeProvider */}
+    <ThemeProvider>
       <React.StrictMode>
         <RouterProvider router={router} />
         <ToastContainer

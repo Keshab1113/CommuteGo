@@ -2,8 +2,8 @@ const express = require("express");
 const adminController = require("../controllers/admin-controller");
 const feedbackController = require("../controllers/feedback-controller")
 const router = express.Router();
-const authMiddleware = require("../middlewares/auth-middleware");
-const adminMiddleware = require("../middlewares/admin-middleware");
+const { authMiddleware } = require("../middlewares/auth-middleware.js");
+const { adminMiddleware } = require("../middlewares/admin-middleware.js");
 
 router.route("/users").get(authMiddleware, adminMiddleware,adminController.getAllUsers);
 router.route("/users/delete/:id").delete(authMiddleware, adminMiddleware, adminController.deleteUserById);

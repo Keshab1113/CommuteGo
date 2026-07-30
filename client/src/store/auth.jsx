@@ -7,7 +7,6 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [user, setUser] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [busdata, setBusdata] = useState("");
     const [feedBackdata, setFeedBackdata] = useState("");
     const authorizationToken = `Bearer ${token}`;
 
@@ -32,7 +31,7 @@ export const AuthProvider = ({ children }) => {
                     Authorization: authorizationToken,
                 }
             });
-            
+
             if (response.ok) {
                 const data = await response.json();
                 setUser(data.userData);
@@ -46,42 +45,32 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    const getbusdata = async() => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form/getallBusDatas`, {
-                method: "GET",
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setBusdata(data);
-            }
-        } catch (error) {
-            console.log(`Busdata frontend error: ${error}`);
-        }
-    }
     const getfeedbackdata = async() => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/getallfeedbacks`, {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form`, {
                 method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
             });
             if (response.ok) {
                 const data = await response.json();
                 setFeedBackdata(data);
             }
         } catch (error) {
-            console.log(`Busdata frontend error: ${error}`);
+            console.log(`Feedback frontend error: ${error}`);
         }
     }
-    
+
 
     useEffect(() => {
-        getbusdata();
         getfeedbackdata();
         userAuthentication();
     }, [])
 
     return (
-        <AuthContext.Provider value={{ storeTokenInLS, LogoutUser, isLoggedIn, user, busdata, feedBackdata, authorizationToken, isLoading }}>
+        <AuthContext.Provider value={{ storeTokenInLS, LogoutUser, isLoggedIn, user, feedBackdata, authorizationToken, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

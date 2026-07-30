@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Filter, Search, Calendar, Users, Shield, Star, Clock, Heart, Share2, Camera, Mountain, TreePine, Tent, Utensils, Waves, Building, Compass, ChevronDown, X } from 'lucide-react';
+import { MapPin, Filter, Search, Calendar, Users, Shield, Star, Clock, Heart, Share2, Camera, Mountain, TreePine, Tent, Utensils, Waves, Building, Compass, ChevronDown, X, Loader2, Plus, Gift } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../store/auth';
+import { toast } from 'react-toastify';
 
 const HiddenDestinations = () => {
+  const { authorizationToken } = useAuth();
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [selectedBudget, setSelectedBudget] = useState('all');
+  const [destinations, setDestinations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const filters = [
     { id: 'all', label: 'All', icon: Compass },
@@ -21,153 +29,40 @@ const HiddenDestinations = () => {
     { id: 'photography', label: 'Photography', icon: Camera },
   ];
 
-  const destinations = [
-    {
-      name: 'Mawlynnong Village',
-      location: 'Meghalaya',
-      image: 'https://images.unsplash.com/photo-1585136917228-bd77b11cf700?w=600&h=400&fit=crop',
-      difficulty: 'Easy',
-      bestSeason: 'Oct - Mar',
-      crowdLevel: 'Very Low',
-      budget: '₹3,500',
-      tags: ['peaceful', 'nature', 'photography'],
-      description: 'Asia\'s cleanest village with living root bridges and cloud-kissing peaks.',
-      highlights: ['Living Root Bridges', 'Mawlynnong Falls', 'Sky Viewpoint'],
-      safetyScore: 9.5,
-      ratings: 4.9,
-      reviews: 234,
-    },
-    {
-      name: 'Chopta-Tungnath',
-      location: 'Uttarakhand',
-      image: 'https://images.unsplash.com/photo-1585136917228-bd77b11cf700?w=600&h=400&fit=crop',
-      difficulty: 'Moderate',
-      bestSeason: 'Apr - Jun',
-      crowdLevel: 'Low',
-      budget: '₹5,000',
-      tags: ['adventure', 'nature', 'photography', 'weekend'],
-      description: 'A pristine meadow surrounded by alpine flowers with ancient Tungnath temple.',
-      highlights: ['Tungnath Temple', 'Chandrashila Summit', 'Alpine Meadows'],
-      safetyScore: 8.8,
-      ratings: 4.7,
-      reviews: 456,
-    },
-    {
-      name: 'Majuli Island',
-      location: 'Assam',
-      image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&h=400&fit=crop',
-      difficulty: 'Easy',
-      bestSeason: 'Nov - Feb',
-      crowdLevel: 'Very Low',
-      budget: '₹4,000',
-      tags: ['peaceful', 'heritage', 'weekend'],
-      description: 'World\'s largest river island with Vaishnavite culture and mask-making.',
-      highlights: ['Mask Workshops', 'River Cruise', 'Satras (Monasteries)'],
-      safetyScore: 9.2,
-      ratings: 4.8,
-      reviews: 189,
-    },
-    {
-      name: 'Spiti Valley',
-      location: 'Himachal Pradesh',
-      image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&h=400&fit=crop',
-      difficulty: 'Challenging',
-      bestSeason: 'May - Oct',
-      crowdLevel: 'Low',
-      budget: '₹12,000',
-      tags: ['adventure', 'photography', 'camping'],
-      description: 'A cold desert mountain valley with Buddhist monasteries and surreal landscapes.',
-      highlights: ['Key Monastery', 'Chandratal Lake', 'Kibber Village'],
-      safetyScore: 7.5,
-      ratings: 4.9,
-      reviews: 678,
-    },
-    {
-      name: 'Gokarna',
-      location: 'Karnataka',
-      image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&h=400&fit=crop',
-      difficulty: 'Easy',
-      bestSeason: 'Sep - Mar',
-      crowdLevel: 'Medium',
-      budget: '₹4,500',
-      tags: ['beach', 'peaceful', 'weekend'],
-      description: 'Serene beaches without commercial tourism, perfect for meditation and sunsets.',
-      highlights: ['Om Beach', 'Mahabaleshwar Temple', 'Nameless Beaches'],
-      safetyScore: 9.0,
-      ratings: 4.6,
-      reviews: 892,
-    },
-    {
-      name: 'Ziro Valley',
-      location: 'Arunachal Pradesh',
-      image: 'https://images.unsplash.com/photo-1600091166971-7f16c8c7e7f2?w=600&h=400&fit=crop',
-      difficulty: 'Moderate',
-      bestSeason: 'Mar - Oct',
-      crowdLevel: 'Very Low',
-      budget: '₹6,500',
-      tags: ['nature', 'heritage', 'photography'],
-      description: 'Home to Apatani tribes with stunning rice terraces and tribal heritage.',
-      highlights: ['Apatani Tribe', 'Rice Terraces', 'Dolphin Nose Viewpoint'],
-      safetyScore: 8.5,
-      ratings: 4.8,
-      reviews: 167,
-    },
-    {
-      name: 'Kinnaur Valley',
-      location: 'Himachal Pradesh',
-      image: 'https://images.unsplash.com/photo-1585136917228-bd77b11cf700?w=600&h=400&fit=crop',
-      difficulty: 'Moderate',
-      bestSeason: 'Mar - Jun',
-      crowdLevel: 'Low',
-      budget: '₹7,000',
-      tags: ['nature', 'adventure', 'photography'],
-      description: 'A scenic valley with apple orchards, Himalayas views, and temples.',
-      highlights: ['Apple Orchards', 'Nako Lake', 'Rekong Peo'],
-      safetyScore: 8.7,
-      ratings: 4.7,
-      reviews: 312,
-    },
-    {
-      name: 'Chaukhandi Bazar',
-      location: 'Uttarakhand',
-      image: 'https://images.unsplash.com/photo-1600091166971-7f16c8c7e7f2?w=600&h=400&fit=crop',
-      difficulty: 'Easy',
-      bestSeason: 'Year Round',
-      crowdLevel: 'Very Low',
-      budget: '₹2,500',
-      tags: ['peaceful', 'heritage', 'weekend'],
-      description: 'An ancient trade hub on the Silk Road with Buddhist stupas and temples.',
-      highlights: ['Buddhist Stupas', 'Temple Complex', 'Mountain Views'],
-      safetyScore: 9.1,
-      ratings: 4.5,
-      reviews: 98,
-    },
-    {
-      name: 'Dhanushkodi',
-      location: 'Tamil Nadu',
-      image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&h=400&fit=crop',
-      difficulty: 'Easy',
-      bestSeason: 'Oct - Mar',
-      crowdLevel: 'Very Low',
-      budget: '₹3,000',
-      tags: ['beach', 'heritage', 'adventure'],
-      description: 'A ghost town at India\'s tip with ruins and pristine beaches.',
-      highlights: ['Ghost Town Ruins', 'Pristine Beaches', 'Adam\'s Bridge'],
-      safetyScore: 8.2,
-      ratings: 4.6,
-      reviews: 245,
-    },
-  ];
+  useEffect(() => {
+    fetchDestinations();
+  }, []);
+
+  const fetchDestinations = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/destinations?limit=50`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setDestinations(data.destinations || []);
+      } else {
+        throw new Error('Failed to fetch destinations');
+      }
+    } catch (err) {
+      setError(err.message);
+      toast.error('Failed to load destinations');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredDestinations = destinations.filter(dest => {
-    const matchesFilter = activeFilter === 'all' || dest.tags.includes(activeFilter);
-    const matchesSearch = dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         dest.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = activeFilter === 'all' || dest.tags?.includes(activeFilter);
+    const matchesSearch = dest.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         dest.location?.name?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesDifficulty = selectedDifficulty === 'all' || dest.difficulty === selectedDifficulty;
     const matchesBudget = selectedBudget === 'all' ||
-                          (selectedBudget === 'low' && parseInt(dest.budget.replace(/[₹,]/g, '')) < 4000) ||
-                          (selectedBudget === 'medium' && parseInt(dest.budget.replace(/[₹,]/g, '')) >= 4000 && parseInt(dest.budget.replace(/[₹,]/g, '')) < 8000) ||
-                          (selectedBudget === 'high' && parseInt(dest.budget.replace(/[₹,]/g, '')) >= 8000);
+                          (selectedBudget === 'low' && dest.estimatedBudget < 4000) ||
+                          (selectedBudget === 'medium' && dest.estimatedBudget >= 4000 && dest.estimatedBudget < 8000) ||
+                          (selectedBudget === 'high' && dest.estimatedBudget >= 8000);
     return matchesFilter && matchesSearch && matchesDifficulty && matchesBudget;
   });
 
@@ -277,113 +172,148 @@ const HiddenDestinations = () => {
       {/* Results Count */}
       <section className="py-6">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="text-gray-500">
-            Showing <span className="text-emerald-400 font-semibold">{filteredDestinations.length}</span> destinations
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-gray-500">
+              Showing <span className="text-emerald-400 font-semibold">{filteredDestinations.length}</span> destinations
+            </p>
+            <button
+              onClick={() => navigate('/add-destination')}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium hover:from-amber-600 hover:to-orange-600 transition-all"
+            >
+              <Gift className="w-4 h-4" />
+              Add & Earn Discount
+            </button>
+          </div>
         </div>
       </section>
+
+      {/* Loading State */}
+      {loading && (
+        <section className="py-24">
+          <div className="max-w-7xl mx-auto px-4 flex items-center justify-center">
+            <Loader2 className="w-12 h-12 animate-spin text-emerald-500" />
+          </div>
+        </section>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <section className="py-24">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="text-red-400 mb-4">{error}</p>
+            <button
+              onClick={fetchDestinations}
+              className="px-6 py-3 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition-all"
+            >
+              Retry
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Destinations Grid */}
-      <section className="pb-24">
-        <div className="max-w-7xl mx-auto px-4">
-          {filteredDestinations.length === 0 ? (
-            <div className="text-center py-20">
-              <Compass className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-2">No destinations found</h3>
-              <p className="text-gray-500">Try adjusting your filters or search query</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDestinations.map((destination, index) => (
-                <motion.div
-                  key={destination.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  whileHover={{ y: -5 }}
-                  className="group relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-all duration-300"
-                >
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={destination.image}
-                      alt={destination.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+      {!loading && !error && (
+        <section className="pb-24">
+          <div className="max-w-7xl mx-auto px-4">
+            {filteredDestinations.length === 0 ? (
+              <div className="text-center py-20">
+                <Compass className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-2">No destinations found</h3>
+                <p className="text-gray-500">Try adjusting your filters or search query</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredDestinations.map((destination, index) => (
+                  <motion.div
+                    key={destination._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    whileHover={{ y: -5 }}
+                    className="group relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-all duration-300"
+                  >
+                    {/* Image */}
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={destination.images?.[0] || 'https://images.unsplash.com/photo-1585136917228-bd77b11cf700?w=600&h=400&fit=crop'}
+                        alt={destination.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
-                    {/* Quick Tags */}
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-xs font-medium flex items-center gap-1">
-                        {destination.difficulty}
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-xs font-medium flex items-center gap-1">
-                        <Shield className="w-3 h-3 text-emerald-400" /> {destination.safetyScore}
-                      </span>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="absolute top-4 right-4 flex gap-2">
-                      <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors">
-                        <Heart className="w-4 h-4" />
-                      </button>
-                      <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors">
-                        <Share2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5">
-                    <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-                      <MapPin className="w-4 h-4 text-emerald-400" />
-                      {destination.location}
-                    </div>
-                    <h3 className="text-xl font-bold mb-2">{destination.name}</h3>
-                    <p className="text-sm text-gray-400 mb-4 line-clamp-2">{destination.description}</p>
-
-                    {/* Highlights */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {destination.highlights.slice(0, 3).map((highlight) => (
-                        <span key={highlight} className="px-2 py-1 rounded-lg bg-white/5 text-xs">
-                          {highlight}
+                      {/* Quick Tags */}
+                      <div className="absolute top-4 left-4 flex gap-2">
+                        <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-xs font-medium flex items-center gap-1">
+                          {destination.difficulty}
                         </span>
-                      ))}
-                    </div>
-
-                    {/* Rating & Reviews */}
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                        <span className="font-semibold">{destination.ratings}</span>
-                      </div>
-                      <span className="text-gray-500 text-sm">({destination.reviews} reviews)</span>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                      <div className="flex items-center gap-4 text-sm text-gray-400">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" /> {destination.bestSeason}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3" /> {destination.crowdLevel}
+                        <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-xs font-medium flex items-center gap-1">
+                          <Shield className="w-3 h-3 text-emerald-400" /> {destination.safetyScore || 'N/A'}
                         </span>
                       </div>
-                      <span className="text-lg font-bold text-emerald-400">{destination.budget}</span>
+
+                      {/* Action Buttons */}
+                      <div className="absolute top-4 right-4 flex gap-2">
+                        <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors">
+                          <Heart className="w-4 h-4" />
+                        </button>
+                        <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors">
+                          <Share2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
 
-                    {/* CTA */}
-                    <button className="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-medium hover:from-emerald-600 hover:to-cyan-600 transition-all">
-                      Explore Destination
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+                    {/* Content */}
+                    <div className="p-5">
+                      <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
+                        <MapPin className="w-4 h-4 text-emerald-400" />
+                        {destination.location?.name || 'Unknown'}
+                      </div>
+                      <h3 className="text-xl font-bold mb-2">{destination.name}</h3>
+                      <p className="text-sm text-gray-400 mb-4 line-clamp-2">{destination.description}</p>
+
+                      {/* Highlights */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {destination.tags?.slice(0, 3).map((tag) => (
+                          <span key={tag} className="px-2 py-1 rounded-lg bg-white/5 text-xs">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Rating & Reviews */}
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                          <span className="font-semibold">{destination.rating || 'N/A'}</span>
+                        </div>
+                        <span className="text-gray-500 text-sm">({destination.reviewCount || 0} reviews)</span>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                        <div className="flex items-center gap-4 text-sm text-gray-400">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" /> {destination.bestSeason?.join(', ') || 'N/A'}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Users className="w-3 h-3" /> {destination.crowdLevel || 'N/A'}
+                          </span>
+                        </div>
+                        <span className="text-lg font-bold text-emerald-400">₹{destination.estimatedBudget?.toLocaleString()}</span>
+                      </div>
+
+                      {/* CTA */}
+                      <button className="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-medium hover:from-emerald-600 hover:to-cyan-600 transition-all">
+                        Explore Destination
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

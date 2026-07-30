@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Home, LayoutDashboard, Users, Bus, MessageSquare, User, Settings, LogOut, Bell, Search, Menu, X, ChevronDown } from "lucide-react";
+import { Home, LayoutDashboard, Users, MapPin, UserCheck, Backpack, Star, MessageSquare, User, Settings, LogOut, Bell, Search, Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "../../store/auth";
 import { ThemeContext } from "../../context/ThemeContext";
 import { cn } from "../../lib/utils";
@@ -14,9 +14,12 @@ const AdminHeader = () => {
 
   const navItems = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/admin/destinations", label: "Destinations", icon: MapPin },
+    { to: "/admin/local-buddies", label: "Local Buddies", icon: UserCheck },
+    { to: "/admin/trips", label: "Trips", icon: Backpack },
+    { to: "/admin/reviews", label: "Reviews", icon: Star },
     { to: "/admin/feedbacks", label: "Feedbacks", icon: MessageSquare },
     { to: "/admin/users", label: "Users", icon: Users },
-    { to: "/admin/busdata", label: "Bus Data", icon: Bus },
   ];
 
   const isActive = (path) => location.pathname === path;
