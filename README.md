@@ -1,4 +1,4 @@
-# CommuteGogg
+# CommuteGo
 
 > Discover Hidden Places. Meet Local Experts. Travel Together.
 
