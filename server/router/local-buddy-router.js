@@ -18,9 +18,11 @@ const {
 router.get("/", getAllBuddies);
 router.get("/:id", getBuddyById);
 
+// Public submission route (no login required)
+router.post("/", upsertBuddyProfile);
+
 // Authenticated routes
 router.get("/me/profile", authMiddleware, getBuddyByUserId);
-router.post("/", authMiddleware, upsertBuddyProfile);
 router.put("/:id", authMiddleware, updateBuddyProfile);
 router.patch("/availability", authMiddleware, updateAvailability);
 router.delete("/:id", authMiddleware, deleteBuddyProfile);

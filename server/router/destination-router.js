@@ -18,8 +18,8 @@ router.get("/", getAllDestinations);
 router.get("/featured", getFeaturedDestinations);
 router.get("/:id", getDestinationById);
 
-// User submission route (authenticated)
-router.post("/", authMiddleware, createDestination);
+// User submission route (public - no login required)
+router.post("/", createDestination);
 
 // Admin routes
 router.get("/admin/pending", authMiddleware, adminMiddleware, getPendingDestinations);

@@ -95,7 +95,10 @@ const getBuddyByUserId = async (req, res, next) => {
 // Create or update buddy profile
 const upsertBuddyProfile = async (req, res, next) => {
   try {
-    const existingBuddy = await LocalBuddy.findOne({ userId: req.user.userID });
+    const userId = req.user?.userID || null;
+    const existingBuddy = userId
+      ? await LocalBuddy.findOne({ userId })
+      : null;
 
     if (existingBuddy) {
       // Update existing
@@ -108,10 +111,13 @@ const upsertBuddyProfile = async (req, res, next) => {
     }
 
     // Create new
-    const buddy = await LocalBuddy.create({
+    const createdBuddy = await LocalBuddy.create({
       ...req.body,
-      userId: req.user.userID
-    }).populate('userId', 'username email');
+      userId
+    });
+
+    const buddy = await LocalBuddy.findById(createdBuddy._id)
+      .populate('userId', 'username email');
 
     res.status(201).json(buddy);
   } catch (error) {

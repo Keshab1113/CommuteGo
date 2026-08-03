@@ -40,15 +40,19 @@ const CreateTrip = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (currentStep < 3) {
+      setCurrentStep(prev => prev + 1);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/trips`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
@@ -314,38 +318,40 @@ const CreateTrip = () => {
             </div>
           )}
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-between mt-8">
-            {currentStep > 1 && (
-              <button
-                type="button"
-                onClick={() => setCurrentStep(prev => prev - 1)}
-                className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
-              >
-                Previous
-              </button>
-            )}
-            {currentStep < 3 ? (
-              <button
-                type="button"
-                onClick={() => setCurrentStep(prev => prev + 1)}
-                disabled={!isStepValid()}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold hover:from-emerald-600 hover:to-cyan-600 transition-all ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Next Step
-              </button>
-            ) : (
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold hover:from-emerald-600 hover:to-cyan-600 transition-all ml-auto flex items-center gap-2"
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-                {loading ? 'Creating...' : 'Create Trip'}
-              </button>
-            )}
-          </div>
         </motion.form>
+
+        {/* Navigation Buttons - outside the form so Next Step never submits */}
+        <div className="flex justify-between mt-8">
+          {currentStep > 1 && (
+            <button
+              type="button"
+              onClick={() => setCurrentStep(prev => prev - 1)}
+              className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+            >
+              Previous
+            </button>
+          )}
+          {currentStep < 3 ? (
+            <button
+              type="button"
+              onClick={() => setCurrentStep(prev => prev + 1)}
+              disabled={!isStepValid()}
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold hover:from-emerald-600 hover:to-cyan-600 transition-all ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next Step
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold hover:from-emerald-600 hover:to-cyan-600 transition-all ml-auto flex items-center gap-2"
+            >
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              {loading ? 'Creating...' : 'Create Trip'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

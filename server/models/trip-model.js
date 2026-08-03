@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const tripSchema = new mongoose.Schema({
-  creatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  creatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 
   // Trip details
   destination: { type: String, required: true },

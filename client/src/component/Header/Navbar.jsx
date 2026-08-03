@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, Bus, Train, Plane, Home, Info, Phone, User, LogOut, ChevronDown, MapPin, ArrowRight, Compass, Users, Heart, Sparkles } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Menu, X, Bus, Train, Plane, Home, Info, Phone, User, LogOut, ChevronDown, MapPin, ArrowRight, Compass, Users, Heart, Sparkles, LayoutDashboard, Shield } from "lucide-react";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../store/auth";
 import { cn } from "../../lib/utils";
 
@@ -10,6 +10,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isExploreDropdownOpen, setIsExploreDropdownOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +23,10 @@ const Navbar = () => {
   const adminlogin = () => {
     navigate("/login");
   };
+
+  const isAdmin = user?.isAdmin || user?.role === "admin";
+  const dashboardPath = isAdmin ? "/admin" : "/travel-matchmaking";
+  const profilePath = isAdmin ? "/admin/profile" : "/profile";
 
   const navLinks = [
     { to: "/", label: "Home", icon: Home },
@@ -36,11 +41,7 @@ const Navbar = () => {
     { to: "/travel-matchmaking", label: "Travel Together", icon: Heart, color: "from-rose-500 to-pink-500", description: "Find compatible companions" },
   ];
 
-  const transportServices = [
-    { to: "/bus", label: "Bus Booking", icon: Bus, color: "from-orange-500 to-red-500" },
-    { to: "/flight", label: "Flight Booking", icon: Plane, color: "from-blue-500 to-cyan-500" },
-    { to: "/train", label: "Train Booking", icon: Train, color: "from-purple-500 to-pink-500" },
-  ];
+  
 
   return (
     <>
@@ -161,15 +162,66 @@ const Navbar = () => {
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
-              {/* Auth Button */}
+              {/* Auth Button / User Dropdown */}
               {isLoggedIn ? (
-                <NavLink
-                  to="/admin/profile"
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold hover:from-cyan-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
-                >
-                  <User className="w-4 h-4" />
-                  Profile
-                </NavLink>
+                <div className="hidden sm:block sm:relative">
+                  <button
+                    onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold hover:from-cyan-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-cyan-500/25"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold text-xs">
+                      {user?.username?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isUserDropdownOpen && "rotate-180")} />
+                  </button>
+
+                  {isUserDropdownOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                      />
+                      <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-[#1C1B1B] border border-gray-800 shadow-xl shadow-cyan-500/10 overflow-hidden z-50 animate-scale-in">
+                        <div className="p-4 border-b border-gray-800">
+                          <p className="font-semibold text-sm text-white truncate">{user?.username || 'User'}</p>
+                          <p className="text-xs text-gray-500 truncate">{user?.email || ''}</p>
+                          <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-medium">
+                            {isAdmin ? <Shield className="w-3 h-3" /> : null}
+                            <span className="capitalize">{isAdmin ? 'Admin' : 'User'}</span>
+                          </div>
+                        </div>
+                        <div className="p-2">
+                          <Link
+                            to={dashboardPath}
+                            onClick={() => setIsUserDropdownOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800/50 transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4 text-gray-500" />
+                            <span className="text-sm font-medium text-gray-200">Dashboard</span>
+                          </Link>
+                          <Link
+                            to={profilePath}
+                            onClick={() => setIsUserDropdownOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800/50 transition-colors"
+                          >
+                            <User className="w-4 h-4 text-gray-500" />
+                            <span className="text-sm font-medium text-gray-200">Profile</span>
+                          </Link>
+                        </div>
+                        <div className="p-2 border-t border-gray-800">
+                          <Link
+                            to="/logout"
+                            onClick={() => setIsUserDropdownOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-500/10 text-red-400 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            <span className="text-sm font-medium">Logout</span>
+                          </Link>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               ) : (
                 <button
                   onClick={adminlogin}
@@ -226,39 +278,44 @@ const Navbar = () => {
               ))}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-800">
-              <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                Transport Services
-              </p>
-              <div className="grid grid-cols-3 gap-2">
-                {transportServices.map((service) => (
-                  <NavLink
-                    key={service.to}
-                    to={service.to}
-                    onClick={() => setIsOpen(false)}
-                    className="flex flex-col items-center gap-2 px-3 py-3 rounded-xl bg-gray-800/50 hover:bg-gray-800 transition-all duration-200"
-                  >
-                    <div className={cn("w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center", service.color)}>
-                      <service.icon className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="text-xs font-medium text-gray-300">
-                      {service.label.split(" ")[0]}
-                    </span>
-                  </NavLink>
-                ))}
-              </div>
-            </div>
+            
 
             <div className="mt-4 pt-4 border-t border-gray-800">
               {isLoggedIn ? (
-                <NavLink
-                  to="/admin/profile"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold"
-                >
-                  <User className="w-4 h-4" />
-                  Profile
-                </NavLink>
+                <div className="space-y-2">
+                  <div className="px-4 py-2">
+                    <p className="text-sm font-semibold text-white">{user?.username || 'User'}</p>
+                    <p className="text-xs text-gray-500">{user?.email || ''}</p>
+                    <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-medium">
+                      {isAdmin ? <Shield className="w-3 h-3" /> : null}
+                      <span className="capitalize">{isAdmin ? 'Admin' : 'User'}</span>
+                    </div>
+                  </div>
+                  <NavLink
+                    to={dashboardPath}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </NavLink>
+                  <NavLink
+                    to={profilePath}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-2 w-full px-4 py-3 rounded-xl bg-white/5 border border-gray-800 text-white text-sm font-semibold"
+                  >
+                    <User className="w-4 h-4" />
+                    Profile
+                  </NavLink>
+                  <NavLink
+                    to="/logout"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-2 w-full px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-semibold"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </NavLink>
+                </div>
               ) : (
                 <button
                   onClick={() => {

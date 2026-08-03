@@ -21,9 +21,11 @@ const {
 router.get("/", getAllTrips);
 router.get("/:id", getTripById);
 
+// Public submission route (no login required)
+router.post("/", createTrip);
+
 // Authenticated routes
 router.get("/my/trips", authMiddleware, getMyTrips);
-router.post("/", authMiddleware, createTrip);
 router.put("/:id", authMiddleware, updateTrip);
 router.patch("/:id/status", authMiddleware, updateTripStatus);
 router.delete("/:id", authMiddleware, deleteTrip);

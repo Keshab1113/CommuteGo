@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const localBuddySchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   displayName: { type: String, required: true },
 
   // Languages & Skills
@@ -22,11 +22,7 @@ const localBuddySchema = new mongoose.Schema({
   reviewCount: { type: Number, default: 0 },
 
   // Availability
-  availability: [{
-    dayOfWeek: { type: Number },
-    startTime: { type: String },
-    endTime: { type: String }
-  }],
+  availability: { type: String, default: 'Flexible' },
   isAvailableNow: { type: Boolean, default: false },
 
   // Content

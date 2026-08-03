@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 export default function Contact() {
   const [formData, setFormData] = useState({ fullname: "", email: "", phone: "", subject: "", message: "" });
-  const [reviewData, setReviewData] = useState({ fullname: "", rating: 5, comment: "" });
+  const [reviewData, setReviewData] = useState({ fullname: "", email: "", rating: 5, comment: "" });
   const [submitted, setSubmitted] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,13 +43,19 @@ export default function Contact() {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...reviewData, type: "review" })
+        body: JSON.stringify({
+          fullname: reviewData.fullname,
+          email: reviewData.email,
+          rating: reviewData.rating,
+          message: reviewData.comment,
+          type: "review"
+        })
       });
 
       if (response.ok) {
         setReviewSubmitted(true);
         toast.success("Thank you for your review!");
-        setReviewData({ fullname: "", rating: 5, comment: "" });
+        setReviewData({ fullname: "", email: "", rating: 5, comment: "" });
         setTimeout(() => setReviewSubmitted(false), 5000);
       } else {
         toast.error("Failed to submit review");
@@ -305,6 +311,17 @@ export default function Contact() {
                       onChange={(e) => setReviewData({ ...reviewData, fullname: e.target.value })}
                       className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all text-white placeholder-gray-500"
                       placeholder="John Doe"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-300">Email Address</label>
+                    <input
+                      type="email"
+                      required
+                      value={reviewData.email}
+                      onChange={(e) => setReviewData({ ...reviewData, email: e.target.value })}
+                      className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all text-white placeholder-gray-500"
+                      placeholder="john@example.com"
                     />
                   </div>
                   <div>

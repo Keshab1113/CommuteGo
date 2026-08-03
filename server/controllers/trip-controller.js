@@ -94,17 +94,21 @@ const getMyTrips = async (req, res, next) => {
 // Create trip
 const createTrip = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.userID);
+    const userId = req.user?.userID || null;
+    let user = null;
+    let isAdmin = false;
 
-    // Determine if user is admin
-    const isAdmin = user.role === 'admin';
+    if (userId) {
+      user = await User.findById(userId);
+      isAdmin = user?.role === 'admin' || user?.isAdmin === true;
+    }
 
     const tripData = {
       ...req.body,
-      creatorId: req.user.userID,
-      creatorName: user.username,
-      creatorAvatar: user.avatar || null,
-      currentParticipants: [req.user.userID],
+      creatorId: userId,
+      creatorName: user ? user.username : 'Anonymous Traveler',
+      creatorAvatar: user ? user.avatar || null : null,
+      currentParticipants: userId ? [userId] : [],
       status: isAdmin ? 'approved' : 'pending',
       submittedBy: isAdmin ? 'admin' : 'user'
     };

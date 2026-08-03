@@ -12,7 +12,9 @@ export const AuthProvider = ({ children }) => {
 
     const storeTokenInLS = (serverToken) => {
         setToken(serverToken);
-        return localStorage.setItem("token", serverToken);
+        localStorage.setItem("token", serverToken);
+        userAuthentication(serverToken);
+        return;
     };
 
     let isLoggedIn = !!token;
@@ -22,13 +24,13 @@ export const AuthProvider = ({ children }) => {
         return localStorage.removeItem("token");
     };
 
-    const userAuthentication = async () => {
+    const userAuthentication = async (currentToken = token) => {
         try {
             setIsLoading(true);
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/user`, {
                 method: "GET",
                 headers: {
-                    Authorization: authorizationToken,
+                    Authorization: `Bearer ${currentToken}`,
                 }
             });
 
@@ -48,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     const getfeedbackdata = async() => {
         try {
             const token = localStorage.getItem('token');
+            if (!token) return;
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/form`, {
                 method: "GET",
                 headers: {
@@ -65,8 +68,13 @@ export const AuthProvider = ({ children }) => {
 
 
     useEffect(() => {
-        getfeedbackdata();
-        userAuthentication();
+        const token = localStorage.getItem('token');
+        if (token) {
+            getfeedbackdata();
+            userAuthentication();
+        } else {
+            setIsLoading(false);
+        }
     }, [])
 
     return (

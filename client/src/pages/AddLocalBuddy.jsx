@@ -32,10 +32,15 @@ const AddLocalBuddy = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (currentStep < 3) {
+      nextStep();
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
       const data = {
         ...formData,
         dayRate: Number(formData.dayRate),
@@ -47,8 +52,7 @@ const AddLocalBuddy = () => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/local-buddies`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(data),
       });
@@ -76,7 +80,32 @@ const AddLocalBuddy = () => {
     }));
   };
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 3));
+  const validateStep = (step) => {
+    switch (step) {
+      case 1:
+        return (
+          formData.displayName.trim() &&
+          formData.location.city.trim() &&
+          formData.location.state.trim() &&
+          formData.languages.length > 0
+        );
+      case 2:
+        return formData.dayRate && Number(formData.dayRate) > 0;
+      case 3:
+        return formData.bio.trim() && formData.whatIOffer.trim();
+      default:
+        return false;
+    }
+  };
+
+  const nextStep = () => {
+    if (!validateStep(currentStep)) {
+      toast.error('Please fill all required fields before continuing.');
+      return;
+    }
+    setCurrentStep(prev => Math.min(prev + 1, 3));
+  };
+
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   return (
@@ -428,46 +457,49 @@ const AddLocalBuddy = () => {
               </div>
             )}
 
-            {/* Navigation Buttons */}
-            <div className="flex gap-4 pt-4">
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  className="flex-1 py-4 rounded-xl bg-white/5 border border-gray-700 text-white font-medium hover:bg-white/10 transition-all"
-                >
-                  Back
-                </button>
-              )}
-              {currentStep < 3 ? (
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  className="flex-1 py-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold hover:from-rose-600 hover:to-pink-600 transition-all shadow-lg shadow-rose-500/25"
-                >
-                  Continue
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex-1 py-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold hover:from-rose-600 hover:to-pink-600 transition-all shadow-lg shadow-rose-500/25 disabled:opacity-70"
-                >
-                  {isLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="w-5 h-5 animate-spin" /> Submitting...
-                    </span>
-                  ) : (
-                    'Submit Application'
-                  )}
-                </button>
-              )}
-            </div>
-
-            <p className="text-center text-xs text-gray-500">
-              Your application will be reviewed by admin before appearing on the platform.
-            </p>
           </form>
+
+          {/* Navigation Buttons - kept OUTSIDE the form so Continue/Back never submit */}
+          <div className="flex gap-4 pt-4">
+            {currentStep > 1 && (
+              <button
+                type="button"
+                onClick={prevStep}
+                className="flex-1 py-4 rounded-xl bg-white/5 border border-gray-700 text-white font-medium hover:bg-white/10 transition-all"
+              >
+                Back
+              </button>
+            )}
+            {currentStep < 3 ? (
+              <button
+                type="button"
+                onClick={nextStep}
+                disabled={!validateStep(currentStep)}
+                className="flex-1 py-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold hover:from-rose-600 hover:to-pink-600 transition-all shadow-lg shadow-rose-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="flex-1 py-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold hover:from-rose-600 hover:to-pink-600 transition-all shadow-lg shadow-rose-500/25 disabled:opacity-70"
+              >
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin" /> Submitting...
+                  </span>
+                ) : (
+                  'Submit Application'
+                )}
+              </button>
+            )}
+          </div>
+
+          <p className="text-center text-xs text-gray-500 pt-2">
+            Your application will be reviewed by admin before appearing on the platform.
+          </p>
         </motion.div>
       </div>
     </div>

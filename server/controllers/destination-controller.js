@@ -133,7 +133,7 @@ const createDestination = async (req, res, next) => {
   try {
     const destination = await Destination.create({
       ...req.body,
-      createdBy: req.user.userID
+      createdBy: req.user?.userID || null
     });
 
     res.status(201).json(destination);

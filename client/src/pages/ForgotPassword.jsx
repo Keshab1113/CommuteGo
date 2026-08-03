@@ -24,7 +24,7 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen flex relative overflow-hidden bg-[#141313]">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
+      <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center">
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 via-cyan-500/10 to-emerald-500/20">
           <div className="absolute top-0 left-0 w-96 h-96 bg-rose-500/30 rounded-full blur-[128px] animate-pulse"></div>
@@ -40,7 +40,7 @@ const ForgotPassword = () => {
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 flex flex-col justify-center px-16"
+          className="relative z-10 flex flex-col justify-center items-center px-16"
         >
           <Link to="/" className="inline-flex items-center gap-3 mb-12 group">
             <div className="w-16 h-16 rounded-2xl  flex items-center justify-center  group-hover:scale-105 transition-transform">
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
             </span>
           </Link>
 
-          <h1 className="text-5xl font-bold mb-6 leading-tight">
+          <h1 className="text-5xl font-bold mb-6 leading-tight text-center">
             <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               Reset Your
             </span>
@@ -61,7 +61,7 @@ const ForgotPassword = () => {
             </span>
           </h1>
 
-          <p className="text-xl text-gray-400 mb-12 max-w-md">
+          <p className="text-xl text-gray-400 mb-12 max-w-md text-center">
             Don't worry, we've got you covered. Enter your email and we'll send you a link to reset your password.
           </p>
 
