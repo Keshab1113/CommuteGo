@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, Users, Shield, Heart, Compass, ArrowRight, Loader2, Mountain, TreePine, Tent, Utensils, Camera as CameraIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -173,7 +174,10 @@ const DestinationsSection = ({ destinations, loading }) => {
                 className="group relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
               >
                 {/* Image */}
-                <div className="relative h-48 overflow-hidden">
+                <div
+                  className="relative h-48 overflow-hidden cursor-pointer"
+                  onClick={() => navigate(`/hidden-destinations/${destination._id}`)}
+                >
                   <img
                     src={destination.images?.[0] || 'https://images.unsplash.com/photo-1585136917228-bd77b11cf700?w=600&h=400&fit=crop'}
                     alt={destination.name}
@@ -196,12 +200,12 @@ const DestinationsSection = ({ destinations, loading }) => {
                 </div>
 
                 {/* Content */}
-                <div className="p-5">
+                <div className="p-5 cursor-pointer" onClick={() => navigate(`/hidden-destinations/${destination._id}`)}>
                   <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
                     <MapPin className="w-4 h-4 text-cyan-400" />
                     {destination.location?.name || 'Unknown'}
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{destination.name}</h3>
+                  <h3 className="text-xl font-bold mb-2 hover:text-cyan-400 transition-colors">{destination.name}</h3>
                   <p className="text-sm text-gray-400 mb-4 line-clamp-2">{destination.description}</p>
 
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -231,6 +235,11 @@ const DestinationsSection = ({ destinations, loading }) => {
       </div>
     </section>
   );
+};
+
+DestinationsSection.propTypes = {
+  destinations: PropTypes.array,
+  loading: PropTypes.bool
 };
 
 export default DestinationsSection;

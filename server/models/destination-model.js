@@ -44,6 +44,18 @@ const destinationSchema = new mongoose.Schema({
     }
   },
 
+  // Extended content
+  blogContent: { type: String, default: '' },
+  adminNotes: { type: String, default: '' },
+  additionalDetails: { type: String, default: '' },
+
+  // Submitter contact info (collected from public user submissions)
+  submitter: {
+    name: { type: String, default: '' },
+    email: { type: String, default: '' },
+    phone: { type: String, default: '' }
+  },
+
   // Metadata
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   submittedBy: { type: String, enum: ['admin', 'user'], default: 'admin' },

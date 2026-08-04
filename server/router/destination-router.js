@@ -11,7 +11,8 @@ const {
   deleteDestination,
   getPendingDestinations,
   reviewDestination,
-  getDestinationFilters
+  getDestinationFilters,
+  askSubmitter
 } = require("../controllers/destination-controller.js");
 
 // Public routes (only approved destinations)
@@ -28,6 +29,7 @@ router.get("/filters", getDestinationFilters);
 // Admin routes
 router.get("/admin/pending", authMiddleware, adminMiddleware, getPendingDestinations);
 router.patch("/admin/:id/review", authMiddleware, adminMiddleware, reviewDestination);
+router.post("/admin/:id/ask", authMiddleware, adminMiddleware, askSubmitter);
 router.put("/:id", authMiddleware, adminMiddleware, updateDestination);
 router.delete("/:id", authMiddleware, adminMiddleware, deleteDestination);
 

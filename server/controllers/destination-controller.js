@@ -1,4 +1,6 @@
 const Destination = require("../models/destination-model.js");
+const Conversation = require("../models/conversation-model.js");
+const Message = require("../models/message-model.js");
 const { createNotification } = require("../utils/notification-helper.js");
 
 // Get all destinations with filtering and pagination (public - only approved)
@@ -137,11 +139,14 @@ const getDestinationById = async (req, res, next) => {
   }
 };
 
-// Create destination (admin only)
+// Create destination (public user submission or admin)
 const createDestination = async (req, res, next) => {
   try {
+    const { submitter, ...rest } = req.body;
+
     const destination = await Destination.create({
-      ...req.body,
+      ...rest,
+      submitter: submitter || {},
       createdBy: req.user?.userID || null
     });
 
@@ -173,6 +178,74 @@ const updateDestination = async (req, res, next) => {
     }
 
     res.status(200).json(destination);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Ask the submitting user a question (admin only)
+const askSubmitter = async (req, res, next) => {
+  try {
+    const { message } = req.body;
+    const destination = await Destination.findById(req.params.id);
+
+    if (!destination) {
+      return res.status(404).json({ message: "Destination not found" });
+    }
+
+    if (!destination.createdBy) {
+      return res.status(400).json({
+        message: "Cannot ask question: destination was submitted anonymously."
+      });
+    }
+
+    if (!message?.trim()) {
+      return res.status(400).json({ message: "Message is required" });
+    }
+
+    const adminId = req.user.userID;
+    const submitterId = destination.createdBy.toString();
+
+    // Find or create direct conversation between admin and submitter
+    let conversation = await Conversation.findOne({
+      participants: { $all: [adminId, submitterId] },
+      type: 'direct',
+      isActive: true
+    });
+
+    if (!conversation) {
+      conversation = await Conversation.create({
+        participants: [adminId, submitterId],
+        type: 'direct',
+        relatedTo: { type: 'destination', id: destination._id }
+      });
+    }
+
+    const newMessage = await Message.create({
+      conversationId: conversation._id,
+      senderId: adminId,
+      content: message.trim(),
+      type: 'text'
+    });
+
+    // Update conversation lastMessage and unread count for submitter
+    conversation.lastMessage = {
+      content: message.trim(),
+      senderId: adminId,
+      createdAt: newMessage.createdAt
+    };
+
+    const unreadIndex = conversation.unreadCount.findIndex(
+      uc => uc.userId.toString() === submitterId
+    );
+    if (unreadIndex > -1) {
+      conversation.unreadCount[unreadIndex].count += 1;
+    } else {
+      conversation.unreadCount.push({ userId: submitterId, count: 1 });
+    }
+    await conversation.save();
+
+    res.status(201).json({ message: "Question sent", conversationId: conversation._id });
   } catch (error) {
     next(error);
   }
@@ -230,4 +303,5 @@ module.exports = {
   getPendingDestinations,
   reviewDestination,
   getDestinationFilters,
+  askSubmitter,
 };

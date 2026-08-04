@@ -294,6 +294,109 @@ body {
   scrollbar-width: none;
 }
 
+/* Dark Quill editor overrides */
+.ql-toolbar {
+  background-color: #1c1b1b;
+  border-color: #374151 !important;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.ql-toolbar .ql-stroke,
+.ql-toolbar .ql-fill,
+.ql-toolbar .ql-picker-label {
+  stroke: #d1d5db !important;
+  color: #d1d5db !important;
+}
+
+.ql-toolbar .ql-picker-options {
+  background-color: #1c1b1b;
+  border-color: #374151 !important;
+  color: #d1d5db;
+}
+
+.ql-toolbar .ql-picker-item:hover {
+  color: #06b6d4;
+}
+
+.ql-container {
+  background-color: #0a0a0a;
+  border-color: #374151 !important;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.ql-editor {
+  color: #f3f4f6;
+  min-height: 200px;
+}
+
+.ql-editor.ql-blank::before {
+  color: #6b7280;
+}
+
+.ql-editor h1,
+.ql-editor h2,
+.ql-editor h3,
+.ql-editor p,
+.ql-editor ul,
+.ql-editor ol {
+  color: #f3f4f6;
+}
+
+.ql-editor a {
+  color: #06b6d4;
+}
+
+.ql-editor blockquote {
+  border-left-color: #06b6d4;
+  color: #d1d5db;
+}
+
+.ql-preview {
+  color: #f3f4f6;
+}
+
+.ql-preview h1,
+.ql-preview h2,
+.ql-preview h3,
+.ql-preview p,
+.ql-preview ul,
+.ql-preview ol,
+.ql-preview li {
+  color: #f3f4f6;
+}
+
+.ql-preview a {
+  color: #06b6d4;
+  text-decoration: underline;
+}
+
+.ql-preview blockquote {
+  border-left: 4px solid #06b6d4;
+  padding-left: 1rem;
+  color: #d1d5db;
+  font-style: italic;
+}
+
+.ql-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.ql-preview th,
+.ql-preview td {
+  border: 1px solid #374151;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.ql-preview th {
+  background-color: #1c1b1b;
+  font-weight: 600;
+}
+
 .firstbackground {
   background: url("/back7.jpg");
   background-repeat: no-repeat;

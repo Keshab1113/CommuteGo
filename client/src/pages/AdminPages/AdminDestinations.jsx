@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Trash2, MapPin, Shield, Loader2, Clock, Check, X } from 'lucide-react';
+import { Search, Trash2, MapPin, Shield, Loader2, Clock, Check, X, Eye } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import { destinationsApi } from '../../services/api/adminApi';
 
 const AdminDestinations = () => {
+  const navigate = useNavigate();
   const [approvedDestinations, setApprovedDestinations] = useState([]);
   const [pendingDestinations, setPendingDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -151,7 +153,12 @@ const AdminDestinations = () => {
                           className="w-12 h-12 rounded-xl object-cover"
                         />
                         <div>
-                          <span className="font-medium text-white">{dest.name}</span>
+                          <button
+                            onClick={() => navigate(`/admin/destinations/${dest._id}`)}
+                            className="font-medium text-white hover:text-cyan-400 transition-colors text-left"
+                          >
+                            {dest.name}
+                          </button>
                           {dest.submittedBy === 'user' && (
                             <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 text-xs">
                               User Submit
@@ -215,6 +222,13 @@ const AdminDestinations = () => {
                             </button>
                           </>
                         )}
+                        <button
+                          onClick={() => navigate(`/admin/destinations/${dest._id}`)}
+                          className="p-2 rounded-lg hover:bg-cyan-500/10 text-gray-400 hover:text-cyan-400 transition-colors"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
                         <button
                           onClick={() => handleDelete(dest._id)}
                           className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"

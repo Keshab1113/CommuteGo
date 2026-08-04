@@ -21,6 +21,7 @@ import AddLocalBuddy from './pages/AddLocalBuddy.jsx'
 import TravelMatchmaking from './pages/TravelMatchmaking.jsx'
 import Trips from './pages/Trips.jsx'
 import CreateTrip from './pages/CreateTrip.jsx'
+import DestinationDetail from './pages/DestinationDetail.jsx'
 import { AuthProvider } from './store/auth.jsx'
 import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
@@ -36,6 +37,7 @@ import NotificationDetail from './pages/AdminPages/AdminNotifications/Notificati
 import AdminFeedback from './pages/AdminPages/AdminFeedback.jsx'
 import AdminContact from './pages/AdminPages/AdminContact.jsx'
 import AdminDestinations from './pages/AdminPages/AdminDestinations.jsx'
+import AdminDestinationDetail from './pages/AdminPages/AdminDestinationDetail.jsx'
 import AdminLocalBuddies from './pages/AdminPages/AdminLocalBuddies.jsx'
 import AdminTrips from './pages/AdminPages/AdminTrips.jsx'
 import { Logout } from './pages/Logout.jsx'
@@ -54,6 +56,7 @@ const router = createBrowserRouter(
         <Route path='contact' element={<Contact />} />
         <Route path='flight' element={<FlightPage />} />
         <Route path='hidden-destinations' element={<HiddenDestinations />} />
+        <Route path='hidden-destinations/:id' element={<DestinationDetail />} />
         <Route path='add-destination' element={<AddDestination />} />
         <Route path='local-buddies' element={<LocalBuddies />} />
         <Route path='become-local-buddy' element={<AddLocalBuddy />} />
@@ -71,6 +74,7 @@ const router = createBrowserRouter(
         <Route path='' element={<AdminHome />} />
         <Route path='users' element={<AllUsers />} />
         <Route path='destinations' element={<AdminDestinations />} />
+        <Route path='destinations/:id' element={<AdminDestinationDetail />} />
         <Route path='local-buddies' element={<AdminLocalBuddies />} />
         <Route path='trips' element={<AdminTrips />} />
         <Route path='feedbacks' element={<AdminFeedback />} />

@@ -294,7 +294,8 @@ const HiddenDestinations = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.05 }}
                     whileHover={{ y: -5 }}
-                    className="group relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-all duration-300"
+                    onClick={() => navigate(`/hidden-destinations/${destination._id}`)}
+                    className="group relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-all duration-300 cursor-pointer"
                   >
                     {/* Image */}
                     <div className="relative h-48 overflow-hidden">
@@ -317,10 +318,22 @@ const HiddenDestinations = () => {
 
                       {/* Action Buttons */}
                       <div className="absolute top-4 right-4 flex gap-2">
-                        <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // TODO: toggle favorite
+                          }}
+                          className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors"
+                        >
                           <Heart className="w-4 h-4" />
                         </button>
-                        <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // TODO: share
+                          }}
+                          className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors"
+                        >
                           <Share2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -332,7 +345,7 @@ const HiddenDestinations = () => {
                         <MapPin className="w-4 h-4 text-emerald-400" />
                         {destination.location?.name || 'Unknown'}
                       </div>
-                      <h3 className="text-xl font-bold mb-2">{destination.name}</h3>
+                      <h3 className="text-xl font-bold mb-2 group-hover:text-emerald-400 transition-colors">{destination.name}</h3>
                       <p className="text-sm text-gray-400 mb-4 line-clamp-2">{destination.description}</p>
 
                       {/* Highlights */}
@@ -367,7 +380,10 @@ const HiddenDestinations = () => {
                       </div>
 
                       {/* CTA */}
-                      <button className="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-medium hover:from-emerald-600 hover:to-cyan-600 transition-all">
+                      <button
+                        onClick={() => navigate(`/hidden-destinations/${destination._id}`)}
+                        className="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-medium hover:from-emerald-600 hover:to-cyan-600 transition-all"
+                      >
                         Explore Destination
                       </button>
                     </div>

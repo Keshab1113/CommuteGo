@@ -41,6 +41,7 @@ export const destinationsApi = {
   delete: (id) => apiClient.delete(`/destinations/${id}`),
   getPending: () => apiClient.get('/destinations/admin/pending'),
   review: (id, data) => apiClient.patch(`/destinations/admin/${id}/review`, data),
+  askSubmitter: (id, data) => apiClient.post(`/destinations/admin/${id}/ask`, data),
 };
 
 // Local Buddies API

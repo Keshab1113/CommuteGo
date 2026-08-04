@@ -1,13 +1,11 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Shield, Star, Loader2, X, Image, Gift, Award, Navigation, Calendar, DollarSign, Tag, Info, CheckCircle } from 'lucide-react';
+import { MapPin, Shield, Star, Loader2, Image, Gift, Award, Navigation, Calendar, DollarSign, Tag, Info, CheckCircle, User, Mail, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ThemeContext } from '../context/ThemeContext';
 
 const AddDestination = () => {
   const navigate = useNavigate();
-  const { darkMode } = useContext(ThemeContext);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -24,35 +22,57 @@ const AddDestination = () => {
     safetyScore: 5,
     crowdLevel: 'Medium',
     timeRequired: '',
-    category: 'nature'
+    category: 'nature',
+    submitterName: '',
+    submitterEmail: '',
+    submitterPhone: ''
   });
+
+  // Keep raw input strings so spaces/commas aren't stripped while typing.
+  const [tagInput, setTagInput] = useState('');
+  const [imageInput, setImageInput] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Only allow actual submission on the final step. On earlier steps,
     // pressing Enter or any unexpected submit should advance instead.
-    if (currentStep < 3) {
+    if (currentStep < 4) {
       nextStep();
+      return;
+    }
+
+    if (!validateStep(4)) {
+      toast.error('Please fill all required contact fields with a valid email.');
       return;
     }
 
     setIsLoading(true);
 
+    // Commit image URLs in case onBlur wasn't fired before submit.
+    const images = parseImages(imageInput);
+    const finalFormData = { ...formData, images };
+    setImageInput(images.join(', '));
+
     try {
       const data = {
-        ...formData,
-        estimatedBudget: Number(formData.estimatedBudget),
-        safetyScore: Number(formData.safetyScore),
+        ...finalFormData,
+        estimatedBudget: Number(finalFormData.estimatedBudget),
+        safetyScore: Number(finalFormData.safetyScore),
         location: {
-          name: formData.locationName,
+          name: finalFormData.locationName,
           coordinates: {
-            lat: formData.latitude ? Number(formData.latitude) : 0,
-            lng: formData.longitude ? Number(formData.longitude) : 0
+            lat: finalFormData.latitude ? Number(finalFormData.latitude) : 0,
+            lng: finalFormData.longitude ? Number(finalFormData.longitude) : 0
           }
         },
         status: 'pending',
-        submittedBy: 'user'
+        submittedBy: 'user',
+        submitter: {
+          name: finalFormData.submitterName.trim(),
+          email: finalFormData.submitterEmail.trim(),
+          phone: finalFormData.submitterPhone.trim()
+        }
       };
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/destinations`, {
@@ -86,12 +106,29 @@ const AddDestination = () => {
     }));
   };
 
-  const handleTagInput = (e) => {
-    const value = e.target.value;
-    setFormData(prev => ({
-      ...prev,
-      tags: value.split(',').map(t => t.trim()).filter(Boolean)
-    }));
+  const parseTags = (raw) => raw.split(',').map(t => t.trim()).filter(Boolean);
+
+  const handleTagChange = (e) => {
+    setTagInput(e.target.value);
+  };
+
+  const handleTagBlur = () => {
+    const tags = parseTags(tagInput);
+    setFormData(prev => ({ ...prev, tags }));
+    setTagInput(tags.join(', '));
+  };
+
+  const parseImages = (raw) =>
+    raw.split(',').map(u => u.trim()).filter(u => u.startsWith('http'));
+
+  const handleImageChange = (e) => {
+    setImageInput(e.target.value);
+  };
+
+  const handleImageBlur = () => {
+    const images = parseImages(imageInput);
+    setFormData(prev => ({ ...prev, images }));
+    setImageInput(images.join(', '));
   };
 
   const validateStep = (step) => {
@@ -102,6 +139,13 @@ const AddDestination = () => {
         return formData.estimatedBudget && Number(formData.estimatedBudget) > 0;
       case 3:
         return true;
+      case 4:
+        return (
+          formData.submitterName.trim() &&
+          formData.submitterEmail.trim() &&
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.submitterEmail) &&
+          formData.submitterPhone.trim()
+        );
       default:
         return false;
     }
@@ -112,10 +156,27 @@ const AddDestination = () => {
       toast.error('Please fill all required fields before continuing.');
       return;
     }
-    setCurrentStep(prev => Math.min(prev + 1, 3));
+
+    // Commit raw comma-separated inputs into formData before leaving the step,
+    // in case the user advanced without triggering onBlur.
+    if (currentStep === 2) {
+      const tags = parseTags(tagInput);
+      setFormData(prev => ({ ...prev, tags }));
+      setTagInput(tags.join(', '));
+    }
+
+    setCurrentStep(prev => Math.min(prev + 1, 4));
   };
 
-  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+  const prevStep = () => {
+    // Commit tags if navigating away from step 2 without blurring.
+    if (currentStep === 2) {
+      const tags = parseTags(tagInput);
+      setFormData(prev => ({ ...prev, tags }));
+      setTagInput(tags.join(', '));
+    }
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white py-8">
@@ -170,7 +231,7 @@ const AddDestination = () => {
 
         {/* Progress Steps */}
         <div className="flex items-center justify-between mb-8 px-4">
-          {['Basics', 'Details', 'Media'].map((step, index) => (
+          {['Basics', 'Details', 'Media', 'Contact'].map((step, index) => (
             <div key={step} className="flex items-center">
               <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
                 currentStep > index + 1
@@ -188,8 +249,8 @@ const AddDestination = () => {
               <span className={`ml-3 text-sm font-medium hidden sm:block ${
                 currentStep >= index + 1 ? 'text-white' : 'text-gray-500'
               }`}>{step}</span>
-              {index < 2 && (
-                <div className={`w-12 sm:w-20 h-0.5 mx-3 ${
+              {index < 3 && (
+                <div className={`w-8 sm:w-16 h-0.5 mx-3 ${
                   currentStep > index + 1 ? 'bg-emerald-500' : 'bg-gray-700'
                 }`} />
               )}
@@ -367,8 +428,9 @@ const AddDestination = () => {
                   </label>
                   <input
                     type="text"
-                    value={formData.tags.join(', ')}
-                    onChange={handleTagInput}
+                    value={tagInput}
+                    onChange={handleTagChange}
+                    onBlur={handleTagBlur}
                     className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white placeholder-gray-500"
                     placeholder="peaceful, nature, photography, camping"
                   />
@@ -386,11 +448,9 @@ const AddDestination = () => {
                   </label>
                   <textarea
                     rows={3}
-                    value={formData.images.join(', ')}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      images: e.target.value.split(',').map(u => u.trim()).filter(u => u.startsWith('http'))
-                    })}
+                    value={imageInput}
+                    onChange={handleImageChange}
+                    onBlur={handleImageBlur}
                     className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white placeholder-gray-500 resize-none"
                     placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
                   />
@@ -436,6 +496,68 @@ const AddDestination = () => {
               </div>
             )}
 
+            {/* Step 4: Contact Info */}
+            {currentStep === 4 && (
+              <div className="space-y-6">
+                <div className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                  <div className="flex items-start gap-3">
+                    <User className="w-5 h-5 text-cyan-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-cyan-400">Almost there!</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Please share your contact details so our team can reach you if we need more information about this destination.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-300">
+                    <User className="w-4 h-4 text-emerald-400" />
+                    Your Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.submitterName}
+                    onChange={(e) => setFormData({ ...formData, submitterName: e.target.value })}
+                    className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white placeholder-gray-500"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-300">
+                    <Mail className="w-4 h-4 text-cyan-400" />
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.submitterEmail}
+                    onChange={(e) => setFormData({ ...formData, submitterEmail: e.target.value })}
+                    className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white placeholder-gray-500"
+                    placeholder="john@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-300">
+                    <Phone className="w-4 h-4 text-rose-400" />
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.submitterPhone}
+                    onChange={(e) => setFormData({ ...formData, submitterPhone: e.target.value })}
+                    className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white placeholder-gray-500"
+                    placeholder="+91 99999 99999"
+                  />
+                </div>
+              </div>
+            )}
+
           </form>
 
           {/* Navigation Buttons - kept OUTSIDE the form so Continue/Back never submit */}
@@ -449,7 +571,7 @@ const AddDestination = () => {
                 Back
               </button>
             )}
-            {currentStep < 3 ? (
+            {currentStep < 4 ? (
               <button
                 type="button"
                 onClick={nextStep}
