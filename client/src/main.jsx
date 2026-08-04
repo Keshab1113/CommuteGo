@@ -17,9 +17,11 @@ import TermsOfService from './pages/TermsOfService.jsx'
 import HiddenDestinations from './pages/HiddenDestinations.jsx'
 import AddDestination from './pages/AddDestination.jsx'
 import LocalBuddies from './pages/LocalBuddies.jsx'
+import LocalBuddyDetail from './pages/LocalBuddyDetail.jsx'
 import AddLocalBuddy from './pages/AddLocalBuddy.jsx'
 import TravelMatchmaking from './pages/TravelMatchmaking.jsx'
 import Trips from './pages/Trips.jsx'
+import TripDetail from './pages/TripDetail.jsx'
 import CreateTrip from './pages/CreateTrip.jsx'
 import DestinationDetail from './pages/DestinationDetail.jsx'
 import { AuthProvider } from './store/auth.jsx'
@@ -39,7 +41,9 @@ import AdminContact from './pages/AdminPages/AdminContact.jsx'
 import AdminDestinations from './pages/AdminPages/AdminDestinations.jsx'
 import AdminDestinationDetail from './pages/AdminPages/AdminDestinationDetail.jsx'
 import AdminLocalBuddies from './pages/AdminPages/AdminLocalBuddies.jsx'
+import AdminLocalBuddyDetail from './pages/AdminPages/AdminLocalBuddyDetail.jsx'
 import AdminTrips from './pages/AdminPages/AdminTrips.jsx'
+import AdminTripDetail from './pages/AdminPages/AdminTripDetail.jsx'
 import { Logout } from './pages/Logout.jsx'
 import UserEdit from "./pages/AdminPages/UserEditPage/UserEdit.jsx"
 import ManageFeedbacks from './pages/AdminPages/ManageFeedbacks.jsx'
@@ -59,9 +63,11 @@ const router = createBrowserRouter(
         <Route path='hidden-destinations/:id' element={<DestinationDetail />} />
         <Route path='add-destination' element={<AddDestination />} />
         <Route path='local-buddies' element={<LocalBuddies />} />
+        <Route path='local-buddies/:id' element={<LocalBuddyDetail />} />
         <Route path='become-local-buddy' element={<AddLocalBuddy />} />
         <Route path='travel-matchmaking' element={<TravelMatchmaking />} />
         <Route path='trips' element={<Trips />} />
+        <Route path='trips/:id' element={<TripDetail />} />
         <Route path='create-trip' element={<CreateTrip />} />
         <Route path='privacy-policy' element={<PrivacyPolicy />} />
         <Route path='terms-of-service' element={<TermsOfService />} />
@@ -76,7 +82,9 @@ const router = createBrowserRouter(
         <Route path='destinations' element={<AdminDestinations />} />
         <Route path='destinations/:id' element={<AdminDestinationDetail />} />
         <Route path='local-buddies' element={<AdminLocalBuddies />} />
+        <Route path='local-buddies/:id' element={<AdminLocalBuddyDetail />} />
         <Route path='trips' element={<AdminTrips />} />
+        <Route path='trips/:id' element={<AdminTripDetail />} />
         <Route path='feedbacks' element={<AdminFeedback />} />
         <Route path='contacts' element={<AdminContact />} />
         <Route path='profile' element={<AdminProfile />} />

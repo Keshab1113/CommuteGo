@@ -5,6 +5,7 @@ const { adminMiddleware } = require("../middlewares/admin-middleware.js");
 const {
   getAllTrips,
   getTripById,
+  getAdminTripById,
   getMyTrips,
   createTrip,
   updateTrip,
@@ -41,6 +42,7 @@ router.patch("/requests/:id", authMiddleware, respondToRequest);
 
 // Admin routes
 router.get("/admin/pending", authMiddleware, adminMiddleware, getPendingTrips);
+router.get("/admin/:id", authMiddleware, adminMiddleware, getAdminTripById);
 router.patch("/admin/:id/review", authMiddleware, adminMiddleware, reviewTrip);
 
 module.exports = router;

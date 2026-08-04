@@ -49,6 +49,15 @@ const destinationSchema = new mongoose.Schema({
   adminNotes: { type: String, default: '' },
   additionalDetails: { type: String, default: '' },
 
+  // How to reach routes
+  howToReach: [{
+    mode: { type: String, enum: ['Bus', 'Train', 'Flight', 'Personal Car'], required: true },
+    steps: [{ type: String, required: true }]
+  }],
+
+  // Google Maps embed URL
+  mapEmbedUrl: { type: String, default: '' },
+
   // Submitter contact info (collected from public user submissions)
   submitter: {
     name: { type: String, default: '' },

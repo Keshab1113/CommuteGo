@@ -9,6 +9,7 @@ import {
 import { toast } from 'react-toastify';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import DOMPurify from 'dompurify';
 import { destinationsApi } from '../../services/api/adminApi';
 
 const QUILL_MODULES = {
@@ -83,7 +84,9 @@ const AdminDestinationDetail = () => {
     internetAvailability: '',
     blogContent: '',
     adminNotes: '',
-    additionalDetails: ''
+    additionalDetails: '',
+    mapEmbedUrl: '',
+    howToReach: []
   });
 
   const fetchDestination = useCallback(async () => {
@@ -113,7 +116,9 @@ const AdminDestinationDetail = () => {
         internetAvailability: data.internetAvailability || '',
         blogContent: data.blogContent || '',
         adminNotes: data.adminNotes || '',
-        additionalDetails: data.additionalDetails || ''
+        additionalDetails: data.additionalDetails || '',
+        mapEmbedUrl: data.mapEmbedUrl || '',
+        howToReach: data.howToReach || []
       });
       setTagInput((data.tags || []).join(', '));
       setImageInput((data.images || []).join(', '));
@@ -170,6 +175,60 @@ const AdminDestinationDetail = () => {
     return { tags, images };
   };
 
+  const addHowToReachRoute = () => {
+    setFormData(prev => ({
+      ...prev,
+      howToReach: [...prev.howToReach, { mode: 'Bus', steps: [''] }]
+    }));
+  };
+
+  const removeHowToReachRoute = (routeIndex) => {
+    setFormData(prev => ({
+      ...prev,
+      howToReach: prev.howToReach.filter((_, i) => i !== routeIndex)
+    }));
+  };
+
+  const updateHowToReachMode = (routeIndex, mode) => {
+    setFormData(prev => ({
+      ...prev,
+      howToReach: prev.howToReach.map((route, i) =>
+        i === routeIndex ? { ...route, mode } : route
+      )
+    }));
+  };
+
+  const updateHowToReachStep = (routeIndex, stepIndex, value) => {
+    setFormData(prev => ({
+      ...prev,
+      howToReach: prev.howToReach.map((route, i) =>
+        i === routeIndex
+          ? { ...route, steps: route.steps.map((step, j) => j === stepIndex ? value : step) }
+          : route
+      )
+    }));
+  };
+
+  const addHowToReachStep = (routeIndex) => {
+    setFormData(prev => ({
+      ...prev,
+      howToReach: prev.howToReach.map((route, i) =>
+        i === routeIndex ? { ...route, steps: [...route.steps, ''] } : route
+      )
+    }));
+  };
+
+  const removeHowToReachStep = (routeIndex, stepIndex) => {
+    setFormData(prev => ({
+      ...prev,
+      howToReach: prev.howToReach.map((route, i) =>
+        i === routeIndex
+          ? { ...route, steps: route.steps.filter((_, j) => j !== stepIndex) }
+          : route
+      )
+    }));
+  };
+
   const handleSave = async () => {
     setIsLoading(true);
     const { tags, images } = commitArrayInputs();
@@ -180,6 +239,9 @@ const AdminDestinationDetail = () => {
       images,
       estimatedBudget: Number(formData.estimatedBudget),
       safetyScore: Number(formData.safetyScore),
+      howToReach: formData.howToReach
+        .map(r => ({ ...r, steps: r.steps.filter(s => s.trim()) }))
+        .filter(r => r.steps.length > 0),
       location: {
         name: formData.locationName,
         coordinates: {
@@ -314,7 +376,7 @@ const AdminDestinationDetail = () => {
           ) : (
             <div
               className="prose prose-invert max-w-none ql-preview"
-              dangerouslySetInnerHTML={{ __html: value || '<p class="text-gray-500">-</p>' }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value || '<p class="text-gray-500">-</p>') }}
             />
           )}
         </div>
@@ -486,10 +548,134 @@ const AdminDestinationDetail = () => {
               <FileText className="w-5 h-5 text-rose-400" /> Extended Content
             </h2>
             <div className="space-y-6">
-              {renderField('Blog / Long-form Content', destination.blogContent, 'rich-text', 'blogContent')}
-              {renderField('Additional Details', destination.additionalDetails, 'textarea', 'additionalDetails')}
+              {renderField('Blog / Long-form Content', DOMPurify.sanitize(destination.blogContent || ''), 'rich-text', 'blogContent')}
+              {renderField('Additional Details', DOMPurify.sanitize(destination.additionalDetails || ''), 'rich-text', 'additionalDetails')}
               {renderField('Admin Notes (internal)', destination.adminNotes, 'textarea', 'adminNotes')}
             </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="rounded-3xl bg-[#1C1B1B] border border-white/10 p-6"
+          >
+            <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-cyan-400" /> How to Reach
+            </h2>
+
+            {isEditing ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider block mb-2">
+                    Google Map Embed URL
+                  </label>
+                  <input
+                    type="url"
+                    name="mapEmbedUrl"
+                    value={formData.mapEmbedUrl}
+                    onChange={handleInput}
+                    className="w-full px-3 py-2 rounded-lg bg-[#0a0a0a] border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
+                    placeholder="https://www.google.com/maps/embed?pb=..."
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-xs font-medium text-gray-500 uppercase tracking-wider block">
+                    Routes
+                  </label>
+                  {formData.howToReach.map((route, routeIndex) => (
+                    <div key={routeIndex} className="p-3 rounded-lg bg-[#0a0a0a] border border-gray-700">
+                      <div className="flex items-center gap-2 mb-3">
+                        <select
+                          value={route.mode}
+                          onChange={(e) => updateHowToReachMode(routeIndex, e.target.value)}
+                          className="px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
+                        >
+                          {['Bus', 'Train', 'Flight', 'Personal Car'].map(m => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() => removeHowToReachRoute(routeIndex)}
+                          className="ml-auto text-xs text-red-400 hover:text-red-300"
+                        >
+                          Remove Route
+                        </button>
+                      </div>
+                      {route.steps.map((step, stepIndex) => (
+                        <div key={stepIndex} className="flex items-center gap-2 mb-2">
+                          <span className="text-xs text-gray-500 w-14">Step {stepIndex + 1}</span>
+                          <input
+                            type="text"
+                            value={step}
+                            onChange={(e) => updateHowToReachStep(routeIndex, stepIndex, e.target.value)}
+                            className="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
+                            placeholder="e.g., From Kolkata to New Jalpaiguri by Train"
+                          />
+                          {route.steps.length > 1 && (
+                            <button
+                              onClick={() => removeHowToReachStep(routeIndex, stepIndex)}
+                              className="text-xs text-red-400 hover:text-red-300"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => addHowToReachStep(routeIndex)}
+                        className="mt-1 text-xs text-cyan-400 hover:text-cyan-300"
+                      >
+                        + Add Step
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={addHowToReachRoute}
+                    className="text-sm text-cyan-400 hover:text-cyan-300"
+                  >
+                    + Add Route
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {destination.mapEmbedUrl && (
+                  <div className="rounded-xl overflow-hidden border border-gray-700">
+                    <iframe
+                      src={destination.mapEmbedUrl}
+                      width="100%"
+                      height="250"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={`${destination.name} map`}
+                    />
+                  </div>
+                )}
+
+                {destination.howToReach?.length > 0 ? destination.howToReach.map((route, i) => (
+                  <div key={i} className="p-4 rounded-xl bg-[#0a0a0a] border border-gray-700">
+                    <h3 className="text-sm font-semibold text-cyan-400 mb-3 flex items-center gap-2">
+                      {route.mode === 'Flight' && '✈️'}
+                      {route.mode === 'Train' && '🚆'}
+                      {route.mode === 'Bus' && '🚌'}
+                      {route.mode === 'Personal Car' && '🚗'}
+                      Route {i + 1}: {route.mode}
+                    </h3>
+                    <ol className="list-decimal list-inside space-y-2 text-sm text-gray-300">
+                      {route.steps.map((step, j) => (
+                        <li key={j}>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+                )) : (
+                  <p className="text-sm text-gray-500">No routes added yet.</p>
+                )}
+              </div>
+            )}
           </motion.div>
 
           {isEditing && (

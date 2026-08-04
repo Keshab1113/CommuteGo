@@ -66,6 +66,7 @@ export const experiencesApi = {
 export const tripsApi = {
   getAll: (params) => apiClient.get('/trips', { params }),
   getById: (id) => apiClient.get(`/trips/${id}`),
+  getAdminById: (id) => apiClient.get(`/trips/admin/${id}`),
   getMyTrips: () => apiClient.get('/trips/my/trips'),
   create: (data) => apiClient.post('/trips', data),
   update: (id, data) => apiClient.put(`/trips/${id}`, data),
@@ -81,6 +82,21 @@ export const reviewsApi = {
   getByTarget: (type, id) => apiClient.get(`/reviews/${type}/${id}`),
   create: (data) => apiClient.post('/reviews', data),
   delete: (id) => apiClient.delete(`/reviews/${id}`),
+};
+
+// Conversations / Messages API
+export const conversationsApi = {
+  getAll: () => apiClient.get('/conversations'),
+  getOrCreate: (data) => apiClient.post('/conversations', data),
+  getById: (id) => apiClient.get(`/conversations/${id}`),
+  getMessages: (id, params) => apiClient.get(`/conversations/${id}/messages`, { params }),
+  markAsRead: (id) => apiClient.patch(`/conversations/${id}/read`),
+};
+
+export const messagesApi = {
+  send: (data) => apiClient.post('/messages', data),
+  markAsRead: (id) => apiClient.patch(`/messages/${id}/read`),
+  delete: (id) => apiClient.delete(`/messages/${id}`),
 };
 
 // Admin API (users, feedbacks)

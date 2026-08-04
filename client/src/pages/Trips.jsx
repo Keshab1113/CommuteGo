@@ -333,7 +333,8 @@ const Trips = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.05 }}
                     whileHover={{ y: -5 }}
-                    className="group relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 hover:border-rose-500/30 transition-all duration-300"
+                    onClick={() => navigate(`/trips/${trip._id}`)}
+                    className="group relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 hover:border-rose-500/30 transition-all duration-300 cursor-pointer"
                   >
                     {/* Cover */}
                     <div className="relative h-48 overflow-hidden">
@@ -414,13 +415,16 @@ const Trips = () => {
                       {/* CTA */}
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleJoinTrip(trip._id)}
+                          onClick={(e) => { e.stopPropagation(); handleJoinTrip(trip._id); }}
                           className="flex-1 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-emerald-500 text-white font-medium hover:from-rose-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2"
                         >
                           <UserPlus className="w-4 h-4" />
                           Join Trip
                         </button>
-                        <button className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                        <button
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                        >
                           <MessageCircle className="w-5 h-5" />
                         </button>
                       </div>

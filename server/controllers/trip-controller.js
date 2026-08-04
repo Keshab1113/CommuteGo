@@ -130,6 +130,23 @@ const createTrip = async (req, res, next) => {
   }
 };
 
+// Get single trip by ID (admin only - bypasses public status filter)
+const getAdminTripById = async (req, res, next) => {
+  try {
+    const trip = await Trip.findById(req.params.id)
+      .populate('creatorId', 'username email')
+      .populate('currentParticipants', 'username email');
+
+    if (!trip) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    res.status(200).json(trip);
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Get pending trips (admin only)
 const getPendingTrips = async (req, res, next) => {
   try {
@@ -375,6 +392,7 @@ const getTripFilters = async (req, res, next) => {
 module.exports = {
   getAllTrips,
   getTripById,
+  getAdminTripById,
   getMyTrips,
   createTrip,
   updateTrip,

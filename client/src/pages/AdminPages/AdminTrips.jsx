@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Trash2, MapPin, Calendar, Users, Loader2, Check, X, Clock } from 'lucide-react';
-import { useAuth } from '../../store/auth';
-import { ThemeContext } from '../../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { tripsApi } from '../../services/api/adminApi';
 
 const AdminTrips = () => {
-  const { authorizationToken } = useAuth();
-  const { darkMode } = useContext(ThemeContext);
+  const navigate = useNavigate();
   const [approvedTrips, setApprovedTrips] = useState([]);
   const [pendingTrips, setPendingTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -154,7 +152,11 @@ const AdminTrips = () => {
               </thead>
               <tbody>
                 {filteredTrips.map((trip) => (
-                  <tr key={trip._id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                  <tr
+                    key={trip._id}
+                    onClick={() => navigate(`/admin/trips/${trip._id}`)}
+                    className="border-b border-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                  >
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <img
@@ -212,14 +214,14 @@ const AdminTrips = () => {
                         {activeTab === 'pending' && (
                           <>
                             <button
-                              onClick={() => handleReview(trip._id, 'approved')}
+                              onClick={(e) => { e.stopPropagation(); handleReview(trip._id, 'approved'); }}
                               className="p-2 rounded-lg hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 transition-colors"
                               title="Approve"
                             >
                               <Check className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleReview(trip._id, 'rejected')}
+                              onClick={(e) => { e.stopPropagation(); handleReview(trip._id, 'rejected'); }}
                               className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"
                               title="Reject"
                             >
@@ -228,7 +230,7 @@ const AdminTrips = () => {
                           </>
                         )}
                         <button
-                          onClick={() => handleDelete(trip._id)}
+                          onClick={(e) => { e.stopPropagation(); handleDelete(trip._id); }}
                           className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
