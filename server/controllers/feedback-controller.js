@@ -1,10 +1,22 @@
 const Feedback = require("../models/feedback-model");
+const { createNotification } = require("../utils/notification-helper.js");
 
 // Submit feedback/contact form (public)
 const feedbackForm = async (req, res) => {
     try {
         const response = req.body;
-        await Feedback.create(response);
+        const feedback = await Feedback.create(response);
+
+        await createNotification({
+            title: response.type === "review" ? "New review submitted" : "New feedback received",
+            message: response.type === "review"
+                ? `A new ${response.rating || ""}-star review has been submitted.`
+                : `New ${response.type || "feedback"} from ${response.name || "a visitor"}.`,
+            type: "info",
+            entityType: "feedback",
+            entityId: feedback._id,
+        });
+
         return res.status(200).json({ message: "Feedback submitted successfully" });
     } catch (error) {
         console.error("Feedback submission error:", error);
@@ -54,6 +66,17 @@ const updateFeedBackById = async (req, res) => {
             { ...updatedUserData, reviewedAt: new Date() },
             { new: true }
         );
+
+        if (updatedData && updatedUserData.status) {
+            await createNotification({
+                title: `Feedback ${updatedUserData.status}`,
+                message: `Feedback from ${updatedData.name || "a visitor"} has been ${updatedUserData.status}.`,
+                type: updatedUserData.status === "approved" ? "success" : "warning",
+                entityType: "feedback",
+                entityId: updatedData._id,
+            });
+        }
+
         return res.status(200).json(updatedData);
     } catch (error) {
         return res.status(500).json({ message: "Failed to update feedback" });

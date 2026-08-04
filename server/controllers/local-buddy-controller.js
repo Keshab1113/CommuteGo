@@ -1,4 +1,5 @@
 const LocalBuddy = require("../models/local-buddy-model.js");
+const { createNotification } = require("../utils/notification-helper.js");
 
 // Get all local buddies with filtering (public - only approved)
 const getAllBuddies = async (req, res, next) => {
@@ -119,6 +120,14 @@ const upsertBuddyProfile = async (req, res, next) => {
     const buddy = await LocalBuddy.findById(createdBuddy._id)
       .populate('userId', 'username email');
 
+    await createNotification({
+      title: "New local buddy application",
+      message: `"${buddy.displayName || buddy.userId?.username || "A user"}" applied to become a local buddy.`,
+      type: "info",
+      entityType: "localBuddy",
+      entityId: buddy._id,
+    });
+
     res.status(201).json(buddy);
   } catch (error) {
     next(error);
@@ -184,6 +193,14 @@ const deleteBuddyProfile = async (req, res, next) => {
 
     await LocalBuddy.findByIdAndDelete(req.params.id);
 
+    await createNotification({
+      title: "Local buddy deleted",
+      message: `"${buddy.displayName || buddy.userId?.username || "A local buddy"}" profile has been removed.`,
+      type: "error",
+      entityType: "localBuddy",
+      entityId: buddy._id,
+    });
+
     res.status(200).json({ message: "Local Buddy profile deleted successfully" });
   } catch (error) {
     next(error);
@@ -217,7 +234,32 @@ const reviewBuddy = async (req, res, next) => {
       return res.status(404).json({ message: "Local Buddy not found" });
     }
 
+    await createNotification({
+      title: `Local buddy ${status === "approved" ? "approved" : "rejected"}`,
+      message: `"${buddy.displayName || buddy.userId?.username || "A local buddy"}" has been ${status === "approved" ? "approved" : "rejected"}.`,
+      type: status === "approved" ? "success" : "warning",
+      entityType: "localBuddy",
+      entityId: buddy._id,
+    });
+
     res.status(200).json(buddy);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get available filter values (interests, cities)
+const getBuddyFilters = async (req, res, next) => {
+  try {
+    const [interests, cities] = await Promise.all([
+      LocalBuddy.distinct('interests', { status: 'approved', isActive: true }),
+      LocalBuddy.distinct('location.city', { status: 'approved', isActive: true }),
+    ]);
+
+    res.status(200).json({
+      interests: interests.filter(Boolean).sort(),
+      cities: cities.filter(Boolean).sort(),
+    });
   } catch (error) {
     next(error);
   }
@@ -232,5 +274,6 @@ module.exports = {
   updateAvailability,
   deleteBuddyProfile,
   getPendingBuddies,
-  reviewBuddy
+  reviewBuddy,
+  getBuddyFilters,
 };

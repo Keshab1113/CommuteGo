@@ -1,5 +1,6 @@
 const User = require("../models/user-model.js");
 const bcrypt = require("bcryptjs");
+const { createNotification } = require("../utils/notification-helper.js");
 
 const home = async (req, res) => {
   try {
@@ -20,6 +21,14 @@ const signup = async (req, res) => {
     }
 
     const userCreated = await User.create({ username, email, password });
+
+    await createNotification({
+      title: "New user registered",
+      message: `"${username}" just signed up on CommuteGo.`,
+      type: "info",
+      entityType: "user",
+      entityId: userCreated._id,
+    });
 
     res
       .status(201)
@@ -70,4 +79,32 @@ const user = async (req, res) => {
   }
 }
 
-module.exports = { home, signup, login, user };
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.userID;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current password and new password are required." });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password is incorrect." });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { home, signup, login, user, changePassword };

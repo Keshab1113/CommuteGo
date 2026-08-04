@@ -10,7 +10,8 @@ const {
   updateDestination,
   deleteDestination,
   getPendingDestinations,
-  reviewDestination
+  reviewDestination,
+  getDestinationFilters
 } = require("../controllers/destination-controller.js");
 
 // Public routes (only approved destinations)
@@ -20,6 +21,9 @@ router.get("/:id", getDestinationById);
 
 // User submission route (public - no login required)
 router.post("/", createDestination);
+
+// Filter metadata
+router.get("/filters", getDestinationFilters);
 
 // Admin routes
 router.get("/admin/pending", authMiddleware, adminMiddleware, getPendingDestinations);

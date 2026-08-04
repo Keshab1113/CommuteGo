@@ -1,36 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Filter, Search, Calendar, Users, Shield, Star, Clock, Heart, Share2, Camera, Mountain, TreePine, Tent, Utensils, Waves, Building, Compass, ChevronDown, X, Loader2, Plus, Gift } from 'lucide-react';
+import { MapPin, Search, Calendar, Users, Shield, Star, Heart, Share2, Camera, Mountain, TreePine, Tent, Utensils, Waves, Building, Compass, Loader2, Gift, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../store/auth';
 import { toast } from 'react-toastify';
 
+const iconMap = {
+  adventure: Mountain,
+  nature: TreePine,
+  peaceful: Heart,
+  weekend: Calendar,
+  camping: Tent,
+  food: Utensils,
+  beach: Waves,
+  heritage: Building,
+  photography: Camera,
+  spiritual: Compass,
+  cultural: Compass,
+};
+
 const HiddenDestinations = () => {
-  const { authorizationToken } = useAuth();
   const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState('all');
+
+  const [activeTag, setActiveTag] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [selectedBudget, setSelectedBudget] = useState('all');
-  const [destinations, setDestinations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const filters = [
-    { id: 'all', label: 'All', icon: Compass },
-    { id: 'adventure', label: 'Adventure', icon: Mountain },
-    { id: 'nature', label: 'Nature', icon: TreePine },
-    { id: 'peaceful', label: 'Peaceful', icon: Heart },
-    { id: 'weekend', label: 'Weekend Getaway', icon: Calendar },
-    { id: 'camping', label: 'Camping', icon: Tent },
-    { id: 'food', label: 'Food & Culture', icon: Utensils },
-    { id: 'beach', label: 'Beach', icon: Waves },
-    { id: 'heritage', label: 'Heritage', icon: Building },
-    { id: 'photography', label: 'Photography', icon: Camera },
-  ];
+  const [destinations, setDestinations] = useState([]);
+  const [filterOptions, setFilterOptions] = useState({ tags: [], categories: [], difficulties: [] });
+  const [loading, setLoading] = useState(true);
+  const [filtersLoading, setFiltersLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchDestinations();
+    fetchFilterOptions();
   }, []);
 
   const fetchDestinations = async () => {
@@ -54,16 +59,38 @@ const HiddenDestinations = () => {
     }
   };
 
+  const fetchFilterOptions = async () => {
+    setFiltersLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/destinations/filters`);
+      if (response.ok) {
+        const data = await response.json();
+        setFilterOptions({
+          tags: data.tags || [],
+          categories: data.categories || [],
+          difficulties: data.difficulties || [],
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch filter options:', err);
+      toast.error('Failed to load filter options');
+    } finally {
+      setFiltersLoading(false);
+    }
+  };
+
   const filteredDestinations = destinations.filter(dest => {
-    const matchesFilter = activeFilter === 'all' || dest.tags?.includes(activeFilter);
-    const matchesSearch = dest.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchesTag = activeTag === 'all' || dest.tags?.some(tag => tag.toLowerCase() === activeTag.toLowerCase());
+    const matchesSearch = !searchQuery ||
+                         dest.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          dest.location?.name?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesDifficulty = selectedDifficulty === 'all' || dest.difficulty === selectedDifficulty;
     const matchesBudget = selectedBudget === 'all' ||
                           (selectedBudget === 'low' && dest.estimatedBudget < 4000) ||
                           (selectedBudget === 'medium' && dest.estimatedBudget >= 4000 && dest.estimatedBudget < 8000) ||
                           (selectedBudget === 'high' && dest.estimatedBudget >= 8000);
-    return matchesFilter && matchesSearch && matchesDifficulty && matchesBudget;
+    const matchesCategory = selectedCategory === 'all' || dest.category === selectedCategory;
+    return matchesTag && matchesSearch && matchesDifficulty && matchesBudget && matchesCategory;
   });
 
   return (
@@ -87,7 +114,7 @@ const HiddenDestinations = () => {
             </span>
             <h1 className="text-4xl md:text-6xl font-black mb-6">
               <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                Discover India's
+                Discover India&apos;s
               </span>
               <br />
               <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
@@ -123,37 +150,74 @@ const HiddenDestinations = () => {
       {/* Filters */}
       <section className="sticky top-16 z-40 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/5 py-4">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            {/* Category Filters */}
+          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+            {/* Dynamic Tag Filters */}
             <div className="flex flex-wrap gap-2">
-              {filters.map((filter) => (
-                <button
-                  key={filter.id}
-                  onClick={() => setActiveFilter(filter.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    activeFilter === filter.id
-                      ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white'
-                      : 'bg-white/5 border border-white/10 hover:bg-white/10'
-                  }`}
-                >
-                  <filter.icon className="w-4 h-4" />
-                  {filter.label}
-                </button>
-              ))}
+              <button
+                onClick={() => setActiveTag('all')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  activeTag === 'all'
+                    ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white'
+                    : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                }`}
+              >
+                <Compass className="w-4 h-4" />
+                All
+              </button>
+
+              {filtersLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin text-emerald-500 ml-2" />
+              ) : (
+                filterOptions.tags.map((tag) => {
+                  const Icon = iconMap[tag.toLowerCase()] || Tag;
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => setActiveTag(tag)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        activeTag.toLowerCase() === tag.toLowerCase()
+                          ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white'
+                          : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                    </button>
+                  );
+                })
+              )}
             </div>
 
             {/* Additional Filters */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
+              {filterOptions.categories.length > 0 && (
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-500/50"
+                >
+                  <option value="all">All Categories</option>
+                  {filterOptions.categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              )}
+
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
                 className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-500/50"
               >
-                <option value="all">All Difficulty</option>
-                <option value="Easy">Easy</option>
-                <option value="Moderate">Moderate</option>
-                <option value="Challenging">Challenging</option>
+                <option value="all">
+                  {filterOptions.difficulties.length > 0 ? 'All Difficulty' : 'Difficulty'}
+                </option>
+                {filterOptions.difficulties.map((diff) => (
+                  <option key={diff} value={diff}>{diff}</option>
+                ))}
               </select>
+
               <select
                 value={selectedBudget}
                 onChange={(e) => setSelectedBudget(e.target.value)}

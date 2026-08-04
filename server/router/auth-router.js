@@ -9,5 +9,6 @@ router.route("/").get(authcontrollers.home);
 router.route("/signup").post(validate(signupSchema), authcontrollers.signup);
 router.route("/login").post(validate(loginSchema), authcontrollers.login);
 router.route("/user").get(authMiddleware, authcontrollers.user);
+router.route("/change-password").patch(authMiddleware, authcontrollers.changePassword);
 
 module.exports = router;

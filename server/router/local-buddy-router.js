@@ -11,11 +11,13 @@ const {
   updateAvailability,
   deleteBuddyProfile,
   getPendingBuddies,
-  reviewBuddy
+  reviewBuddy,
+  getBuddyFilters,
 } = require("../controllers/local-buddy-controller.js");
 
 // Public routes (only approved buddies)
 router.get("/", getAllBuddies);
+router.get("/filters", getBuddyFilters);
 router.get("/:id", getBuddyById);
 
 // Public submission route (no login required)

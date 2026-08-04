@@ -25,8 +25,8 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
       {/* Logo */}
       <div className={`h-16 flex items-center border-b border-white/10 ${isOpen ? 'px-6' : 'justify-center px-2'}`}>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-lg">C</span>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
+            <img src="/logo.png" alt="logo" className="w-full h-full object-contain" />
           </div>
           {isOpen && (
             <div>

@@ -1,4 +1,5 @@
 const Review = require("../models/review-model.js");
+const { createNotification } = require("../utils/notification-helper.js");
 
 // Create a review
 const createReview = async (req, res, next) => {
@@ -28,6 +29,14 @@ const createReview = async (req, res, next) => {
 
     // Update target's average rating
     await updateTargetRating(targetType, targetId);
+
+    await createNotification({
+      title: "New review submitted",
+      message: `A ${rating}-star review was submitted for a ${targetType}.`,
+      type: "info",
+      entityType: "review",
+      entityId: review._id,
+    });
 
     res.status(201).json(review);
   } catch (error) {

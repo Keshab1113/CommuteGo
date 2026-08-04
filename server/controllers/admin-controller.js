@@ -1,5 +1,6 @@
 const User = require("../models/user-model")
 const Feedback = require("../models/feedback-model")
+const { createNotification } = require("../utils/notification-helper.js");
 
 const getAllUsers = async (req, res) => {
     try {
@@ -40,7 +41,16 @@ const updateUserById = async (req, res) => {
 const deleteUserById = async (req, res) => {
     try {
         const id = req.params.id;
-        await User.deleteOne({ _id: id });
+        const user = await User.findByIdAndDelete(id);
+
+        await createNotification({
+            title: "User deleted",
+            message: user ? `"${user.username}" has been deleted by an admin.` : "A user account has been deleted by an admin.",
+            type: "warning",
+            entityType: "user",
+            entityId: user?._id || id,
+        });
+
         return res.status(200).json({ message: "User Deleted Successfully." });
     } catch (error) {
        console.log(error);

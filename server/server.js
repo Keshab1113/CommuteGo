@@ -14,6 +14,7 @@ const tripRoute = require("./router/trip-router.js")
 const reviewRoute = require("./router/review-router.js")
 const conversationRoute = require("./router/conversation-router.js")
 const messageRoute = require("./router/message-router.js")
+const notificationRoute = require("./router/notification-router.js")
 
 
 const corsOptions = {
@@ -36,6 +37,7 @@ app.use("/api/reviews",reviewRoute);
 app.use("/api/conversations",conversationRoute);
 app.use("/api/messages",messageRoute);
 app.use("/api/admin",adminRoute);
+app.use("/api/notifications",notificationRoute);
 
 app.use(errorMiddleware);
 

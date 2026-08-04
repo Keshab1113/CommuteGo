@@ -1,4 +1,5 @@
 const Destination = require("../models/destination-model.js");
+const { createNotification } = require("../utils/notification-helper.js");
 
 // Get all destinations with filtering and pagination (public - only approved)
 const getAllDestinations = async (req, res, next) => {
@@ -89,6 +90,14 @@ const reviewDestination = async (req, res, next) => {
       return res.status(404).json({ message: "Destination not found" });
     }
 
+    await createNotification({
+      title: `Destination ${status === "approved" ? "approved" : "rejected"}`,
+      message: `"${destination.name}" has been ${status === "approved" ? "approved and published" : "rejected"}.`,
+      type: status === "approved" ? "success" : "warning",
+      entityType: "destination",
+      entityId: destination._id,
+    });
+
     res.status(200).json(destination);
   } catch (error) {
     next(error);
@@ -136,6 +145,14 @@ const createDestination = async (req, res, next) => {
       createdBy: req.user?.userID || null
     });
 
+    await createNotification({
+      title: "New destination submitted",
+      message: `"${destination.name}" has been submitted and is awaiting review.`,
+      type: destination.status === "approved" ? "success" : "info",
+      entityType: "destination",
+      entityId: destination._id,
+    });
+
     res.status(201).json(destination);
   } catch (error) {
     next(error);
@@ -170,7 +187,34 @@ const deleteDestination = async (req, res, next) => {
       return res.status(404).json({ message: "Destination not found" });
     }
 
+    await createNotification({
+      title: "Destination deleted",
+      message: `"${destination.name}" has been removed from the platform.`,
+      type: "error",
+      entityType: "destination",
+      entityId: destination._id,
+    });
+
     res.status(200).json({ message: "Destination deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get available filter values (tags, categories, difficulty)
+const getDestinationFilters = async (req, res, next) => {
+  try {
+    const [tags, categories, difficulties] = await Promise.all([
+      Destination.distinct('tags', { status: 'approved' }),
+      Destination.distinct('category', { status: 'approved' }),
+      Destination.distinct('difficulty', { status: 'approved' }),
+    ]);
+
+    res.status(200).json({
+      tags: tags.filter(Boolean).sort(),
+      categories: categories.filter(Boolean).sort(),
+      difficulties: difficulties.filter(Boolean).sort(),
+    });
   } catch (error) {
     next(error);
   }
@@ -184,5 +228,6 @@ module.exports = {
   updateDestination,
   deleteDestination,
   getPendingDestinations,
-  reviewDestination
+  reviewDestination,
+  getDestinationFilters,
 };

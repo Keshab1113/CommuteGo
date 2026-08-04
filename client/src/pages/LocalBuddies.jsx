@@ -1,43 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Filter, Star, Clock, Shield, Heart, Camera, Music, Utensils, Mountain, BookOpen, Users, CheckCircle, MessageCircle, Calendar, ChevronDown, X, Award, Loader2 } from 'lucide-react';
-import { useAuth } from '../store/auth';
+import { MapPin, Search, Star, Heart, Camera, Music, Utensils, Mountain, BookOpen, Users, CheckCircle, MessageCircle, Award, Loader2, Tag, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+const interestIcons = {
+  photography: Camera,
+  music: Music,
+  food: Utensils,
+  adventure: Mountain,
+  heritage: BookOpen,
+  nature: Mountain,
+  art: Sparkles,
+  history: BookOpen,
+  trekking: Mountain,
+  cooking: Utensils,
+  yoga: Users,
+  spirituality: Sparkles,
+  wildlife: Mountain,
+};
+
 const LocalBuddies = () => {
-  const { authorizationToken } = useAuth();
   const navigate = useNavigate();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedInterest, setSelectedInterest] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
+
   const [buddies, setBuddies] = useState([]);
+  const [filterOptions, setFilterOptions] = useState({ interests: [], cities: [] });
   const [loading, setLoading] = useState(true);
+  const [filtersLoading, setFiltersLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const interests = [
-    { id: 'all', label: 'All', icon: Users },
-    { id: 'photography', label: 'Photography', icon: Camera },
-    { id: 'music', label: 'Music & Arts', icon: Music },
-    { id: 'food', label: 'Food & Cooking', icon: Utensils },
-    { id: 'adventure', label: 'Adventure', icon: Mountain },
-    { id: 'heritage', label: 'Heritage', icon: BookOpen },
-  ];
-
-  const locations = [
-    { id: 'all', label: 'All Locations' },
-    { id: 'darjeeling', label: 'Darjeeling, WB' },
-    { id: 'jaipur', label: 'Jaipur, Rajasthan' },
-    { id: 'shillong', label: 'Shillong, Meghalaya' },
-    { id: 'varanasi', label: 'Varanasi, UP' },
-    { id: 'kochi', label: 'Kochi, Kerala' },
-    { id: 'goa', label: 'Goa' },
-  ];
 
   useEffect(() => {
     fetchBuddies();
+    fetchFilterOptions();
   }, []);
 
   const fetchBuddies = async () => {
@@ -61,14 +60,39 @@ const LocalBuddies = () => {
     }
   };
 
+  const fetchFilterOptions = async () => {
+    setFiltersLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/local-buddies/filters`);
+      if (response.ok) {
+        const data = await response.json();
+        setFilterOptions({
+          interests: data.interests || [],
+          cities: data.cities || [],
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch buddy filter options:', err);
+      toast.error('Failed to load filter options');
+    } finally {
+      setFiltersLoading(false);
+    }
+  };
+
   const filteredBuddies = buddies.filter(buddy => {
-    const matchesSearch = buddy.displayName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         buddy.location?.city?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = !searchQuery ||
+                         buddy.displayName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         buddy.location?.city?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         buddy.location?.state?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesInterest = selectedInterest === 'all' ||
-                            buddy.interests?.some(i => i.toLowerCase().includes(selectedInterest.toLowerCase()));
+                            buddy.interests?.some(i => i.toLowerCase() === selectedInterest.toLowerCase());
     const matchesLocation = selectedLocation === 'all' ||
-                           buddy.location?.city?.toLowerCase().includes(selectedLocation.toLowerCase());
-    return matchesSearch && matchesInterest && matchesLocation;
+                           buddy.location?.city?.toLowerCase() === selectedLocation.toLowerCase();
+    const matchesPrice = priceRange === 'all' ||
+                         (priceRange === 'low' && buddy.dayRate < 2000) ||
+                         (priceRange === 'medium' && buddy.dayRate >= 2000 && buddy.dayRate < 4000) ||
+                         (priceRange === 'high' && buddy.dayRate >= 4000);
+    return matchesSearch && matchesInterest && matchesLocation && matchesPrice;
   });
 
   return (
@@ -130,20 +154,39 @@ const LocalBuddies = () => {
       <section className="py-6 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap gap-3 justify-center">
-            {interests.map((interest) => (
-              <button
-                key={interest.id}
-                onClick={() => setSelectedInterest(interest.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedInterest === interest.id
-                    ? 'bg-gradient-to-r from-cyan-500 to-rose-500 text-white'
-                    : 'bg-white/5 border border-white/10 hover:bg-white/10'
-                }`}
-              >
-                <interest.icon className="w-4 h-4" />
-                {interest.label}
-              </button>
-            ))}
+            <button
+              onClick={() => setSelectedInterest('all')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                selectedInterest === 'all'
+                  ? 'bg-gradient-to-r from-cyan-500 to-rose-500 text-white'
+                  : 'bg-white/5 border border-white/10 hover:bg-white/10'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              All
+            </button>
+
+            {filtersLoading ? (
+              <Loader2 className="w-5 h-5 animate-spin text-cyan-500" />
+            ) : (
+              filterOptions.interests.map((interest) => {
+                const Icon = interestIcons[interest.toLowerCase()] || Tag;
+                return (
+                  <button
+                    key={interest}
+                    onClick={() => setSelectedInterest(interest)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      selectedInterest.toLowerCase() === interest.toLowerCase()
+                        ? 'bg-gradient-to-r from-cyan-500 to-rose-500 text-white'
+                        : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {interest.charAt(0).toUpperCase() + interest.slice(1)}
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>
       </section>
@@ -153,17 +196,59 @@ const LocalBuddies = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap gap-3 items-center">
             <span className="text-sm text-gray-500">Filter by location:</span>
-            {locations.map((loc) => (
+            <button
+              onClick={() => setSelectedLocation('all')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                selectedLocation === 'all'
+                  ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                  : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+              }`}
+            >
+              All Locations
+            </button>
+
+            {filtersLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />
+            ) : (
+              filterOptions.cities.map((city) => (
+                <button
+                  key={city}
+                  onClick={() => setSelectedLocation(city)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    selectedLocation.toLowerCase() === city.toLowerCase()
+                      ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                      : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+                  }`}
+                >
+                  {city}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Price Filter */}
+      <section className="py-4 border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-wrap gap-3 items-center">
+            <span className="text-sm text-gray-500">Day rate:</span>
+            {[
+              { id: 'all', label: 'Any' },
+              { id: 'low', label: 'Under ₹2K' },
+              { id: 'medium', label: '₹2K - ₹4K' },
+              { id: 'high', label: '₹4K+' },
+            ].map((range) => (
               <button
-                key={loc.id}
-                onClick={() => setSelectedLocation(loc.id)}
+                key={range.id}
+                onClick={() => setPriceRange(range.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  selectedLocation === loc.id
-                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                  priceRange === range.id
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                     : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
                 }`}
               >
-                {loc.label}
+                {range.label}
               </button>
             ))}
           </div>
@@ -211,127 +296,135 @@ const LocalBuddies = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredBuddies.map((buddy, index) => (
-                <motion.div
-                  key={buddy._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  whileHover={{ y: -5 }}
-                  className="group relative p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
-                >
-                  {/* Badge */}
-                  {buddy.isFeatured && (
-                    <div className="absolute top-4 right-4 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30">
-                      <span className="text-xs font-medium text-amber-400 flex items-center gap-1">
-                        <Award className="w-3 h-3" />
-                        Featured
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Profile */}
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="relative">
-                      <img
-                        src={buddy.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop'}
-                        alt={buddy.displayName}
-                        className="w-20 h-20 rounded-2xl object-cover"
-                      />
-                      {buddy.isVerified && (
-                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-br from-cyan-500 to-rose-500 flex items-center justify-center">
-                          <CheckCircle className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg">{buddy.displayName}</h3>
-                      <p className="text-sm text-gray-400 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-cyan-400" />
-                        {buddy.location?.city}, {buddy.location?.state}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Local since {new Date(buddy.createdAt).getFullYear()}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Bio */}
-                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">{buddy.bio}</p>
-
-                  {/* Interests */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {buddy.interests?.slice(0, 3).map((interest) => (
-                      <span key={interest} className="px-2 py-1 rounded-lg bg-white/5 text-xs">
-                        {interest}
-                      </span>
-                    ))}
-                    {buddy.interests?.length > 3 && (
-                      <span className="px-2 py-1 rounded-lg bg-white/5 text-xs text-gray-400">
-                        +{buddy.interests.length - 3} more
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-4 gap-2 mb-4">
-                    <div className="text-center p-2 rounded-xl bg-white/5">
-                      <div className="flex items-center justify-center gap-1">
-                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                        <span className="font-bold text-sm">{buddy.rating?.toFixed(1) || 'N/A'}</span>
+            {filteredBuddies.length === 0 ? (
+              <div className="text-center py-20">
+                <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-2">No buddies found</h3>
+                <p className="text-gray-500">Try adjusting your filters or search query</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredBuddies.map((buddy, index) => (
+                  <motion.div
+                    key={buddy._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    whileHover={{ y: -5 }}
+                    className="group relative p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
+                  >
+                    {/* Badge */}
+                    {buddy.isFeatured && (
+                      <div className="absolute top-4 right-4 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30">
+                        <span className="text-xs font-medium text-amber-400 flex items-center gap-1">
+                          <Award className="w-3 h-3" />
+                          Featured
+                        </span>
                       </div>
-                      <p className="text-xs text-gray-500">Rating</p>
-                    </div>
-                    <div className="text-center p-2 rounded-xl bg-white/5">
-                      <p className="font-bold text-sm">{buddy.reviewCount || 0}</p>
-                      <p className="text-xs text-gray-500">Reviews</p>
-                    </div>
-                    <div className="text-center p-2 rounded-xl bg-white/5">
-                      <p className="font-bold text-sm">{buddy.tripsCompleted || 0}</p>
-                      <p className="text-xs text-gray-500">Trips</p>
-                    </div>
-                    <div className="text-center p-2 rounded-xl bg-white/5">
-                      <p className="font-bold text-xs">{buddy.responseTime || 'N/A'}</p>
-                      <p className="text-xs text-gray-500">Response</p>
-                    </div>
-                  </div>
+                    )}
 
-                  {/* Languages */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {buddy.languages?.map((lang) => (
-                      <span key={lang} className="px-2 py-0.5 rounded bg-white/5 text-xs text-gray-400">
-                        {lang}
-                      </span>
-                    ))}
-                  </div>
+                    {/* Profile */}
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="relative">
+                        <img
+                          src={buddy.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop'}
+                          alt={buddy.displayName}
+                          className="w-20 h-20 rounded-2xl object-cover"
+                        />
+                        {buddy.isVerified && (
+                          <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-br from-cyan-500 to-rose-500 flex items-center justify-center">
+                            <CheckCircle className="w-4 h-4 text-white" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg">{buddy.displayName}</h3>
+                        <p className="text-sm text-gray-400 flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-cyan-400" />
+                          {buddy.location?.city}, {buddy.location?.state}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Local since {new Date(buddy.createdAt).getFullYear()}
+                        </p>
+                      </div>
+                    </div>
 
-                  {/* Footer */}
-                  <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                    <div>
-                      <span className="text-xl font-bold text-cyan-400">₹{buddy.dayRate?.toLocaleString()}</span>
-                      <span className="text-xs text-gray-500 ml-1">/day</span>
-                      {buddy.priceNegotiable && (
-                        <span className="ml-2 px-2 py-0.5 rounded bg-emerald-500/10 text-xs text-emerald-400">
-                          Negotiable
+                    {/* Bio */}
+                    <p className="text-sm text-gray-400 mb-4 line-clamp-2">{buddy.bio}</p>
+
+                    {/* Interests */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {buddy.interests?.slice(0, 3).map((interest) => (
+                        <span key={interest} className="px-2 py-1 rounded-lg bg-white/5 text-xs">
+                          {interest}
+                        </span>
+                      ))}
+                      {buddy.interests?.length > 3 && (
+                        <span className="px-2 py-1 rounded-lg bg-white/5 text-xs text-gray-400">
+                          +{buddy.interests.length - 3} more
                         </span>
                       )}
                     </div>
-                    <div className="flex gap-2">
-                      <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
-                        <Heart className="w-4 h-4" />
-                      </button>
-                      <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
-                        <MessageCircle className="w-4 h-4" />
-                      </button>
-                      <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-rose-500 text-white text-sm font-medium hover:from-cyan-600 hover:to-rose-600 transition-all">
-                        Book
-                      </button>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-4 gap-2 mb-4">
+                      <div className="text-center p-2 rounded-xl bg-white/5">
+                        <div className="flex items-center justify-center gap-1">
+                          <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                          <span className="font-bold text-sm">{buddy.rating?.toFixed(1) || 'N/A'}</span>
+                        </div>
+                        <p className="text-xs text-gray-500">Rating</p>
+                      </div>
+                      <div className="text-center p-2 rounded-xl bg-white/5">
+                        <p className="font-bold text-sm">{buddy.reviewCount || 0}</p>
+                        <p className="text-xs text-gray-500">Reviews</p>
+                      </div>
+                      <div className="text-center p-2 rounded-xl bg-white/5">
+                        <p className="font-bold text-sm">{buddy.tripsCompleted || 0}</p>
+                        <p className="text-xs text-gray-500">Trips</p>
+                      </div>
+                      <div className="text-center p-2 rounded-xl bg-white/5">
+                        <p className="font-bold text-xs">{buddy.responseTime || 'N/A'}</p>
+                        <p className="text-xs text-gray-500">Response</p>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+
+                    {/* Languages */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {buddy.languages?.map((lang) => (
+                        <span key={lang} className="px-2 py-0.5 rounded bg-white/5 text-xs text-gray-400">
+                          {lang}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                      <div>
+                        <span className="text-xl font-bold text-cyan-400">₹{buddy.dayRate?.toLocaleString()}</span>
+                        <span className="text-xs text-gray-500 ml-1">/day</span>
+                        {buddy.priceNegotiable && (
+                          <span className="ml-2 px-2 py-0.5 rounded bg-emerald-500/10 text-xs text-emerald-400">
+                            Negotiable
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                          <Heart className="w-4 h-4" />
+                        </button>
+                        <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                          <MessageCircle className="w-4 h-4" />
+                        </button>
+                        <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-rose-500 text-white text-sm font-medium hover:from-cyan-600 hover:to-rose-600 transition-all">
+                          Book
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -349,7 +442,10 @@ const LocalBuddies = () => {
             <p className="text-gray-400 mb-6 max-w-xl mx-auto">
               Love your city? Share it with travelers and earn while doing what you love.
             </p>
-            <button className="px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-rose-500 text-white font-semibold hover:from-cyan-600 hover:to-rose-600 transition-all shadow-lg shadow-cyan-500/25">
+            <button
+              onClick={() => navigate('/become-local-buddy')}
+              className="px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-rose-500 text-white font-semibold hover:from-cyan-600 hover:to-rose-600 transition-all shadow-lg shadow-cyan-500/25"
+            >
               Apply Now
             </button>
           </motion.div>

@@ -19,21 +19,25 @@ import AddDestination from './pages/AddDestination.jsx'
 import LocalBuddies from './pages/LocalBuddies.jsx'
 import AddLocalBuddy from './pages/AddLocalBuddy.jsx'
 import TravelMatchmaking from './pages/TravelMatchmaking.jsx'
+import Trips from './pages/Trips.jsx'
 import CreateTrip from './pages/CreateTrip.jsx'
 import { AuthProvider } from './store/auth.jsx'
 import { ThemeProvider } from './context/ThemeContext';
+import { NotificationProvider } from './context/NotificationContext';
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Admin from './pages/AdminPages/Admin.jsx'
 import AdminHome from './pages/AdminPages/AdminHome.jsx'
 import AllUsers from './pages/AdminPages/AllUsers.jsx'
 import AdminProfile from './pages/AdminPages/AdminProfile/AdminProfile.jsx'
+import AdminSettings from './pages/AdminPages/AdminSettings/AdminSettings.jsx'
+import AdminNotifications from './pages/AdminPages/AdminNotifications/AdminNotifications.jsx'
+import NotificationDetail from './pages/AdminPages/AdminNotifications/NotificationDetail.jsx'
 import AdminFeedback from './pages/AdminPages/AdminFeedback.jsx'
 import AdminContact from './pages/AdminPages/AdminContact.jsx'
 import AdminDestinations from './pages/AdminPages/AdminDestinations.jsx'
 import AdminLocalBuddies from './pages/AdminPages/AdminLocalBuddies.jsx'
 import AdminTrips from './pages/AdminPages/AdminTrips.jsx'
-import AdminReviews from './pages/AdminPages/AdminReviews.jsx'
 import { Logout } from './pages/Logout.jsx'
 import UserEdit from "./pages/AdminPages/UserEditPage/UserEdit.jsx"
 import ManageFeedbacks from './pages/AdminPages/ManageFeedbacks.jsx'
@@ -54,6 +58,7 @@ const router = createBrowserRouter(
         <Route path='local-buddies' element={<LocalBuddies />} />
         <Route path='become-local-buddy' element={<AddLocalBuddy />} />
         <Route path='travel-matchmaking' element={<TravelMatchmaking />} />
+        <Route path='trips' element={<Trips />} />
         <Route path='create-trip' element={<CreateTrip />} />
         <Route path='privacy-policy' element={<PrivacyPolicy />} />
         <Route path='terms-of-service' element={<TermsOfService />} />
@@ -71,6 +76,9 @@ const router = createBrowserRouter(
         <Route path='feedbacks' element={<AdminFeedback />} />
         <Route path='contacts' element={<AdminContact />} />
         <Route path='profile' element={<AdminProfile />} />
+        <Route path='settings' element={<AdminSettings />} />
+        <Route path='notifications' element={<AdminNotifications />} />
+        <Route path='notifications/:id' element={<NotificationDetail />} />
         <Route path="users/:id/edit" element={<UserEdit />} />
         <Route path="/admin/feedbacks/:id/edit" element={<ManageFeedbacks />} />
       </Route>
@@ -82,9 +90,10 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AuthProvider>
     <ThemeProvider>
-      <React.StrictMode>
-        <RouterProvider router={router} />
-        <ToastContainer
+      <NotificationProvider>
+        <React.StrictMode>
+          <RouterProvider router={router} />
+          <ToastContainer
           position="top-right"
           autoClose={5000}
           hideProgressBar={false}
@@ -95,8 +104,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           draggable
           pauseOnHover
           theme="colored"
-        />
-      </React.StrictMode>
+          />
+        </React.StrictMode>
+      </NotificationProvider>
     </ThemeProvider>
   </AuthProvider>
 )

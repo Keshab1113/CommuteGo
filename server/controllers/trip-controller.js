@@ -1,6 +1,7 @@
 const Trip = require("../models/trip-model.js");
 const TripJoinRequest = require("../models/trip-join-request-model.js");
 const User = require("../models/user-model.js");
+const { createNotification } = require("../utils/notification-helper.js");
 
 // Get all trips with filtering (public - only approved)
 const getAllTrips = async (req, res, next) => {
@@ -115,6 +116,14 @@ const createTrip = async (req, res, next) => {
 
     const trip = await Trip.create(tripData);
 
+    await createNotification({
+      title: "New trip created",
+      message: `"${trip.title}" by ${trip.creatorName || "a traveler"} is ${trip.status === "approved" ? "live" : "awaiting review"}.`,
+      type: trip.status === "approved" ? "success" : "info",
+      entityType: "trip",
+      entityId: trip._id,
+    });
+
     res.status(201).json(trip);
   } catch (error) {
     next(error);
@@ -147,6 +156,14 @@ const reviewTrip = async (req, res, next) => {
     if (!trip) {
       return res.status(404).json({ message: "Trip not found" });
     }
+
+    await createNotification({
+      title: `Trip ${status === "approved" ? "approved" : "rejected"}`,
+      message: `"${trip.title}" has been ${status === "approved" ? "approved" : "rejected"}.`,
+      type: status === "approved" ? "success" : "warning",
+      entityType: "trip",
+      entityId: trip._id,
+    });
 
     res.status(200).json(trip);
   } catch (error) {
@@ -216,6 +233,14 @@ const deleteTrip = async (req, res, next) => {
 
     trip.tripStatus = 'cancelled';
     await trip.save();
+
+    await createNotification({
+      title: "Trip cancelled",
+      message: `"${trip.title}" has been cancelled by ${req.user?.username || "the creator"}.`,
+      type: "warning",
+      entityType: "trip",
+      entityId: trip._id,
+    });
 
     res.status(200).json({ message: "Trip cancelled successfully" });
   } catch (error) {
@@ -316,7 +341,32 @@ const respondToRequest = async (req, res, next) => {
     request.respondedAt = new Date();
     await request.save();
 
+    await createNotification({
+      title: `Trip join request ${status}`,
+      message: `A join request for "${trip.title}" has been ${status}.`,
+      type: status === 'accepted' ? "success" : "warning",
+      entityType: "trip",
+      entityId: trip._id,
+    });
+
     res.status(200).json(request);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get available filter values (interests, destinations, budget ranges)
+const getTripFilters = async (req, res, next) => {
+  try {
+    const [interests, destinations] = await Promise.all([
+      Trip.distinct('interests', { status: 'approved', tripStatus: 'open' }),
+      Trip.distinct('destination', { status: 'approved', tripStatus: 'open' }),
+    ]);
+
+    res.status(200).json({
+      interests: interests.filter(Boolean).sort(),
+      destinations: destinations.filter(Boolean).sort(),
+    });
   } catch (error) {
     next(error);
   }
@@ -334,5 +384,6 @@ module.exports = {
   getTripRequests,
   respondToRequest,
   getPendingTrips,
-  reviewTrip
+  reviewTrip,
+  getTripFilters,
 };

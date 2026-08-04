@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Search, MapPin, Calendar, Users, Wallet, Shield, Star, Clock, Filter, MessageCircle, UserPlus, Sparkles, ArrowRight, ChevronRight, Compass, Camera, Mountain, Utensils, Loader2 } from 'lucide-react';
+import { Heart, Search, MapPin, Calendar, Users, Wallet, Shield, Star, MessageCircle, UserPlus, Sparkles, ArrowRight, ChevronRight, Compass, Camera, Mountain, Utensils, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import { toast } from 'react-toastify';
 
@@ -185,7 +186,7 @@ const TravelMatchmaking = () => {
               </span>
             </h1>
             <p className="text-xl text-gray-400">
-              Don't travel alone. Find like-minded explorers heading to the same destination.
+              Don&apos;t travel alone. Find like-minded explorers heading to the same destination.
             </p>
           </motion.div>
 
@@ -244,6 +245,13 @@ const TravelMatchmaking = () => {
             >
               My Trips
             </button>
+            <Link
+              to="/trips"
+              className="ml-auto inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+            >
+              Browse All Trips
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>

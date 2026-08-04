@@ -14,11 +14,13 @@ const {
   getTripRequests,
   respondToRequest,
   getPendingTrips,
-  reviewTrip
+  reviewTrip,
+  getTripFilters
 } = require("../controllers/trip-controller.js");
 
 // Public routes (only approved trips)
 router.get("/", getAllTrips);
+router.get("/filters", getTripFilters);
 router.get("/:id", getTripById);
 
 // Public submission route (no login required)

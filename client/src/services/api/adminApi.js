@@ -91,6 +91,16 @@ export const adminDataApi = {
   getAllFeedbacks: () => apiClient.get('/form'),
   updateFeedback: (id, data) => apiClient.patch(`/form/${id}`, data),
   deleteFeedback: (id) => apiClient.delete(`/form/${id}`),
+  changePassword: (data) => apiClient.patch('/auth/change-password', data),
+};
+
+// Notifications API
+export const notificationsApi = {
+  getAll: (params) => apiClient.get('/notifications', { params }),
+  getById: (id) => apiClient.get(`/notifications/${id}`),
+  markAsRead: (id) => apiClient.patch(`/notifications/${id}/read`),
+  markAllAsRead: () => apiClient.patch('/notifications/read-all'),
+  delete: (id) => apiClient.delete(`/notifications/${id}`),
 };
 
 export default adminDataApi;

@@ -5,7 +5,7 @@ const SearchFlight = () => {
     <div className='h-screen flex justify-center items-center firstbackground'>
       <div className=' sm:h-20 sm:w-9/12 w-[60%] flex sm:flex-row flex-col rounded-xl sm:backdrop-blur bg-white sm:bg-inherit'>
         <div className='searchlabels rounded-tl-xl'>
-          <label for="cars" className='searchlabel rounded-tl-xl'>Destination from</label>
+          <label htmlFor="cars" className='searchlabel rounded-tl-xl'>Destination from</label>
           <select name="cars" id="cars" form="carform" className=' searchselects rounded-bl-xl'>
             <option value="volvo">Kolkata</option>
             <option value="saab">Mumbai</option>
@@ -16,7 +16,7 @@ const SearchFlight = () => {
           </select>
         </div>
         <div className='searchlabels'>
-          <label for="cars" className='searchlabel'>Destination to</label>
+          <label htmlFor="cars" className='searchlabel'>Destination to</label>
           <select name="cars" id="cars" form="carform" className=' searchselects'>
             <option value="volvo">Kolkata</option>
             <option value="saab">Mumbai</option>
@@ -31,7 +31,7 @@ const SearchFlight = () => {
           <input type="date" name="" id="" className=' searchselects' />
         </div>
         <div className=' searchlabels'>
-          <label for="cars" className='searchlabel'>Guests</label>
+          <label htmlFor="cars" className='searchlabel'>Guests</label>
           <select name="cars" id="cars" form="carform" className=' searchselects'>
             <option value="volvo">1</option>
             <option value="saab">2</option>
@@ -40,7 +40,7 @@ const SearchFlight = () => {
           </select>
         </div>
         <div className='searchlabels'>
-          <label for="cars" className='searchlabel'>ClassName</label>
+          <label htmlFor="cars" className='searchlabel'>ClassName</label>
           <select name="cars" id="cars" form="carform" className=' searchselects'>
             <option value="volvo">Economy</option>
             <option value="saab">Premium Economy</option>

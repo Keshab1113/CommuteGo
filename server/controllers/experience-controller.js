@@ -1,4 +1,5 @@
 const Experience = require("../models/experience-model.js");
+const { createNotification } = require("../utils/notification-helper.js");
 
 // Get all experiences with filtering
 const getAllExperiences = async (req, res, next) => {
@@ -92,6 +93,14 @@ const createExperience = async (req, res, next) => {
   try {
     const experience = await Experience.create(req.body);
 
+    await createNotification({
+      title: "New experience added",
+      message: `"${experience.title || "An experience"}" has been added by a local buddy.`,
+      type: "info",
+      entityType: "experience",
+      entityId: experience._id,
+    });
+
     res.status(201).json(experience);
   } catch (error) {
     next(error);
@@ -146,6 +155,14 @@ const deleteExperience = async (req, res, next) => {
     // Soft delete
     experience.isActive = false;
     await experience.save();
+
+    await createNotification({
+      title: "Experience removed",
+      message: `"${experience.title || "An experience"}" has been removed.`,
+      type: "warning",
+      entityType: "experience",
+      entityId: experience._id,
+    });
 
     res.status(200).json({ message: "Experience deleted successfully" });
   } catch (error) {
