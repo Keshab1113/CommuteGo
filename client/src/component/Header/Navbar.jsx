@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Menu, X, Bus, Train, Plane, Home, Info, Phone, User, LogOut, ChevronDown, MapPin, ArrowRight, Compass, Users, Heart, Sparkles, LayoutDashboard, Shield } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, Home, Info, Phone, User, LogOut, ChevronDown, MapPin, ArrowRight, Compass, Users, Heart, Sparkles, LayoutDashboard, Shield, Route } from "lucide-react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../store/auth";
 import { cn } from "../../lib/utils";
@@ -38,6 +38,7 @@ const Navbar = () => {
   const pillars = [
     { to: "/hidden-destinations", label: "Hidden Destinations", icon: Compass, color: "from-emerald-500 to-teal-500", description: "Discover authentic places" },
     { to: "/local-buddies", label: "Local Buddies", icon: Users, color: "from-cyan-500 to-blue-500", description: "Connect with passionate locals" },
+    { to: "/trips", label: "All Trips", icon: Route, color: "from-amber-500 to-orange-500", description: "Browse open travel itineraries" },
     { to: "/travel-matchmaking", label: "Travel Together", icon: Heart, color: "from-rose-500 to-pink-500", description: "Find compatible companions" },
   ];
 
@@ -276,9 +277,29 @@ const Navbar = () => {
                   {link.label}
                 </NavLink>
               ))}
-            </div>
 
-            
+              <p className="px-4 py-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                Explore
+              </p>
+              {pillars.map((pillar) => (
+                <NavLink
+                  key={pillar.to}
+                  to={pillar.to}
+                  onClick={() => setIsOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                      isActive
+                        ? "text-cyan-400 bg-cyan-500/10"
+                        : "text-gray-300 hover:bg-gray-800/50"
+                    )
+                  }
+                >
+                  <pillar.icon className="w-5 h-5" />
+                  {pillar.label}
+                </NavLink>
+              ))}
+            </div>
 
             <div className="mt-4 pt-4 border-t border-gray-800">
               {isLoggedIn ? (
