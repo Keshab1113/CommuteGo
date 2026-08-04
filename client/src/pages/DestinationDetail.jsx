@@ -59,24 +59,51 @@ const DestinationDetail = () => {
 
   const fetchRelated = useCallback(async () => {
     if (!destination) return;
-    const location = destination.location?.name || destination.name;
+
+    const fullLocation = destination.location?.name || destination.name;
+    // Use the primary place name (first comma-separated segment) for the best match.
+    const city = fullLocation.split(',')[0].trim();
 
     setBuddiesLoading(true);
     setTripsLoading(true);
     try {
-      const [buddiesRes, tripsRes] = await Promise.all([
-        fetch(`${API_URL}/api/local-buddies?search=${encodeURIComponent(location)}&limit=8`),
-        fetch(`${API_URL}/api/trips?destination=${encodeURIComponent(location)}&limit=8`)
+      const [buddiesByCityRes, buddiesBySearchRes, tripsByCityRes, tripsBySearchRes] = await Promise.all([
+        fetch(`${API_URL}/api/local-buddies?city=${encodeURIComponent(city)}&limit=12`),
+        fetch(`${API_URL}/api/local-buddies?search=${encodeURIComponent(fullLocation)}&limit=12`),
+        fetch(`${API_URL}/api/trips?destination=${encodeURIComponent(city)}&limit=12`),
+        fetch(`${API_URL}/api/trips?destination=${encodeURIComponent(fullLocation)}&limit=12`)
       ]);
 
-      if (buddiesRes.ok) {
-        const buddiesData = await buddiesRes.json();
-        setBuddies(buddiesData.buddies || []);
+      const mergeUnique = (items) => {
+        const seen = new Set();
+        return items.filter(item => {
+          if (seen.has(item._id)) return false;
+          seen.add(item._id);
+          return true;
+        });
+      };
+
+      let relatedBuddies = [];
+      if (buddiesByCityRes.ok) {
+        const data = await buddiesByCityRes.json();
+        relatedBuddies = data.buddies || [];
       }
-      if (tripsRes.ok) {
-        const tripsData = await tripsRes.json();
-        setTrips(tripsData.trips || []);
+      if (buddiesBySearchRes.ok) {
+        const data = await buddiesBySearchRes.json();
+        relatedBuddies = mergeUnique([...relatedBuddies, ...(data.buddies || [])]);
       }
+      setBuddies(relatedBuddies.slice(0, 8));
+
+      let relatedTrips = [];
+      if (tripsByCityRes.ok) {
+        const data = await tripsByCityRes.json();
+        relatedTrips = data.trips || [];
+      }
+      if (tripsBySearchRes.ok) {
+        const data = await tripsBySearchRes.json();
+        relatedTrips = mergeUnique([...relatedTrips, ...(data.trips || [])]);
+      }
+      setTrips(relatedTrips.slice(0, 8));
     } catch (error) {
       // Silent: related content is optional
     } finally {

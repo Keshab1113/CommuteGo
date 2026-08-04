@@ -333,6 +333,29 @@ const AdminDestinationDetail = () => {
   }
 
   const renderField = (label, value, type = 'text', name, options = null) => {
+    if (type === 'rich-text') {
+      return (
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</label>
+          {isEditing ? (
+            <ReactQuill
+              theme="snow"
+              value={formData[name]}
+              onChange={(val) => setFormData(prev => ({ ...prev, [name]: val }))}
+              modules={QUILL_MODULES}
+              formats={QUILL_FORMATS}
+              className="bg-[#0a0a0a] rounded-lg border border-gray-700 overflow-hidden"
+            />
+          ) : (
+            <div
+              className="ql-preview text-gray-300 text-sm leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value || '<p class="text-gray-500">-</p>') }}
+            />
+          )}
+        </div>
+      );
+    }
+
     if (!isEditing) {
       return (
         <div className="space-y-1">
@@ -356,29 +379,6 @@ const AdminDestinationDetail = () => {
               <option key={opt} value={opt}>{opt}</option>
             ))}
           </select>
-        </div>
-      );
-    }
-
-    if (type === 'rich-text') {
-      return (
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</label>
-          {isEditing ? (
-            <ReactQuill
-              theme="snow"
-              value={formData[name]}
-              onChange={(value) => setFormData(prev => ({ ...prev, [name]: value }))}
-              modules={QUILL_MODULES}
-              formats={QUILL_FORMATS}
-              className="bg-[#0a0a0a] rounded-lg border border-gray-700 overflow-hidden"
-            />
-          ) : (
-            <div
-              className="prose prose-invert max-w-none ql-preview"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value || '<p class="text-gray-500">-</p>') }}
-            />
-          )}
         </div>
       );
     }
@@ -548,8 +548,8 @@ const AdminDestinationDetail = () => {
               <FileText className="w-5 h-5 text-rose-400" /> Extended Content
             </h2>
             <div className="space-y-6">
-              {renderField('Blog / Long-form Content', DOMPurify.sanitize(destination.blogContent || ''), 'rich-text', 'blogContent')}
-              {renderField('Additional Details', DOMPurify.sanitize(destination.additionalDetails || ''), 'rich-text', 'additionalDetails')}
+              {renderField('Blog / Long-form Content', destination.blogContent, 'rich-text', 'blogContent')}
+              {renderField('Additional Details', destination.additionalDetails, 'rich-text', 'additionalDetails')}
               {renderField('Admin Notes (internal)', destination.adminNotes, 'textarea', 'adminNotes')}
             </div>
           </motion.div>

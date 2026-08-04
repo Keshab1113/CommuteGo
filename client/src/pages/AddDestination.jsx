@@ -510,6 +510,77 @@ const AddDestination = () => {
                   />
                   <p className="mt-2 text-xs text-gray-500">Paste a Google Maps embed URL to show the location on the detail page.</p>
                 </div>
+
+                <div className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                  <div className="flex items-start gap-3">
+                    <MapIcon className="w-5 h-5 text-cyan-400 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-cyan-400 mb-2">How to Reach</p>
+                      <p className="text-xs text-gray-400 mb-4">Add one or more travel routes with steps. Each route can use Bus, Train, Flight, or Personal Car.</p>
+
+                      {formData.howToReach.map((route, routeIndex) => (
+                        <div key={routeIndex} className="mb-4 p-3 rounded-lg bg-[#0a0a0a] border border-gray-700">
+                          <div className="flex items-center gap-2 mb-3">
+                            <select
+                              value={route.mode}
+                              onChange={(e) => updateHowToReachMode(routeIndex, e.target.value)}
+                              className="px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
+                            >
+                              {['Bus', 'Train', 'Flight', 'Personal Car'].map(m => (
+                                <option key={m} value={m}>{m}</option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => removeHowToReachRoute(routeIndex)}
+                              className="ml-auto text-xs text-red-400 hover:text-red-300"
+                            >
+                              Remove Route
+                            </button>
+                          </div>
+
+                          {route.steps.map((step, stepIndex) => (
+                            <div key={stepIndex} className="flex items-center gap-2 mb-2">
+                              <span className="text-xs text-gray-500 w-12">Step {stepIndex + 1}</span>
+                              <input
+                                type="text"
+                                value={step}
+                                onChange={(e) => updateHowToReachStep(routeIndex, stepIndex, e.target.value)}
+                                placeholder="e.g., From Kolkata to New Jalpaiguri by Train"
+                                className="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
+                              />
+                              {route.steps.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeHowToReachStep(routeIndex, stepIndex)}
+                                  className="text-xs text-red-400 hover:text-red-300"
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          ))}
+
+                          <button
+                            type="button"
+                            onClick={() => addHowToReachStep(routeIndex)}
+                            className="mt-2 text-xs text-cyan-400 hover:text-cyan-300"
+                          >
+                            + Add Step
+                          </button>
+                        </div>
+                      ))}
+
+                      <button
+                        type="button"
+                        onClick={addHowToReachRoute}
+                        className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-2"
+                      >
+                        + Add Route
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -543,79 +614,6 @@ const AddDestination = () => {
                         <li>• Write a detailed, honest description</li>
                         <li>• Include accurate budget estimate</li>
                       </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-                    <div className="flex items-start gap-3">
-                      <MapIcon className="w-5 h-5 text-cyan-400 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-cyan-400 mb-2">How to Reach</p>
-                        <p className="text-xs text-gray-400 mb-4">Add one or more travel routes with steps. Each route can use Bus, Train, Flight, or Personal Car.</p>
-
-                        {formData.howToReach.map((route, routeIndex) => (
-                          <div key={routeIndex} className="mb-4 p-3 rounded-lg bg-[#0a0a0a] border border-gray-700">
-                            <div className="flex items-center gap-2 mb-3">
-                              <select
-                                value={route.mode}
-                                onChange={(e) => updateHowToReachMode(routeIndex, e.target.value)}
-                                className="px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
-                              >
-                                {['Bus', 'Train', 'Flight', 'Personal Car'].map(m => (
-                                  <option key={m} value={m}>{m}</option>
-                                ))}
-                              </select>
-                              <button
-                                type="button"
-                                onClick={() => removeHowToReachRoute(routeIndex)}
-                                className="ml-auto text-xs text-red-400 hover:text-red-300"
-                              >
-                                Remove Route
-                              </button>
-                            </div>
-
-                            {route.steps.map((step, stepIndex) => (
-                              <div key={stepIndex} className="flex items-center gap-2 mb-2">
-                                <span className="text-xs text-gray-500 w-12">Step {stepIndex + 1}</span>
-                                <input
-                                  type="text"
-                                  value={step}
-                                  onChange={(e) => updateHowToReachStep(routeIndex, stepIndex, e.target.value)}
-                                  placeholder="e.g., From Kolkata to New Jalpaiguri by Train"
-                                  className="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
-                                />
-                                {route.steps.length > 1 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => removeHowToReachStep(routeIndex, stepIndex)}
-                                    className="text-xs text-red-400 hover:text-red-300"
-                                  >
-                                    Remove
-                                  </button>
-                                )}
-                              </div>
-                            ))}
-
-                            <button
-                              type="button"
-                              onClick={() => addHowToReachStep(routeIndex)}
-                              className="mt-2 text-xs text-cyan-400 hover:text-cyan-300"
-                            >
-                              + Add Step
-                            </button>
-                          </div>
-                        ))}
-
-                        <button
-                          type="button"
-                          onClick={addHowToReachRoute}
-                          className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-2"
-                        >
-                          + Add Route
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
