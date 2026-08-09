@@ -331,14 +331,26 @@ const DestinationDetail = () => {
                             <span className="text-sm text-gray-500">Route {routeIndex + 1}</span>
                           </div>
                           <ol className="space-y-3">
-                            {route.steps.map((step, stepIndex) => (
-                              <li key={stepIndex} className="flex items-start gap-3">
-                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-white/10 text-gray-300 text-xs font-bold flex items-center justify-center">
-                                  {stepIndex + 1}
-                                </span>
-                                <span className="text-gray-300">{step}</span>
-                              </li>
-                            ))}
+                            {route.steps.map((step, stepIndex) => {
+                              const vehicle = step.vehicle || route.mode;
+                              const instruction = step.instruction || (typeof step === 'string' ? step : '');
+                              const StepIcon = modeIcons[vehicle] || Navigation;
+                              return (
+                                <li key={stepIndex} className="flex items-start gap-3">
+                                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-white/10 text-gray-300 text-xs font-bold flex items-center justify-center">
+                                    {stepIndex + 1}
+                                  </span>
+                                  <div className="flex-1">
+                                    {vehicle && (
+                                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border mb-1.5 ${modeColors[vehicle] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'}`}>
+                                        <StepIcon className="w-3 h-3" /> {vehicle}
+                                      </span>
+                                    )}
+                                    <p className="text-gray-300">{instruction}</p>
+                                  </div>
+                                </li>
+                              );
+                            })}
                           </ol>
                         </div>
                       );

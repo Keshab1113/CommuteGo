@@ -4,6 +4,8 @@ import { Search, Trash2, Star, Loader2, MessageSquare, User, MapPin, Backpack } 
 import { ThemeContext } from '../../context/ThemeContext';
 import { toast } from 'react-toastify';
 import { reviewsApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
+import SimpleSelect from '../../components/ui/SimpleSelect';
 
 const AdminReviews = () => {
   const { darkMode } = useContext(ThemeContext);
@@ -11,6 +13,8 @@ const AdminReviews = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchReviews();
@@ -28,15 +32,22 @@ const AdminReviews = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this review?')) {
-      try {
-        await reviewsApi.delete(id);
-        toast.success('Review deleted successfully');
-        fetchReviews();
-      } catch (error) {
-        toast.error('Failed to delete review');
-      }
+  const handleDelete = (id) => {
+    setDeleteItem(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteItem) return;
+    setIsDeleting(true);
+    try {
+      await reviewsApi.delete(deleteItem);
+      toast.success('Review deleted successfully');
+      fetchReviews();
+    } catch (error) {
+      toast.error('Failed to delete review');
+    } finally {
+      setIsDeleting(false);
+      setDeleteItem(null);
     }
   };
 
@@ -75,17 +86,18 @@ const AdminReviews = () => {
               className="pl-10 pr-4 py-2 rounded-xl bg-[#1C1B1B] border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-500/50"
             />
           </div>
-          <select
+          <SimpleSelect
             value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl bg-[#1C1B1B] border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500/50"
-          >
-            <option value="all">All Types</option>
-            <option value="destination">Destination</option>
-            <option value="buddy">Local Buddy</option>
-            <option value="trip">Trip</option>
-            <option value="experience">Experience</option>
-          </select>
+            onChange={(value) => setTypeFilter(value)}
+            options={[
+              { value: 'all', label: 'All Types' },
+              { value: 'destination', label: 'Destination' },
+              { value: 'buddy', label: 'Local Buddy' },
+              { value: 'trip', label: 'Trip' },
+              { value: 'experience', label: 'Experience' },
+            ]}
+            triggerClassName="px-4 h-10 rounded-xl bg-[#1C1B1B] border-white/10 text-white text-sm"
+          />
         </div>
       </div>
 
@@ -168,6 +180,17 @@ const AdminReviews = () => {
           )}
         </motion.div>
       )}
+
+      <DeleteConfirmModal
+        open={!!deleteItem}
+        onOpenChange={(open) => {
+          if (!open) setDeleteItem(null);
+        }}
+        title="Delete Review"
+        description="Are you sure you want to delete this review? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

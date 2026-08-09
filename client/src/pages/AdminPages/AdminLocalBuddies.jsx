@@ -4,6 +4,7 @@ import { Search, Trash2, MapPin, Star, Loader2, Check, X, Clock, Award, Users } 
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { localBuddiesApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
 
 const AdminLocalBuddies = () => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const AdminLocalBuddies = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('approved');
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchBuddies();
@@ -43,15 +46,22 @@ const AdminLocalBuddies = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this local buddy?')) {
-      try {
-        await localBuddiesApi.delete(id);
-        toast.success('Local buddy deleted successfully');
-        fetchBuddies();
-      } catch (error) {
-        toast.error('Failed to delete local buddy');
-      }
+  const handleDelete = (id) => {
+    setDeleteItem(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteItem) return;
+    setIsDeleting(true);
+    try {
+      await localBuddiesApi.delete(deleteItem);
+      toast.success('Local buddy deleted successfully');
+      fetchBuddies();
+    } catch (error) {
+      toast.error('Failed to delete local buddy');
+    } finally {
+      setIsDeleting(false);
+      setDeleteItem(null);
     }
   };
 
@@ -254,6 +264,17 @@ const AdminLocalBuddies = () => {
           </div>
         </motion.div>
       )}
+
+      <DeleteConfirmModal
+        open={!!deleteItem}
+        onOpenChange={(open) => {
+          if (!open) setDeleteItem(null);
+        }}
+        title="Delete Local Buddy"
+        description="Are you sure you want to delete this local buddy? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

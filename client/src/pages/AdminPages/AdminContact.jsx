@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Search, Trash2, CheckCircle, Clock, Loader2, Mail, Phone, MapPin, Eye, MessageSquare } from 'lucide-react';
 import { toast } from "react-toastify";
 import { adminDataApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
+import SimpleSelect from '../../components/ui/SimpleSelect';
 
 const AdminContact = () => {
   const [contacts, setContacts] = useState([]);
@@ -10,6 +12,8 @@ const AdminContact = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchContacts = async () => {
     setIsLoading(true);
@@ -51,6 +55,21 @@ const AdminContact = () => {
     }
   };
 
+  const confirmDelete = async () => {
+    if (!deleteItem) return;
+    setIsDeleting(true);
+    try {
+      await adminDataApi.deleteFeedback(deleteItem);
+      toast.success("Contact deleted successfully");
+      fetchContacts();
+    } catch (error) {
+      toast.error("Failed to delete contact");
+    } finally {
+      setIsDeleting(false);
+      setDeleteItem(null);
+    }
+  };
+
   const filteredContacts = contacts.filter(contact => {
     const matchesSearch =
       contact.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,15 +100,16 @@ const AdminContact = () => {
               className="pl-10 pr-4 py-2 rounded-xl bg-[#1C1B1B] border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-500/50"
             />
           </div>
-          <select
+          <SimpleSelect
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl bg-[#1C1B1B] border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500/50"
-          >
-            <option value="all">All Status</option>
-            <option value="done">Resolved</option>
-            <option value="pending">Pending</option>
-          </select>
+            onChange={(value) => setFilter(value)}
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'done', label: 'Resolved' },
+              { value: 'pending', label: 'Pending' },
+            ]}
+            triggerClassName="px-4 h-10 rounded-xl bg-[#1C1B1B] border-white/10 text-white text-sm"
+          />
         </div>
       </div>
 
@@ -209,11 +229,7 @@ const AdminContact = () => {
                           </button>
                         )}
                         <button
-                          onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this contact?')) {
-                              deleteContact(contact._id);
-                            }
-                          }}
+                          onClick={() => setDeleteItem(contact._id)}
                           className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -234,6 +250,17 @@ const AdminContact = () => {
           )}
         </motion.div>
       )}
+
+      <DeleteConfirmModal
+        open={!!deleteItem}
+        onOpenChange={(open) => {
+          if (!open) setDeleteItem(null);
+        }}
+        title="Delete Contact"
+        description="Are you sure you want to delete this contact? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
 
       {/* Detail Modal */}
       {selectedContact && (

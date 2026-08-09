@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { tripsApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
+import SimpleSelect from '../../components/ui/SimpleSelect';
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
@@ -31,6 +33,8 @@ const AdminTripDetail = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     destination: '',
@@ -116,16 +120,20 @@ const AdminTripDetail = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to cancel/delete this trip?')) return;
-    setIsLoading(true);
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    setIsDeleting(true);
     try {
       await tripsApi.delete(id);
-      toast.success('Trip cancelled successfully');
+      toast.success('Trip deleted successfully');
       navigate('/admin/trips');
     } catch (error) {
-      toast.error('Failed to cancel trip');
-      setIsLoading(false);
+      toast.error('Failed to delete trip');
+      setIsDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -234,18 +242,18 @@ const AdminTripDetail = () => {
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Trip Status</label>
-                  <select
-                    name="tripStatus"
+                  <SimpleSelect
                     value={formData.tripStatus}
-                    onChange={handleInput}
-                    className="w-full px-4 py-2 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-emerald-500/50"
-                  >
-                    <option value="open">Open</option>
-                    <option value="closed">Closed</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
+                    onChange={(value) => handleInput({ target: { name: 'tripStatus', value } })}
+                    options={[
+                      { value: 'open', label: 'Open' },
+                      { value: 'closed', label: 'Closed' },
+                      { value: 'in-progress', label: 'In Progress' },
+                      { value: 'completed', label: 'Completed' },
+                      { value: 'cancelled', label: 'Cancelled' },
+                    ]}
+                    triggerClassName="w-full h-10 rounded-xl bg-[#0a0a0a] border-white/10 text-white"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Budget (₹)</label>
@@ -412,6 +420,15 @@ const AdminTripDetail = () => {
           )}
         </div>
       </motion.div>
+
+      <DeleteConfirmModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        title="Delete Trip"
+        description="Are you sure you want to delete this trip? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

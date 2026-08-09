@@ -63,7 +63,7 @@ const Services = () => {
         { value: '10K+', label: 'Trips Matched' },
         { value: '95%', label: 'Match Rate' },
       ],
-      link: '/travel-matchmaking',
+      link: '/trips',
     },
   ];
 

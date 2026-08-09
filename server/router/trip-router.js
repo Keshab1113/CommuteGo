@@ -11,6 +11,7 @@ const {
   updateTrip,
   updateTripStatus,
   deleteTrip,
+  adminDeleteTrip,
   requestJoinTrip,
   getTripRequests,
   respondToRequest,
@@ -44,5 +45,6 @@ router.patch("/requests/:id", authMiddleware, respondToRequest);
 router.get("/admin/pending", authMiddleware, adminMiddleware, getPendingTrips);
 router.get("/admin/:id", authMiddleware, adminMiddleware, getAdminTripById);
 router.patch("/admin/:id/review", authMiddleware, adminMiddleware, reviewTrip);
+router.delete("/admin/:id", authMiddleware, adminMiddleware, adminDeleteTrip);
 
 module.exports = router;

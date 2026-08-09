@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { User, MapPin, Globe, Star, Clock, DollarSign, Shield, Loader2, X, Image, Gift, Award, CheckCircle, Heart, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import SimpleSelect from '../components/ui/SimpleSelect';
 
 const AddLocalBuddy = () => {
   const navigate = useNavigate();
@@ -364,16 +365,18 @@ const AddLocalBuddy = () => {
                     <Shield className="w-4 h-4 text-emerald-400" />
                     Response Time
                   </label>
-                  <select
+                  <SimpleSelect
                     value={formData.responseTime}
-                    onChange={(e) => setFormData({ ...formData, responseTime: e.target.value })}
-                    className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all text-white"
-                  >
-                    <option value="< 30 mins">Less than 30 minutes</option>
-                    <option value="< 1 hour">Less than 1 hour</option>
-                    <option value="< 2 hours">Less than 2 hours</option>
-                    <option value="< 24 hours">Less than 24 hours</option>
-                  </select>
+                    onChange={(value) => setFormData({ ...formData, responseTime: value })}
+                    placeholder="Select response time"
+                    options={[
+                      { value: '< 30 mins', label: 'Less than 30 minutes' },
+                      { value: '< 1 hour', label: 'Less than 1 hour' },
+                      { value: '< 2 hours', label: 'Less than 2 hours' },
+                      { value: '< 24 hours', label: 'Less than 24 hours' },
+                    ]}
+                    triggerClassName="w-full h-[58px] rounded-xl bg-[#0a0a0a] border-gray-700 text-white"
+                  />
                 </div>
 
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-[#0a0a0a] border border-gray-700">

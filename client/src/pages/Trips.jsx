@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import { toast } from 'react-toastify';
+import SimpleSelect from '../components/ui/SimpleSelect';
 import {
   Heart,
   Search,
@@ -123,6 +124,44 @@ const Trips = () => {
     }
   };
 
+  const handleMessageCreator = async (trip) => {
+    if (!isLoggedIn) {
+      toast.error('Please login to message the trip creator');
+      return;
+    }
+
+    const creatorId = trip.creatorId?._id || trip.creatorId;
+    if (!creatorId) {
+      toast.error('Trip creator not found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/conversations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authorizationToken,
+        },
+        body: JSON.stringify({
+          participantId: creatorId,
+          type: 'direct',
+          relatedTo: { type: 'trip', id: trip._id },
+        }),
+      });
+
+      if (response.ok) {
+        const conversation = await response.json();
+        navigate(`/conversations/${conversation._id}`);
+      } else {
+        const data = await response.json();
+        toast.error(data.message || 'Failed to start conversation');
+      }
+    } catch (err) {
+      toast.error('Failed to start conversation');
+    }
+  };
+
   const filteredTrips = trips.filter((trip) => {
     const matchesSearch = !searchQuery ||
                          trip.destination?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -237,30 +276,33 @@ const Trips = () => {
             {/* Additional Filters */}
             <div className="flex flex-wrap gap-3">
               {filterOptions.destinations.length > 0 && (
-                <select
+                <SimpleSelect
                   value={selectedDestination}
-                  onChange={(e) => setSelectedDestination(e.target.value)}
-                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-rose-500/50"
-                >
-                  <option value="all">All Destinations</option>
-                  {filterOptions.destinations.map((dest) => (
-                    <option key={dest} value={dest}>
-                      {dest}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setSelectedDestination}
+                  placeholder="All Destinations"
+                  options={[
+                    { value: 'all', label: 'All Destinations' },
+                    ...filterOptions.destinations.map((dest) => ({
+                      value: dest,
+                      label: dest,
+                    })),
+                  ]}
+                  triggerClassName="min-w-[160px]"
+                />
               )}
 
-              <select
+              <SimpleSelect
                 value={selectedBudget}
-                onChange={(e) => setSelectedBudget(e.target.value)}
-                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-rose-500/50"
-              >
-                <option value="all">All Budget</option>
-                <option value="low">Budget (Under ₹5K)</option>
-                <option value="medium">Mid-range (₹5K-15K)</option>
-                <option value="high">Premium (₹15K+)</option>
-              </select>
+                onChange={setSelectedBudget}
+                placeholder="All Budget"
+                options={[
+                  { value: 'all', label: 'All Budget' },
+                  { value: 'low', label: 'Budget (Under ₹5K)' },
+                  { value: 'medium', label: 'Mid-range (₹5K-15K)' },
+                  { value: 'high', label: 'Premium (₹15K+)' },
+                ]}
+                triggerClassName="min-w-[160px]"
+              />
             </div>
           </div>
         </div>
@@ -422,7 +464,7 @@ const Trips = () => {
                           Join Trip
                         </button>
                         <button
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={(e) => { e.stopPropagation(); handleMessageCreator(trip); }}
                           className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
                         >
                           <MessageCircle className="w-5 h-5" />

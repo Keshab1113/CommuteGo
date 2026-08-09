@@ -11,6 +11,8 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from 'dompurify';
 import { destinationsApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
+import SimpleSelect from '../../components/ui/SimpleSelect';
 
 const QUILL_MODULES = {
   toolbar: [
@@ -58,6 +60,8 @@ const AdminDestinationDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [question, setQuestion] = useState('');
   const [isSendingQuestion, setIsSendingQuestion] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Raw comma-separated inputs for array fields to avoid cursor jumping.
   const [tagInput, setTagInput] = useState('');
@@ -118,7 +122,7 @@ const AdminDestinationDetail = () => {
         adminNotes: data.adminNotes || '',
         additionalDetails: data.additionalDetails || '',
         mapEmbedUrl: data.mapEmbedUrl || '',
-        howToReach: data.howToReach || []
+        howToReach: normalizeHowToReach(data.howToReach || [])
       });
       setTagInput((data.tags || []).join(', '));
       setImageInput((data.images || []).join(', '));
@@ -133,6 +137,21 @@ const AdminDestinationDetail = () => {
   useEffect(() => {
     fetchDestination();
   }, [fetchDestination]);
+
+  const normalizeHowToReach = (routes) => {
+    return routes.map(route => ({
+      ...route,
+      steps: route.steps.map(step => {
+        if (typeof step === 'string') {
+          return { vehicle: route.mode || 'Bus', instruction: step };
+        }
+        return {
+          vehicle: step.vehicle || route.mode || 'Bus',
+          instruction: step.instruction || ''
+        };
+      })
+    }));
+  };
 
   const handleInput = (e) => {
     const { name, value, type, checked } = e.target;
@@ -178,7 +197,7 @@ const AdminDestinationDetail = () => {
   const addHowToReachRoute = () => {
     setFormData(prev => ({
       ...prev,
-      howToReach: [...prev.howToReach, { mode: 'Bus', steps: [''] }]
+      howToReach: [...prev.howToReach, { mode: 'Bus', steps: [{ vehicle: 'Bus', instruction: '' }] }]
     }));
   };
 
@@ -198,22 +217,34 @@ const AdminDestinationDetail = () => {
     }));
   };
 
-  const updateHowToReachStep = (routeIndex, stepIndex, value) => {
+  const updateStepVehicle = (routeIndex, stepIndex, vehicle) => {
     setFormData(prev => ({
       ...prev,
       howToReach: prev.howToReach.map((route, i) =>
         i === routeIndex
-          ? { ...route, steps: route.steps.map((step, j) => j === stepIndex ? value : step) }
+          ? { ...route, steps: route.steps.map((step, j) => j === stepIndex ? { ...step, vehicle } : step) }
+          : route
+      )
+    }));
+  };
+
+  const updateHowToReachStep = (routeIndex, stepIndex, instruction) => {
+    setFormData(prev => ({
+      ...prev,
+      howToReach: prev.howToReach.map((route, i) =>
+        i === routeIndex
+          ? { ...route, steps: route.steps.map((step, j) => j === stepIndex ? { ...step, instruction } : step) }
           : route
       )
     }));
   };
 
   const addHowToReachStep = (routeIndex) => {
+    const defaultVehicle = formData.howToReach[routeIndex]?.mode || 'Bus';
     setFormData(prev => ({
       ...prev,
       howToReach: prev.howToReach.map((route, i) =>
-        i === routeIndex ? { ...route, steps: [...route.steps, ''] } : route
+        i === routeIndex ? { ...route, steps: [...route.steps, { vehicle: defaultVehicle, instruction: '' }] } : route
       )
     }));
   };
@@ -240,7 +271,7 @@ const AdminDestinationDetail = () => {
       estimatedBudget: Number(formData.estimatedBudget),
       safetyScore: Number(formData.safetyScore),
       howToReach: formData.howToReach
-        .map(r => ({ ...r, steps: r.steps.filter(s => s.trim()) }))
+        .map(r => ({ ...r, steps: r.steps.filter(s => (typeof s === 'string' ? s.trim() : s.instruction?.trim())) }))
         .filter(r => r.steps.length > 0),
       location: {
         name: formData.locationName,
@@ -273,16 +304,20 @@ const AdminDestinationDetail = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this destination? This cannot be undone.')) return;
-    setIsLoading(true);
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    setIsDeleting(true);
     try {
       await destinationsApi.delete(id);
       toast.success('Destination deleted successfully');
       navigate('/admin/destinations');
     } catch (error) {
       toast.error('Failed to delete destination');
-      setIsLoading(false);
+      setIsDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -369,16 +404,12 @@ const AdminDestinationDetail = () => {
       return (
         <div className="space-y-1">
           <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</label>
-          <select
-            name={name}
+          <SimpleSelect
             value={formData[name]}
-            onChange={handleInput}
-            className="w-full px-3 py-2 rounded-lg bg-[#0a0a0a] border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
-          >
-            {options.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
+            onChange={(value) => handleInput({ target: { name, value } })}
+            options={options.map(opt => ({ value: opt, label: opt }))}
+            triggerClassName="w-full h-9 rounded-lg bg-[#0a0a0a] border-gray-700 text-white text-sm"
+          />
         </div>
       );
     }
@@ -587,15 +618,12 @@ const AdminDestinationDetail = () => {
                   {formData.howToReach.map((route, routeIndex) => (
                     <div key={routeIndex} className="p-3 rounded-lg bg-[#0a0a0a] border border-gray-700">
                       <div className="flex items-center gap-2 mb-3">
-                        <select
+                        <SimpleSelect
                           value={route.mode}
-                          onChange={(e) => updateHowToReachMode(routeIndex, e.target.value)}
-                          className="px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
-                        >
-                          {['Bus', 'Train', 'Flight', 'Personal Car'].map(m => (
-                            <option key={m} value={m}>{m}</option>
-                          ))}
-                        </select>
+                          onChange={(value) => updateHowToReachMode(routeIndex, value)}
+                          options={['Bus', 'Train', 'Flight', 'Personal Car'].map(m => ({ value: m, label: m }))}
+                          triggerClassName="px-3 h-9 rounded-lg bg-black/30 border-gray-700 text-white text-sm"
+                        />
                         <button
                           onClick={() => removeHowToReachRoute(routeIndex)}
                           className="ml-auto text-xs text-red-400 hover:text-red-300"
@@ -603,26 +631,36 @@ const AdminDestinationDetail = () => {
                           Remove Route
                         </button>
                       </div>
-                      {route.steps.map((step, stepIndex) => (
-                        <div key={stepIndex} className="flex items-center gap-2 mb-2">
-                          <span className="text-xs text-gray-500 w-14">Step {stepIndex + 1}</span>
-                          <input
-                            type="text"
-                            value={step}
-                            onChange={(e) => updateHowToReachStep(routeIndex, stepIndex, e.target.value)}
-                            className="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
-                            placeholder="e.g., From Kolkata to New Jalpaiguri by Train"
-                          />
-                          {route.steps.length > 1 && (
-                            <button
-                              onClick={() => removeHowToReachStep(routeIndex, stepIndex)}
-                              className="text-xs text-red-400 hover:text-red-300"
-                            >
-                              Remove
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                      {route.steps.map((step, stepIndex) => {
+                        const vehicle = step.vehicle || route.mode || 'Bus';
+                        const instruction = step.instruction ?? (typeof step === 'string' ? step : '');
+                        return (
+                          <div key={stepIndex} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-2">
+                            <span className="text-xs text-gray-500 w-14 flex items-center">Step {stepIndex + 1}</span>
+                            <SimpleSelect
+                              value={vehicle}
+                              onChange={(value) => updateStepVehicle(routeIndex, stepIndex, value)}
+                              options={['Bus', 'Train', 'Flight', 'Personal Car', 'Taxi', 'Auto', 'Walk', 'Boat', 'Other'].map(m => ({ value: m, label: m }))}
+                              triggerClassName="px-3 h-9 rounded-lg bg-black/30 border-gray-700 text-white text-sm sm:w-[140px]"
+                            />
+                            <input
+                              type="text"
+                              value={instruction}
+                              onChange={(e) => updateHowToReachStep(routeIndex, stepIndex, e.target.value)}
+                              className="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
+                              placeholder="e.g., From Kolkata to New Jalpaiguri"
+                            />
+                            {route.steps.length > 1 && (
+                              <button
+                                onClick={() => removeHowToReachStep(routeIndex, stepIndex)}
+                                className="text-xs text-red-400 hover:text-red-300"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
                       <button
                         onClick={() => addHowToReachStep(routeIndex)}
                         className="mt-1 text-xs text-cyan-400 hover:text-cyan-300"
@@ -666,9 +704,16 @@ const AdminDestinationDetail = () => {
                       Route {i + 1}: {route.mode}
                     </h3>
                     <ol className="list-decimal list-inside space-y-2 text-sm text-gray-300">
-                      {route.steps.map((step, j) => (
-                        <li key={j}>{step}</li>
-                      ))}
+                      {route.steps.map((step, j) => {
+                        const vehicle = step.vehicle || route.mode;
+                        const instruction = step.instruction || (typeof step === 'string' ? step : '');
+                        return (
+                          <li key={j} className="flex items-start gap-2">
+                            <span className="text-xs text-gray-500 border border-gray-700 rounded px-1.5 py-0.5">{vehicle}</span>
+                            <span>{instruction}</span>
+                          </li>
+                        );
+                      })}
                     </ol>
                   </div>
                 )) : (
@@ -838,6 +883,15 @@ const AdminDestinationDetail = () => {
           </motion.div>
         </div>
       </div>
+
+      <DeleteConfirmModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        title="Delete Destination"
+        description="Are you sure you want to delete this destination? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

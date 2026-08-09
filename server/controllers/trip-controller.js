@@ -235,7 +235,7 @@ const updateTripStatus = async (req, res, next) => {
   }
 };
 
-// Delete/cancel trip (creator only)
+// Cancel trip (creator only)
 const deleteTrip = async (req, res, next) => {
   try {
     const trip = await Trip.findById(req.params.id);
@@ -265,6 +265,29 @@ const deleteTrip = async (req, res, next) => {
   }
 };
 
+// Hard delete trip (admin only)
+const adminDeleteTrip = async (req, res, next) => {
+  try {
+    const trip = await Trip.findByIdAndDelete(req.params.id);
+
+    if (!trip) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    await createNotification({
+      title: "Trip deleted",
+      message: `"${trip.destination}" has been removed from the platform.`,
+      type: "error",
+      entityType: "trip",
+      entityId: trip._id,
+    });
+
+    res.status(200).json({ message: "Trip deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Request to join trip
 const requestJoinTrip = async (req, res, next) => {
   try {
@@ -274,7 +297,7 @@ const requestJoinTrip = async (req, res, next) => {
       return res.status(404).json({ message: "Trip not found" });
     }
 
-    if (trip.status !== 'open') {
+    if (trip.tripStatus !== 'open') {
       return res.status(400).json({ message: "Trip is not accepting join requests" });
     }
 
@@ -398,6 +421,7 @@ module.exports = {
   updateTrip,
   updateTripStatus,
   deleteTrip,
+  adminDeleteTrip,
   requestJoinTrip,
   getTripRequests,
   respondToRequest,

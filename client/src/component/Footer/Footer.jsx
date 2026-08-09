@@ -16,7 +16,7 @@ const Footer = () => {
   const pillars = [
     { to: "/hidden-destinations", label: "Hidden Destinations", icon: Compass, color: "from-emerald-500 to-teal-500" },
     { to: "/local-buddies", label: "Local Buddies", icon: Users, color: "from-cyan-500 to-blue-500" },
-    { to: "/travel-matchmaking", label: "Travel Together", icon: Heart, color: "from-rose-500 to-pink-500" },
+    { to: "/trips", label: "Travel Together", icon: Heart, color: "from-rose-500 to-pink-500" },
   ];
 
   const services = [

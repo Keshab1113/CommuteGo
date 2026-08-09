@@ -4,6 +4,7 @@ import { Search, Trash2, MapPin, Shield, Loader2, Clock, Check, X, Eye } from 'l
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { destinationsApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
 
 const AdminDestinations = () => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const AdminDestinations = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('approved');
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchDestinations();
@@ -43,15 +46,22 @@ const AdminDestinations = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this destination?')) {
-      try {
-        await destinationsApi.delete(id);
-        toast.success('Destination deleted successfully');
-        fetchDestinations();
-      } catch (error) {
-        toast.error('Failed to delete destination');
-      }
+  const handleDelete = (id) => {
+    setDeleteItem(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteItem) return;
+    setIsDeleting(true);
+    try {
+      await destinationsApi.delete(deleteItem);
+      toast.success('Destination deleted successfully');
+      fetchDestinations();
+    } catch (error) {
+      toast.error('Failed to delete destination');
+    } finally {
+      setIsDeleting(false);
+      setDeleteItem(null);
     }
   };
 
@@ -244,6 +254,17 @@ const AdminDestinations = () => {
           </div>
         </motion.div>
       )}
+
+      <DeleteConfirmModal
+        open={!!deleteItem}
+        onOpenChange={(open) => {
+          if (!open) setDeleteItem(null);
+        }}
+        title="Delete Destination"
+        description="Are you sure you want to delete this destination? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

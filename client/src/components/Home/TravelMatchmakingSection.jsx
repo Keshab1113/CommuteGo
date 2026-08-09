@@ -1,6 +1,15 @@
-import { motion } from 'framer-motion';
-import { Calendar, Wallet, Heart, ArrowRight, Loader2, Users, MapPin, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { motion } from "framer-motion";
+import {
+  Calendar,
+  Wallet,
+  Heart,
+  ArrowRight,
+  Loader2,
+  Users,
+  MapPin,
+  Plus,
+} from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 
 const TravelMatchmakingSection = ({ trips, loading }) => {
   const navigate = useNavigate();
@@ -41,7 +50,8 @@ const TravelMatchmakingSection = ({ trips, loading }) => {
             </span>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Don't travel alone. Find like-minded explorers heading to the same destination.
+            Don't travel alone. Find like-minded explorers heading to the same
+            destination.
           </p>
         </motion.div>
 
@@ -60,12 +70,17 @@ const TravelMatchmakingSection = ({ trips, loading }) => {
                 <Plus className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-1">Create a Trip & Find Companions!</h3>
-                <p className="text-gray-400">Don't travel alone. Find like-minded explorers for your next adventure.</p>
+                <h3 className="text-xl font-bold text-white mb-1">
+                  Create a Trip & Find Companions!
+                </h3>
+                <p className="text-gray-400">
+                  Don't travel alone. Find like-minded explorers for your next
+                  adventure.
+                </p>
               </div>
             </div>
             <button
-              onClick={() => navigate('/create-trip')}
+              onClick={() => navigate("/create-trip")}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold hover:from-emerald-600 hover:to-cyan-600 transition-all shadow-lg shadow-emerald-500/25 flex items-center gap-2"
             >
               <MapPin className="w-5 h-5" />
@@ -100,7 +115,7 @@ const TravelMatchmakingSection = ({ trips, loading }) => {
             <h3 className="text-2xl font-bold mb-2">No Trips Yet</h3>
             <p className="text-gray-400 mb-4">Be the first to create a trip!</p>
             <button
-              onClick={() => navigate('/create-trip')}
+              onClick={() => navigate("/create-trip")}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-medium"
             >
               Create Trip
@@ -121,22 +136,31 @@ const TravelMatchmakingSection = ({ trips, loading }) => {
                 >
                   <div className="relative h-40 overflow-hidden">
                     <img
-                      src={trip.image || 'https://images.unsplash.com/photo-1585136917228-bd77b11cf700?w=400&h=300&fit=crop'}
+                      src={
+                        trip.image ||
+                        "https://images.unsplash.com/photo-1585136917228-bd77b11cf700?w=400&h=300&fit=crop"
+                      }
                       alt={trip.destination}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                     <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-xs font-medium">
-                      {trip.maxParticipants - trip.currentParticipants} spots left
+                      {trip.maxParticipants - trip.currentParticipants} spots
+                      left
                     </div>
                   </div>
 
                   <div className="p-5">
-                    <h3 className="text-xl font-bold mb-2">{trip.destination}</h3>
+                    <h3 className="text-xl font-bold mb-2">
+                      {trip.destination}
+                    </h3>
 
                     <div className="flex flex-wrap gap-2 mb-4">
                       {trip.interests?.slice(0, 3).map((interest) => (
-                        <span key={interest} className="px-2 py-1 rounded-lg bg-white/5 text-xs">
+                        <span
+                          key={interest}
+                          className="px-2 py-1 rounded-lg bg-white/5 text-xs"
+                        >
                           {interest}
                         </span>
                       ))}
@@ -144,21 +168,35 @@ const TravelMatchmakingSection = ({ trips, loading }) => {
 
                     <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" /> {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
+                        <Calendar className="w-4 h-4" />{" "}
+                        {new Date(trip.startDate).toLocaleDateString()} -{" "}
+                        {new Date(trip.endDate).toLocaleDateString()}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Wallet className="w-4 h-4" /> ₹{trip.budget?.toLocaleString()}
+                        <Wallet className="w-4 h-4" /> ₹
+                        {trip.budget?.toLocaleString()}
                       </span>
                     </div>
 
-                    <button onClick={() => navigate('/travel-matchmaking')} className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-medium hover:from-emerald-600 hover:to-cyan-600 transition-all">
+                    <button
+                      onClick={() => navigate(`/trips/${trip._id}`)}
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-medium hover:from-emerald-600 hover:to-cyan-600 transition-all"
+                    >
                       Join This Trip
                     </button>
                   </div>
                 </motion.div>
               ))}
             </div>
-
+            <div className=" w-full flex justify-center items-center">
+              <Link
+                to="/trips"
+                className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all"
+              >
+                View All Trips
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
             {/* CTA */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -167,8 +205,13 @@ const TravelMatchmakingSection = ({ trips, loading }) => {
               className="mt-16 p-8 rounded-3xl bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-white/10 text-center"
             >
               <h3 className="text-2xl font-bold mb-2">Create Your Own Trip</h3>
-              <p className="text-gray-400 mb-6">Looking for companions? Create a trip and let others join you.</p>
-              <button onClick={() => navigate('/travel-matchmaking')} className="px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold hover:from-emerald-600 hover:to-cyan-600 transition-all shadow-lg shadow-emerald-500/25">
+              <p className="text-gray-400 mb-6">
+                Looking for companions? Create a trip and let others join you.
+              </p>
+              <button
+                onClick={() => navigate("/create-trip")}
+                className="px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold hover:from-emerald-600 hover:to-cyan-600 transition-all shadow-lg shadow-emerald-500/25"
+              >
                 Start a Trip
               </button>
             </motion.div>

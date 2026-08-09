@@ -59,7 +59,7 @@ const CreateTrip = () => {
 
       if (response.ok) {
         toast.success('Trip created successfully! Pending admin approval.');
-        navigate('/travel-matchmaking');
+        navigate('/trips');
       } else {
         const data = await response.json();
         toast.error(data.message || 'Failed to create trip');

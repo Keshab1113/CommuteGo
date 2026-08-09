@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Home, Info, Phone, User, LogOut, ChevronDown, MapPin, ArrowRight, Compass, Users, Heart, Sparkles, LayoutDashboard, Shield, Route } from "lucide-react";
+import { Menu, X, Home, Info, Phone, User, LogOut, ChevronDown, MapPin, ArrowRight, Compass, Users, Heart, Sparkles, LayoutDashboard, Shield } from "lucide-react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../store/auth";
 import { cn } from "../../lib/utils";
@@ -25,7 +25,7 @@ const Navbar = () => {
   };
 
   const isAdmin = user?.isAdmin || user?.role === "admin";
-  const dashboardPath = isAdmin ? "/admin" : "/travel-matchmaking";
+  const dashboardPath = isAdmin ? "/admin" : "/trips";
   const profilePath = isAdmin ? "/admin/profile" : "/profile";
 
   const navLinks = [
@@ -38,8 +38,7 @@ const Navbar = () => {
   const pillars = [
     { to: "/hidden-destinations", label: "Hidden Destinations", icon: Compass, color: "from-emerald-500 to-teal-500", description: "Discover authentic places" },
     { to: "/local-buddies", label: "Local Buddies", icon: Users, color: "from-cyan-500 to-blue-500", description: "Connect with passionate locals" },
-    { to: "/trips", label: "All Trips", icon: Route, color: "from-amber-500 to-orange-500", description: "Browse open travel itineraries" },
-    { to: "/travel-matchmaking", label: "Travel Together", icon: Heart, color: "from-rose-500 to-pink-500", description: "Find compatible companions" },
+    { to: "/trips", label: "Travel Together", icon: Heart, color: "from-rose-500 to-pink-500", description: "Browse trips and find companions" },
   ];
 
   

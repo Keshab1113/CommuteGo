@@ -45,7 +45,7 @@ const DestinationsSection = ({ destinations, loading }) => {
           viewport={{ once: true }}
           className="flex flex-col md:flex-row md:items-end justify-between mb-12"
         >
-          <div>
+          <div className='  w-full flex justify-center items-center flex-col text-center'>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 text-sm font-medium mb-4">
               <Compass className="w-4 h-4" />
               Hidden Destinations
@@ -54,15 +54,13 @@ const DestinationsSection = ({ destinations, loading }) => {
               <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
                 Explore Beyond
               </span>
-              <br />
+              {" "}
               <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
                 The Ordinary
               </span>
             </h2>
           </div>
-          <button onClick={() => navigate('/hidden-destinations')} className="mt-4 md:mt-0 px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition-all flex items-center gap-2">
-            View All <ArrowRight className="w-4 h-4" />
-          </button>
+          
         </motion.div>
 
         {/* Filters */}
@@ -232,6 +230,11 @@ const DestinationsSection = ({ destinations, loading }) => {
             ))}
           </div>
         )}
+        <div className=' w-full flex justify-center items-center mt-10'>
+        <button onClick={() => navigate('/hidden-destinations')} className="mt-4 md:mt-0 px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition-all flex items-center gap-2">
+            View All Destinations <ArrowRight className="w-4 h-4" />
+          </button>
+          </div>
       </div>
     </section>
   );

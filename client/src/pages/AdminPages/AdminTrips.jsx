@@ -4,6 +4,7 @@ import { Search, Trash2, MapPin, Calendar, Users, Loader2, Check, X, Clock } fro
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { tripsApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
 
 const AdminTrips = () => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const AdminTrips = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('approved');
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchTrips();
@@ -43,15 +46,22 @@ const AdminTrips = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this trip?')) {
-      try {
-        await tripsApi.delete(id);
-        toast.success('Trip deleted successfully');
-        fetchTrips();
-      } catch (error) {
-        toast.error('Failed to delete trip');
-      }
+  const handleDelete = (id) => {
+    setDeleteItem(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteItem) return;
+    setIsDeleting(true);
+    try {
+      await tripsApi.delete(deleteItem);
+      toast.success('Trip deleted successfully');
+      fetchTrips();
+    } catch (error) {
+      toast.error('Failed to delete trip');
+    } finally {
+      setIsDeleting(false);
+      setDeleteItem(null);
     }
   };
 
@@ -244,6 +254,17 @@ const AdminTrips = () => {
           </div>
         </motion.div>
       )}
+
+      <DeleteConfirmModal
+        open={!!deleteItem}
+        onOpenChange={(open) => {
+          if (!open) setDeleteItem(null);
+        }}
+        title="Delete Trip"
+        description="Are you sure you want to delete this trip? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

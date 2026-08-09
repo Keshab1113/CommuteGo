@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Navigate } from 'react-router-dom'
 import Layout from './Layout.jsx'
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
@@ -19,10 +19,11 @@ import AddDestination from './pages/AddDestination.jsx'
 import LocalBuddies from './pages/LocalBuddies.jsx'
 import LocalBuddyDetail from './pages/LocalBuddyDetail.jsx'
 import AddLocalBuddy from './pages/AddLocalBuddy.jsx'
-import TravelMatchmaking from './pages/TravelMatchmaking.jsx'
 import Trips from './pages/Trips.jsx'
 import TripDetail from './pages/TripDetail.jsx'
 import CreateTrip from './pages/CreateTrip.jsx'
+import Conversations from './pages/Conversations.jsx'
+import ConversationDetail from './pages/ConversationDetail.jsx'
 import DestinationDetail from './pages/DestinationDetail.jsx'
 import { AuthProvider } from './store/auth.jsx'
 import { ThemeProvider } from './context/ThemeContext';
@@ -65,10 +66,12 @@ const router = createBrowserRouter(
         <Route path='local-buddies' element={<LocalBuddies />} />
         <Route path='local-buddies/:id' element={<LocalBuddyDetail />} />
         <Route path='become-local-buddy' element={<AddLocalBuddy />} />
-        <Route path='travel-matchmaking' element={<TravelMatchmaking />} />
+        <Route path='travel-matchmaking' element={<Navigate to="/trips" replace />} />
         <Route path='trips' element={<Trips />} />
         <Route path='trips/:id' element={<TripDetail />} />
         <Route path='create-trip' element={<CreateTrip />} />
+        <Route path='conversations' element={<Conversations />} />
+        <Route path='conversations/:id' element={<ConversationDetail />} />
         <Route path='privacy-policy' element={<PrivacyPolicy />} />
         <Route path='terms-of-service' element={<TermsOfService />} />
       </Route>

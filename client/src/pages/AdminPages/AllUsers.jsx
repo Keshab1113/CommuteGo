@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from '../../store/auth';
 import { ThemeContext } from '../../context/ThemeContext';
 import { toast } from "react-toastify";
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
 
 const AllUsers = () => {
   const { authorizationToken } = useAuth();
@@ -13,6 +14,8 @@ const AllUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const usersPerPage = 10;
 
   const getAllUsersData = async () => {
@@ -35,8 +38,14 @@ const AllUsers = () => {
   };
 
   const deleteUser = async (id) => {
+    setDeleteItem(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteItem) return;
+    setIsDeleting(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/delete/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/delete/${deleteItem}`, {
         method: "DELETE",
         headers: {
           Authorization: authorizationToken,
@@ -45,9 +54,14 @@ const AllUsers = () => {
       if (response.ok) {
         toast.success("User deleted successfully");
         getAllUsersData();
+      } else {
+        toast.error("Failed to delete user");
       }
     } catch (error) {
       toast.error("Failed to delete user");
+    } finally {
+      setIsDeleting(false);
+      setDeleteItem(null);
     }
   };
 
@@ -153,11 +167,7 @@ const AllUsers = () => {
                           <Edit className="w-4 h-4" />
                         </Link>
                         <button
-                          onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this user?')) {
-                              deleteUser(curUser._id);
-                            }
-                          }}
+                          onClick={() => deleteUser(curUser._id)}
                           className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -219,6 +229,17 @@ const AllUsers = () => {
           </div>
         </motion.div>
       )}
+
+      <DeleteConfirmModal
+        open={!!deleteItem}
+        onOpenChange={(open) => {
+          if (!open) setDeleteItem(null);
+        }}
+        title="Delete User"
+        description="Are you sure you want to delete this user? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

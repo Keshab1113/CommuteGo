@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Search, Calendar, Users, Shield, Star, Heart, Share2, Camera, Mountain, TreePine, Tent, Utensils, Waves, Building, Compass, Loader2, Gift, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import SimpleSelect from '../components/ui/SimpleSelect';
 
 const iconMap = {
   adventure: Mountain,
@@ -191,43 +192,47 @@ const HiddenDestinations = () => {
             {/* Additional Filters */}
             <div className="flex flex-wrap gap-3">
               {filterOptions.categories.length > 0 && (
-                <select
+                <SimpleSelect
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-500/50"
-                >
-                  <option value="all">All Categories</option>
-                  {filterOptions.categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setSelectedCategory}
+                  placeholder="All Categories"
+                  options={[
+                    { value: 'all', label: 'All Categories' },
+                    ...filterOptions.categories.map((cat) => ({
+                      value: cat,
+                      label: cat.charAt(0).toUpperCase() + cat.slice(1),
+                    })),
+                  ]}
+                  triggerClassName="min-w-[150px]"
+                />
               )}
 
-              <select
+              <SimpleSelect
                 value={selectedDifficulty}
-                onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-500/50"
-              >
-                <option value="all">
-                  {filterOptions.difficulties.length > 0 ? 'All Difficulty' : 'Difficulty'}
-                </option>
-                {filterOptions.difficulties.map((diff) => (
-                  <option key={diff} value={diff}>{diff}</option>
-                ))}
-              </select>
+                onChange={setSelectedDifficulty}
+                placeholder={filterOptions.difficulties.length > 0 ? 'All Difficulty' : 'Difficulty'}
+                options={[
+                  { value: 'all', label: filterOptions.difficulties.length > 0 ? 'All Difficulty' : 'Difficulty' },
+                  ...filterOptions.difficulties.map((diff) => ({
+                    value: diff,
+                    label: diff,
+                  })),
+                ]}
+                triggerClassName="min-w-[150px]"
+              />
 
-              <select
+              <SimpleSelect
                 value={selectedBudget}
-                onChange={(e) => setSelectedBudget(e.target.value)}
-                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-500/50"
-              >
-                <option value="all">All Budget</option>
-                <option value="low">Budget (Under ₹4K)</option>
-                <option value="medium">Mid-range (₹4K-8K)</option>
-                <option value="high">Premium (₹8K+)</option>
-              </select>
+                onChange={setSelectedBudget}
+                placeholder="All Budget"
+                options={[
+                  { value: 'all', label: 'All Budget' },
+                  { value: 'low', label: 'Budget (Under ₹4K)' },
+                  { value: 'medium', label: 'Mid-range (₹4K-8K)' },
+                  { value: 'high', label: 'Premium (₹8K+)' },
+                ]}
+                triggerClassName="min-w-[150px]"
+              />
             </div>
           </div>
         </div>

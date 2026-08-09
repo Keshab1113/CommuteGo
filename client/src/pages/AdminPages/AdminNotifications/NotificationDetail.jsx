@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { notificationsApi } from "../../../services/api/adminApi";
 import { useNotifications } from "../../../context/NotificationContext";
+import DeleteConfirmModal from "../../../components/ui/DeleteConfirmModal";
 
 const typeStyles = {
   info: { icon: Bell, color: "bg-cyan-500/10 text-cyan-400", label: "Info" },
@@ -58,6 +59,8 @@ const NotificationDetail = () => {
   const { deleteNotification } = useNotifications();
   const [notification, setNotification] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchNotification = async () => {
@@ -78,12 +81,16 @@ const NotificationDetail = () => {
   }, [id]);
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this notification?")) return;
+    setIsDeleting(true);
     try {
       await deleteNotification(id);
+      setShowDeleteModal(false);
       navigate("/admin/notifications");
     } catch (error) {
       console.error(error);
+      toast.error("Failed to delete notification");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -115,6 +122,7 @@ const NotificationDetail = () => {
   const relatedRoute = entityRoutes[notification.entityType];
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -130,7 +138,7 @@ const NotificationDetail = () => {
           Back to notifications
         </Link>
         <button
-          onClick={handleDelete}
+          onClick={() => setShowDeleteModal(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 text-red-400 text-sm font-medium hover:bg-red-500/20 transition-all"
         >
           <Trash2 className="w-4 h-4" />
@@ -204,6 +212,16 @@ const NotificationDetail = () => {
         </div>
       </div>
     </motion.div>
+
+    <DeleteConfirmModal
+      open={showDeleteModal}
+      onOpenChange={setShowDeleteModal}
+      onConfirm={handleDelete}
+      isDeleting={isDeleting}
+      title="Delete Notification"
+      description="Are you sure you want to delete this notification? This action cannot be undone."
+    />
+    </>
   );
 };
 

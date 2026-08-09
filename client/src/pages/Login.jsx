@@ -49,7 +49,7 @@ const Login = () => {
         if (res_data.isAdmin || res_data.role === "admin") {
           navigate("/admin");
         } else {
-          navigate("/travel-matchmaking");
+          navigate("/trips");
         }
       } else {
         toast.error(res_data.extraDetails || res_data.message);

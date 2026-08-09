@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare, CheckCircle, ArrowRight, Sparkles, Heart, Star, ThumbsUp } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
+import SimpleSelect from "../components/ui/SimpleSelect";
 
 export default function Contact() {
   const [formData, setFormData] = useState({ fullname: "", email: "", phone: "", subject: "", message: "" });
@@ -233,20 +234,21 @@ export default function Contact() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-300">Subject</label>
-                      <select
-                        required
+                      <SimpleSelect
                         value={formData.subject}
-                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                        className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-800 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white"
-                      >
-                        <option value="">Select a topic</option>
-                        <option value="Hidden Destinations">Hidden Destinations</option>
-                        <option value="Local Buddies">Local Buddies</option>
-                        <option value="Travel Matchmaking">Travel Matchmaking</option>
-                        <option value="Bug Report">Bug Report</option>
-                        <option value="Partnership">Partnership</option>
-                        <option value="Other">Other</option>
-                      </select>
+                        onChange={(value) => setFormData({ ...formData, subject: value })}
+                        placeholder="Select a topic"
+                        required
+                        options={[
+                          { value: 'Hidden Destinations', label: 'Hidden Destinations' },
+                          { value: 'Local Buddies', label: 'Local Buddies' },
+                          { value: 'Travel Matchmaking', label: 'Travel Matchmaking' },
+                          { value: 'Bug Report', label: 'Bug Report' },
+                          { value: 'Partnership', label: 'Partnership' },
+                          { value: 'Other', label: 'Other' },
+                        ]}
+                        triggerClassName="w-full h-[58px] rounded-xl bg-[#0a0a0a] border-gray-800 text-white"
+                      />
                     </div>
                   </div>
                   <div>

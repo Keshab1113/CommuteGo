@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Search, Trash2, CheckCircle, XCircle, Clock, Loader2, Star, ThumbsUp, Eye } from 'lucide-react';
 import { toast } from "react-toastify";
 import { adminDataApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
+import SimpleSelect from '../../components/ui/SimpleSelect';
 
 const AdminFeedback = () => {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -10,6 +12,8 @@ const AdminFeedback = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchReviews = async () => {
     setIsLoading(true);
@@ -38,6 +42,21 @@ const AdminFeedback = () => {
       fetchReviews();
     } catch (error) {
       toast.error("Failed to delete review");
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteItem) return;
+    setIsDeleting(true);
+    try {
+      await adminDataApi.deleteFeedback(deleteItem);
+      toast.success("Review deleted successfully");
+      fetchReviews();
+    } catch (error) {
+      toast.error("Failed to delete review");
+    } finally {
+      setIsDeleting(false);
+      setDeleteItem(null);
     }
   };
 
@@ -81,16 +100,17 @@ const AdminFeedback = () => {
               className="pl-10 pr-4 py-2 rounded-xl bg-[#1C1B1B] border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-500/50"
             />
           </div>
-          <select
+          <SimpleSelect
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl bg-[#1C1B1B] border border-white/10 text-white text-sm focus:outline-none focus:border-cyan-500/50"
-          >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
+            onChange={(value) => setFilter(value)}
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'approved', label: 'Approved' },
+              { value: 'rejected', label: 'Rejected' },
+            ]}
+            triggerClassName="px-4 h-10 rounded-xl bg-[#1C1B1B] border-white/10 text-white text-sm"
+          />
         </div>
       </div>
 
@@ -250,11 +270,7 @@ const AdminFeedback = () => {
                           </>
                         )}
                         <button
-                          onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this review?')) {
-                              deleteReview(review._id);
-                            }
-                          }}
+                          onClick={() => setDeleteItem(review._id)}
                           className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -275,6 +291,17 @@ const AdminFeedback = () => {
           )}
         </motion.div>
       )}
+
+      <DeleteConfirmModal
+        open={!!deleteItem}
+        onOpenChange={(open) => {
+          if (!open) setDeleteItem(null);
+        }}
+        title="Delete Review"
+        description="Are you sure you want to delete this review? This action cannot be undone."
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+      />
 
       {/* Review Detail Modal */}
       {selectedReview && (

@@ -52,7 +52,10 @@ const destinationSchema = new mongoose.Schema({
   // How to reach routes
   howToReach: [{
     mode: { type: String, enum: ['Bus', 'Train', 'Flight', 'Personal Car'], required: true },
-    steps: [{ type: String, required: true }]
+    steps: [{
+      vehicle: { type: String, enum: ['Bus', 'Train', 'Flight', 'Personal Car', 'Taxi', 'Auto', 'Walk', 'Boat', 'Other'], default: 'Bus' },
+      instruction: { type: String, required: true }
+    }]
   }],
 
   // Google Maps embed URL

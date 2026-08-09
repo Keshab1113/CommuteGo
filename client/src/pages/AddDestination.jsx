@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Shield, Star, Loader2, Image, Gift, Award, Navigation, Calendar, DollarSign, Tag, Info, CheckCircle, User, Mail, Phone, Map as MapIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import SimpleSelect from '../components/ui/SimpleSelect';
 
 const AddDestination = () => {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ const AddDestination = () => {
         submittedBy: 'user',
         mapEmbedUrl: finalFormData.mapEmbedUrl.trim(),
         howToReach: finalFormData.howToReach
-          .map(r => ({ ...r, steps: r.steps.filter(s => s.trim()) }))
+          .map(r => ({ ...r, steps: r.steps.filter(s => (typeof s === 'string' ? s.trim() : s.instruction?.trim())) }))
           .filter(r => r.steps.length > 0),
         submitter: {
           name: finalFormData.submitterName.trim(),
@@ -130,7 +131,7 @@ const AddDestination = () => {
   const addHowToReachRoute = () => {
     setFormData(prev => ({
       ...prev,
-      howToReach: [...prev.howToReach, { mode: 'Bus', steps: [''] }]
+      howToReach: [...prev.howToReach, { mode: 'Bus', steps: [{ vehicle: 'Bus', instruction: '' }] }]
     }));
   };
 
@@ -150,22 +151,34 @@ const AddDestination = () => {
     }));
   };
 
-  const updateHowToReachStep = (routeIndex, stepIndex, value) => {
+  const updateStepVehicle = (routeIndex, stepIndex, vehicle) => {
     setFormData(prev => ({
       ...prev,
       howToReach: prev.howToReach.map((route, i) =>
         i === routeIndex
-          ? { ...route, steps: route.steps.map((step, j) => j === stepIndex ? value : step) }
+          ? { ...route, steps: route.steps.map((step, j) => j === stepIndex ? { ...step, vehicle } : step) }
+          : route
+      )
+    }));
+  };
+
+  const updateHowToReachStep = (routeIndex, stepIndex, instruction) => {
+    setFormData(prev => ({
+      ...prev,
+      howToReach: prev.howToReach.map((route, i) =>
+        i === routeIndex
+          ? { ...route, steps: route.steps.map((step, j) => j === stepIndex ? { ...step, instruction } : step) }
           : route
       )
     }));
   };
 
   const addHowToReachStep = (routeIndex) => {
+    const defaultVehicle = formData.howToReach[routeIndex]?.mode || 'Bus';
     setFormData(prev => ({
       ...prev,
       howToReach: prev.howToReach.map((route, i) =>
-        i === routeIndex ? { ...route, steps: [...route.steps, ''] } : route
+        i === routeIndex ? { ...route, steps: [...route.steps, { vehicle: defaultVehicle, instruction: '' }] } : route
       )
     }));
   };
@@ -385,15 +398,16 @@ const AddDestination = () => {
                       <Star className="w-4 h-4 text-amber-400" />
                       Difficulty
                     </label>
-                    <select
+                    <SimpleSelect
                       value={formData.difficulty}
-                      onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                      className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white"
-                    >
-                      <option value="Easy">Easy</option>
-                      <option value="Moderate">Moderate</option>
-                      <option value="Challenging">Challenging</option>
-                    </select>
+                      onChange={(value) => setFormData({ ...formData, difficulty: value })}
+                      options={[
+                        { value: 'Easy', label: 'Easy' },
+                        { value: 'Moderate', label: 'Moderate' },
+                        { value: 'Challenging', label: 'Challenging' },
+                      ]}
+                      triggerClassName="w-full h-[58px] rounded-xl bg-[#0a0a0a] border-gray-700 text-white"
+                    />
                   </div>
                   <div>
                     <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-300">
@@ -428,34 +442,36 @@ const AddDestination = () => {
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-3 text-gray-300">Crowd Level</label>
-                    <select
+                    <SimpleSelect
                       value={formData.crowdLevel}
-                      onChange={(e) => setFormData({ ...formData, crowdLevel: e.target.value })}
-                      className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white"
-                    >
-                      <option value="Very Low">Very Low</option>
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                      <option value="Very High">Very High</option>
-                    </select>
+                      onChange={(value) => setFormData({ ...formData, crowdLevel: value })}
+                      options={[
+                        { value: 'Very Low', label: 'Very Low' },
+                        { value: 'Low', label: 'Low' },
+                        { value: 'Medium', label: 'Medium' },
+                        { value: 'High', label: 'High' },
+                        { value: 'Very High', label: 'Very High' },
+                      ]}
+                      triggerClassName="w-full h-[58px] rounded-xl bg-[#0a0a0a] border-gray-700 text-white"
+                    />
                   </div>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium mb-3 text-gray-300">Category</label>
-                  <select
+                  <SimpleSelect
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-4 rounded-xl bg-[#0a0a0a] border border-gray-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all text-white"
-                  >
-                    <option value="adventure">Adventure</option>
-                    <option value="nature">Nature</option>
-                    <option value="heritage">Heritage</option>
-                    <option value="beach">Beach</option>
-                    <option value="spiritual">Spiritual</option>
-                    <option value="cultural">Cultural</option>
-                  </select>
+                    onChange={(value) => setFormData({ ...formData, category: value })}
+                    options={[
+                      { value: 'adventure', label: 'Adventure' },
+                      { value: 'nature', label: 'Nature' },
+                      { value: 'heritage', label: 'Heritage' },
+                      { value: 'beach', label: 'Beach' },
+                      { value: 'spiritual', label: 'Spiritual' },
+                      { value: 'cultural', label: 'Cultural' },
+                    ]}
+                    triggerClassName="w-full h-[58px] rounded-xl bg-[#0a0a0a] border-gray-700 text-white"
+                  />
                 </div>
 
                 <div>
@@ -516,20 +532,17 @@ const AddDestination = () => {
                     <MapIcon className="w-5 h-5 text-cyan-400 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-sm font-medium text-cyan-400 mb-2">How to Reach</p>
-                      <p className="text-xs text-gray-400 mb-4">Add one or more travel routes with steps. Each route can use Bus, Train, Flight, or Personal Car.</p>
+                      <p className="text-xs text-gray-400 mb-4">Add one or more travel routes with steps. Choose a vehicle for each step.</p>
 
                       {formData.howToReach.map((route, routeIndex) => (
                         <div key={routeIndex} className="mb-4 p-3 rounded-lg bg-[#0a0a0a] border border-gray-700">
                           <div className="flex items-center gap-2 mb-3">
-                            <select
+                            <SimpleSelect
                               value={route.mode}
-                              onChange={(e) => updateHowToReachMode(routeIndex, e.target.value)}
-                              className="px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
-                            >
-                              {['Bus', 'Train', 'Flight', 'Personal Car'].map(m => (
-                                <option key={m} value={m}>{m}</option>
-                              ))}
-                            </select>
+                              onChange={(value) => updateHowToReachMode(routeIndex, value)}
+                              options={['Bus', 'Train', 'Flight', 'Personal Car'].map(m => ({ value: m, label: m }))}
+                              triggerClassName="px-3 h-10 rounded-lg bg-black/30 border-gray-700 text-white text-sm"
+                            />
                             <button
                               type="button"
                               onClick={() => removeHowToReachRoute(routeIndex)}
@@ -539,27 +552,37 @@ const AddDestination = () => {
                             </button>
                           </div>
 
-                          {route.steps.map((step, stepIndex) => (
-                            <div key={stepIndex} className="flex items-center gap-2 mb-2">
-                              <span className="text-xs text-gray-500 w-12">Step {stepIndex + 1}</span>
-                              <input
-                                type="text"
-                                value={step}
-                                onChange={(e) => updateHowToReachStep(routeIndex, stepIndex, e.target.value)}
-                                placeholder="e.g., From Kolkata to New Jalpaiguri by Train"
-                                className="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
-                              />
-                              {route.steps.length > 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => removeHowToReachStep(routeIndex, stepIndex)}
-                                  className="text-xs text-red-400 hover:text-red-300"
-                                >
-                                  Remove
-                                </button>
-                              )}
-                            </div>
-                          ))}
+                          {route.steps.map((step, stepIndex) => {
+                            const vehicle = step.vehicle || route.mode || 'Bus';
+                            const instruction = step.instruction ?? (typeof step === 'string' ? step : '');
+                            return (
+                              <div key={stepIndex} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-2">
+                                <span className="text-xs text-gray-500 w-12 flex items-center">Step {stepIndex + 1}</span>
+                                <SimpleSelect
+                                  value={vehicle}
+                                  onChange={(value) => updateStepVehicle(routeIndex, stepIndex, value)}
+                                  options={['Bus', 'Train', 'Flight', 'Personal Car', 'Taxi', 'Auto', 'Walk', 'Boat', 'Other'].map(m => ({ value: m, label: m }))}
+                                  triggerClassName="px-3 h-10 rounded-lg bg-black/30 border-gray-700 text-white text-sm sm:w-[140px]"
+                                />
+                                <input
+                                  type="text"
+                                  value={instruction}
+                                  onChange={(e) => updateHowToReachStep(routeIndex, stepIndex, e.target.value)}
+                                  placeholder="e.g., From Kolkata to New Jalpaiguri"
+                                  className="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-gray-700 text-white text-sm focus:border-cyan-500 focus:outline-none"
+                                />
+                                {route.steps.length > 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeHowToReachStep(routeIndex, stepIndex)}
+                                    className="text-xs text-red-400 hover:text-red-300"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })}
 
                           <button
                             type="button"

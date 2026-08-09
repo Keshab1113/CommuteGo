@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { localBuddiesApi } from '../../services/api/adminApi';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
@@ -23,6 +24,8 @@ const AdminLocalBuddyDetail = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     displayName: '',
@@ -117,15 +120,16 @@ const AdminLocalBuddyDetail = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this local buddy?')) return;
-    setIsLoading(true);
+    setIsDeleting(true);
     try {
       await localBuddiesApi.delete(id);
       toast.success('Local buddy deleted successfully');
+      setShowDeleteModal(false);
       navigate('/admin/local-buddies');
     } catch (error) {
       toast.error('Failed to delete local buddy');
-      setIsLoading(false);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -180,7 +184,7 @@ const AdminLocalBuddyDetail = () => {
             <Edit3 className="w-4 h-4" /> {isEditing ? 'Cancel' : 'Edit'}
           </button>
           <button
-            onClick={handleDelete}
+            onClick={() => setShowDeleteModal(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors"
           >
             <Trash2 className="w-4 h-4" /> Delete
@@ -438,6 +442,15 @@ const AdminLocalBuddyDetail = () => {
           )}
         </div>
       </motion.div>
+
+      <DeleteConfirmModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+        title="Delete Local Buddy"
+        description="Are you sure you want to delete this local buddy? This action cannot be undone."
+      />
     </div>
   );
 };
