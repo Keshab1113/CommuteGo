@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Users, Heart, Award, ArrowRight, Sparkles, Compass, Users as Buddies, Target, Eye, Globe, TrendingUp, Map } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import Seo from '../components/Seo/Seo';
 
 const About = () => {
   const team = [
@@ -36,6 +37,12 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white overflow-hidden">
+      <Seo
+        title="About Us"
+        description="CommuteGo helps travelers discover hidden destinations, connect with verified local buddies, and find travel companions. Learn about our mission to make every Indian explorer discover the real India."
+        path="/about"
+        keywords="about CommuteGo, India travel platform, travel community, hidden places story, travel mission"
+      />
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">

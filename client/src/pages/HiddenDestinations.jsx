@@ -4,6 +4,7 @@ import { MapPin, Search, Calendar, Users, Shield, Star, Heart, Share2, Camera, M
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import SimpleSelect from '../components/ui/SimpleSelect';
+import Seo from '../components/Seo/Seo';
 
 const iconMap = {
   adventure: Mountain,
@@ -96,6 +97,12 @@ const HiddenDestinations = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Seo
+        title="Hidden Destinations in India — Offbeat Places to Explore"
+        description="Discover offbeat, lesser-known travel destinations across India. Filter by adventure, nature, trekking, camping, photography, and weekend getaways. Find hidden gems away from the tourist crowds."
+        path="/hidden-destinations"
+        keywords="hidden destinations India, offbeat places India, lesser-known travel destinations, weekend getaways India, trekking India, camping spots India, adventure travel India, photography locations India"
+      />
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">

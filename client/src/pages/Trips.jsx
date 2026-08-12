@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import { toast } from 'react-toastify';
 import SimpleSelect from '../components/ui/SimpleSelect';
+import Seo from '../components/Seo/Seo';
 import {
   Heart,
   Search,
@@ -180,6 +181,12 @@ const Trips = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Seo
+        title="Travel Matchmaking — Find Travel Companions in India"
+        description="Find compatible travel companions based on destination, dates, budget, interests, and adventure level. Join or create a trip on CommuteGo and travel together across India."
+        path="/trips"
+        keywords="travel matchmaking India, find travel companions India, travel buddies India, group trips India, travel partners, weekend trip companions"
+      />
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">

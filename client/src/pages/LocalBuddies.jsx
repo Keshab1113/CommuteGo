@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Search, Star, Heart, Camera, Music, Utensils, Mountain, BookOpen, Users, CheckCircle, MessageCircle, Award, Loader2, Tag, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Seo from '../components/Seo/Seo';
 
 const interestIcons = {
   photography: Camera,
@@ -97,6 +98,12 @@ const LocalBuddies = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Seo
+        title="Local Buddies — Verified Local Guides Across India"
+        description="Connect with verified local experts across India who share their home, culture, and stories. Not guides — friends who show you the real India. Browse local buddies by city and interest."
+        path="/local-buddies"
+        keywords="local buddies India, verified local guides, India travel hosts, local experts India, cultural exchange India, authentic India travel, homestay India"
+      />
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">

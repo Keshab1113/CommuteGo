@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Lock, Eye, UserCheck, FileText, Mail, Clock, CheckCircle } from 'lucide-react';
+import Seo from '../components/Seo/Seo';
 
 const PrivacyPolicy = () => {
   const sections = [
@@ -101,6 +102,12 @@ We will respond to your inquiry within 30 days of receipt.`
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Seo
+        title="Privacy Policy"
+        description="Read the CommuteGo privacy policy. Learn how we collect, use, and protect your personal information across our travel platform."
+        path="/privacy-policy"
+        keywords="CommuteGo privacy policy, privacy, data protection, GDPR, data security"
+      />
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">

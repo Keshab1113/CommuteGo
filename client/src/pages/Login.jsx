@@ -5,6 +5,7 @@ import { useAuth } from '../store/auth';
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Bus, Loader2, Sparkles, Compass, MapPin } from 'lucide-react';
 import { ThemeContext } from '../context/ThemeContext';
+import Seo from '../components/Seo/Seo';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -70,7 +71,13 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex relative overflow-hidden bg-[#141313] ">
-      
+      <Seo
+        title="Login"
+        description="Sign in to your CommuteGo account to discover hidden destinations, connect with local buddies, and find travel companions."
+        path="/login"
+        index={false}
+      />
+
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center">
         {/* Animated Background */}

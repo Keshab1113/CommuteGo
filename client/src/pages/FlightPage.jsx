@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import { Plane, Search, MapPin, Calendar, ArrowRight, Clock, Shield, Zap, Globe, Star } from 'lucide-react';
 import { ThemeContext } from '../context/ThemeContext';
+import Seo from '../components/Seo/Seo';
 
 const FlightPage = () => {
   const { darkMode } = useContext(ThemeContext);
@@ -23,6 +24,12 @@ const FlightPage = () => {
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-[#141313] text-white' : 'bg-white text-gray-900'}`}>
+      <Seo
+        title="Flight Booking — Domestic & International Flights"
+        description="Search and book domestic and international flights at the best prices. Compare airlines, find cheap air tickets, and plan your journey with CommuteGo."
+        path="/flight"
+        keywords="flight booking India, cheap flights, domestic flights, international flights, airline tickets, flight comparison, air ticket booking"
+      />
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-500/10"></div>

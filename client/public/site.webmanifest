@@ -1,0 +1,28 @@
+{
+  "name": "CommuteGo — Discover Hidden Places in India",
+  "short_name": "CommuteGo",
+  "description": "India's premium travel platform for hidden destinations, verified local buddies, and travel matchmaking.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#06B6D4",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["travel", "lifestyle", "social"],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

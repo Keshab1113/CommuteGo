@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Send, Mail, Phone, User, MessageSquare, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from "react-toastify";
 import { ThemeContext } from '../context/ThemeContext';
+import Seo from '../components/Seo/Seo';
 
 const defaultfeedbackform = {
   fullname: "",
@@ -46,6 +47,12 @@ const FeedBack = () => {
 
   return (
     <div className={`min-h-screen flex items-center justify-center py-20 ${darkMode ? 'bg-[#141313]' : 'bg-white'}`}>
+      <Seo
+        title="Feedback"
+        description="Share your experience with CommuteGo. Your feedback helps us build a better travel platform for India — hidden destinations, local buddies, and travel matchmaking."
+        path="/feedback"
+        keywords="CommuteGo feedback, travel platform feedback, user reviews CommuteGo"
+      />
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/10 to-emerald-500/10 rounded-full blur-3xl"></div>

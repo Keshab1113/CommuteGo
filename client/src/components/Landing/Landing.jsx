@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { Compass, Users, Heart, ArrowRight, MapPin, Star, Shield, Clock, CheckCircle } from 'lucide-react';
+import Seo from '../Seo/Seo';
 
 const Services = () => {
   const services = [
@@ -76,6 +77,12 @@ const Services = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Seo
+        title="Services — Bus, Flight, Hidden Destinations & More"
+        description="Explore CommuteGo services: book buses and flights, discover hidden destinations, connect with verified local buddies, and find travel companions for your next India trip."
+        path="/services"
+        keywords="bus booking India, flight booking, transport booking, CommuteGo services, travel services India"
+      />
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">

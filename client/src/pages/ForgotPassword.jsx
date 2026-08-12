@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import { Mail, ArrowRight, Bus, Loader2, CheckCircle, Shield, Sparkles, KeyRound } from 'lucide-react';
+import Seo from '../components/Seo/Seo';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -23,6 +24,12 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen flex relative overflow-hidden bg-[#141313]">
+      <Seo
+        title="Forgot Password"
+        description="Reset your CommuteGo password. Recover access to your account."
+        path="/forgot-password"
+        index={false}
+      />
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center">
         {/* Animated Background */}

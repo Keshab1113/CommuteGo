@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, AlertTriangle, CheckCircle, User, MapPin, CreditCard, Ban, Mail, Scale, Globe, Shield } from 'lucide-react';
+import Seo from '../components/Seo/Seo';
 
 const TermsOfService = () => {
   const sections = [
@@ -159,6 +160,12 @@ For legal notices, please send to the address provided above.`
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Seo
+        title="Terms of Service"
+        description="Read the CommuteGo terms of service. The agreement that governs your use of the CommuteGo travel platform."
+        path="/terms-of-service"
+        keywords="CommuteGo terms of service, user agreement, platform terms"
+      />
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">

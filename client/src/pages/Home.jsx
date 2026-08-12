@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ThumbsUp } from 'lucide-react';
+import Seo, { organizationJsonLd, websiteJsonLd } from '../components/Seo/Seo';
 import HeroSection from '../components/Home/HeroSection';
 import PillarsSection from '../components/Home/PillarsSection';
 import DestinationsSection from '../components/Home/DestinationsSection';
@@ -42,6 +43,11 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white overflow-hidden">
+      <Seo
+        path="/"
+        keywords="CommuteGo, hidden destinations India, local buddies India, travel matchmaking India, offbeat places, weekend getaways, India travel community"
+        jsonLd={[organizationJsonLd, websiteJsonLd]}
+      />
       <HeroSection
         searchDestination={searchDestination}
         setSearchDestination={setSearchDestination}

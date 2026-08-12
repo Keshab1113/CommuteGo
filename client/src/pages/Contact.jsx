@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, Clock, Send, MessageSquare, CheckCircle, ArrowRigh
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import SimpleSelect from "../components/ui/SimpleSelect";
+import Seo from "../components/Seo/Seo";
 
 export default function Contact() {
   const [formData, setFormData] = useState({ fullname: "", email: "", phone: "", subject: "", message: "" });
@@ -103,6 +104,12 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Seo
+        title="Contact Us — CommuteGo"
+        description="Get in touch with the CommuteGo team. Email, phone, and social channels for support, partnerships, and travel inquiries. We respond within 24 hours."
+        path="/contact"
+        keywords="contact CommuteGo, CommuteGo support, travel platform contact, India travel help"
+      />
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
