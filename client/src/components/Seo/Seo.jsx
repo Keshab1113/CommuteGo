@@ -24,7 +24,7 @@ const TWITTER_HANDLE = '@commutego';
  */
 const Seo = ({
   title,
-  description = "CommuteGo — Discover hidden places, meet verified local buddies, and find travel companions across India.",
+  description = "CommuteGo — India's travel platform for hidden destinations, local buddies, and travel matchmaking. Find offbeat places and companions.",
   keywords,
   path = '/',
   image,
@@ -32,7 +32,7 @@ const Seo = ({
   index = true,
   jsonLd,
 }) => {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} — Discover Hidden Places, Meet Local Experts & Travel Together`;
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} — Hidden Places, Local Buddies & Travel Partners`;
   const canonicalUrl = `${SITE_URL}${path}`;
   const ogImage = image ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : DEFAULT_OG_IMAGE;
   const robots = index ? 'index, follow, max-image-preview:large' : 'noindex, nofollow';
@@ -96,7 +96,7 @@ export const organizationJsonLd = {
     '@type': 'ContactPoint',
     contactType: 'customer support',
     email: 'keshabdas2003@gmail.com',
-    availableLanguage: ['English', 'Hindi'],
+    availableLanguage: ['en', 'hi'],
   },
   areaServed: {
     '@type': 'Country',
